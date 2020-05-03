@@ -1,6 +1,7 @@
 package de.neemann.oscilloscope.draw.elements;
 
 import de.neemann.oscilloscope.draw.graphics.*;
+import de.neemann.oscilloscope.gui.Observer;
 
 import java.util.ArrayList;
 
@@ -23,6 +24,7 @@ public class Switch<T> extends Element<Switch<T>> {
 
     private final ArrayList<T> items;
     private final String name;
+    private ArrayList<Observer> observers;
     private int selectedPosition;
     private Polygon polygon;
 
@@ -70,6 +72,12 @@ public class Switch<T> extends Element<Switch<T>> {
         return this;
     }
 
+    public void addObserver(Observer observer) {
+        if (observers == null)
+            observers = new ArrayList<>();
+        observers.add(observer);
+    }
+
     /**
      * @return the selected value
      */
@@ -98,19 +106,28 @@ public class Switch<T> extends Element<Switch<T>> {
                 .add(SIZE - MAXLINETHICK, y + MAXLINETHICK)
                 .add(SIZE - MAXLINETHICK, y + SIZE - MAXLINETHICK)
                 .add(MAXLINETHICK, y + SIZE - MAXLINETHICK), Style.SWITCH);
-
     }
 
     @Override
     public void down() {
-        if (selectedPosition < items.size() - 1)
+        if (selectedPosition < items.size() - 1) {
             selectedPosition++;
+            hasChanged();
+        }
     }
 
     @Override
     public void up() {
-        if (selectedPosition > 0)
+        if (selectedPosition > 0) {
             selectedPosition--;
+            hasChanged();
+        }
+    }
+
+    private void hasChanged() {
+        if (observers != null)
+            for (Observer o : observers)
+                o.hasChanged();
     }
 
     public boolean is(T val) {

@@ -1,5 +1,15 @@
 package de.neemann.oscilloscope.draw.elements;
 
 public enum TrigSource {
-    CH_1, CH_2, LINE, EXT
+    Ch_1, Ch_2, LINE, EXT;
+
+    private String name;
+
+    @Override
+    public String toString() {
+        if (name == null)
+            name = super.toString().replace('_', ' ');
+        return name;
+    }
+
 }

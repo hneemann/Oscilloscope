@@ -41,7 +41,22 @@ public class Horizontal {
         return horiMag.is(OffOn.On);
     }
 
-    public double getTimeBase() {
-        return timeBase.getSelected().getMag();
+    public double getTimePerDiv() {
+        double tpd = timeBase.getSelected().getMag() / (1 + var.get() * 2);
+        if (isMag())
+            tpd /= 10;
+        return tpd;
+    }
+
+    public Poti getPosPoti() {
+        return pos;
+    }
+
+    public SelectorKnob<TimeBase> getTimeBaseKnob() {
+        return timeBase;
+    }
+
+    public boolean isXY() {
+        return timeBase.getSelected().getMag() == 0;
     }
 }

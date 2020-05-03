@@ -1,6 +1,6 @@
 package de.neemann.oscilloscope.signal;
 
-public class Sin implements Signal {
+public class Sin implements PeriodicSignal {
 
     private final double ampl;
     private final double freq;
@@ -13,5 +13,10 @@ public class Sin implements Signal {
     @Override
     public double v(double t) {
         return ampl * Math.sin(2 * Math.PI * freq * t);
+    }
+
+    @Override
+    public double period() {
+        return 1 / freq;
     }
 }

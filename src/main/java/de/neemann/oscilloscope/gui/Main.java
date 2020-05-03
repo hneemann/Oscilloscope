@@ -1,11 +1,11 @@
 package de.neemann.oscilloscope.gui;
 
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
-import de.neemann.oscilloscope.signal.FastModel;
+import de.neemann.oscilloscope.signal.Sin;
 
 import javax.swing.*;
-
-import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
@@ -20,16 +20,17 @@ public class Main extends JFrame {
         Oscilloscope oscilloscope = new Oscilloscope();
         ElementComponent el = new ElementComponent(oscilloscope.setPos(SIZE + SIZE2, SIZE + SIZE2));
         getContentPane().add(el);
+        oscilloscope.setElementComponent(el);
 
-        el.setModel(new FastModel(t -> Math.sin(t * 40 * Math.PI), t -> Math.cos(t * 51 * Math.PI), oscilloscope));
+        oscilloscope.setSignalCh1(new Sin(1, 40.00));
+        oscilloscope.setSignalCh2(new Sin(1, 51.73));
 
-        Timer timer = new Timer(10, new AbstractAction() {
+        addWindowListener(new WindowAdapter() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                el.repaint();
+            public void windowClosed(WindowEvent e) {
+                oscilloscope.close();
             }
         });
-        timer.start();
 
         pack();
         setSize(SIZE * 61, SIZE * 31);

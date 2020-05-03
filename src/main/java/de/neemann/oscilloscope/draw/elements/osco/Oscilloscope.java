@@ -1,7 +1,11 @@
 package de.neemann.oscilloscope.draw.elements.osco;
 
 import de.neemann.oscilloscope.draw.elements.*;
+import de.neemann.oscilloscope.gui.ElementComponent;
+import de.neemann.oscilloscope.signal.*;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
@@ -11,7 +15,7 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  * The oscilloscope
  */
 public class Oscilloscope extends Container<Oscilloscope> {
-
+    public static final int TIME_DELTA_MS = 20;
     private static final ArrayList<TimeBase> times = createTimes();
     private static final ArrayList<Magnify> magnify = createMagnify();
 
@@ -22,6 +26,13 @@ public class Oscilloscope extends Container<Oscilloscope> {
 
     private final Switch<Mode> mode;
     private final Switch<OffOn> power;
+
+    private PeriodicSignal signal1;
+    private PeriodicSignal signal2;
+    private boolean isInXY;
+    private Model model;
+    private Timer timer;
+    private ElementComponent elementComponent;
 
     private static ArrayList<TimeBase> createTimes() {
         ArrayList<TimeBase> t = new ArrayList<>();
@@ -69,11 +80,11 @@ public class Oscilloscope extends Container<Oscilloscope> {
 
         trigger = new Trigger();
         Container<?> triggerContainer = new Container<>("Trigger", SIZE * 9, SIZE * 9)
-                .add(trigger.setLevel(new Poti("Level", 20).setPos(SIZE, SIZE * 2)))
-                .add(trigger.setMode(new Switch<TrigMode>("Mode").add(TrigMode.values()).setPos(SIZE * 5, SIZE)))
-                .add(trigger.setSource(new Switch<TrigSource>("Source").add(TrigSource.values()).setPos(SIZE * 8, SIZE)))
-                .add(trigger.setSlope(new Switch<String>("Slope").add("+").add("-").setPos(SIZE, SIZE * 7)))
-                .add(trigger.setIn(new Input("Trig. In").setPos(SIZE * 6, SIZE * 8)));
+                .add(trigger.setLevel(new Poti("Level", 20).setPos(SIZE, SIZE * 8)))
+                .add(trigger.setMode(new Switch<TrigMode>("Mode").add(TrigMode.values()).setPos(SIZE * 3, SIZE)))
+                .add(trigger.setSource(new Switch<TrigSource>("Source").add(TrigSource.values()).setPos(SIZE * 7, SIZE)))
+                .add(trigger.setSlope(new Switch<String>("Slope").add("+").add("-").setPos(SIZE * 4, SIZE * 7)))
+                .add(trigger.setIn(new Input("Trig. In").setPos(SIZE * 8, SIZE * 8)));
 
         horizontal = new Horizontal();
         Container<?> horizontalContainer = new Container<>("Horizontal", SIZE * 16, SIZE * 9)
@@ -86,18 +97,20 @@ public class Oscilloscope extends Container<Oscilloscope> {
         ch2 = new Channel();
         mode = new Switch<Mode>("Mode").add(Mode.values());
         Container<?> verticalContainer = new Container<>("Vertical", SIZE * 28, SIZE * 12)
-                .add(ch1.setMag(new SelectorKnob<Magnify>("VOLTS/DIV", 40).addAll(magnify).setPos(SIZE * 3, SIZE * 5)))
+                .add(ch1.setAmplitude(new SelectorKnob<Magnify>("VOLTS/DIV", 40).addAll(magnify).setPos(SIZE * 3, SIZE * 5)))
                 .add(ch1.setPos(new Poti("POS", 20).setPos(SIZE * 9, SIZE * 2)))
                 .add(ch1.setVar(new Poti("VAR", 20).setPos(SIZE * 9, SIZE * 6)))
-                .add(ch2.setMag(new SelectorKnob<Magnify>("VOLTS/DIV", 40).addAll(magnify).setPos(SIZE * 24, SIZE * 5)))
+                .add(ch2.setAmplitude(new SelectorKnob<Magnify>("VOLTS/DIV", 40).addAll(magnify).setPos(SIZE * 24, SIZE * 5)))
                 .add(ch2.setPos(new Poti("POS", 20).setPos(SIZE * 18, SIZE * 2)))
                 .add(ch2.setVar(new Poti("VAR", 20).setPos(SIZE * 18, SIZE * 6)))
                 .add(mode.setPos(SIZE * 13, SIZE * 3))
-                .add(ch1.setCoupling(new Switch<Coupling>("").add(Coupling.values()).set(1).setPos(SIZE * 8, SIZE * 9)))
-                .add(ch2.setCoupling(new Switch<Coupling>("").add(Coupling.values()).set(1).setPos(SIZE * 18, SIZE * 9)))
+                .add(ch1.setCoupling(new Switch<Coupling>("").add(Coupling.values()).set(1).setPos(SIZE * 9, SIZE * 9)))
+                .add(ch2.setCoupling(new Switch<Coupling>("").add(Coupling.values()).set(1).setPos(SIZE * 17, SIZE * 9)))
                 .add(ch2.setInv(new Switch<OffOn>("Ch 2 INV").add(OffOn.values()).setPos(SIZE * 13, SIZE * 9)))
-                .add(ch1.setInput(new Input("Ch 1 / X").setPos(SIZE * 3, SIZE * 11)))
-                .add(ch2.setInput(new Input("Ch 2 / Y").setPos(SIZE * 24, SIZE * 11)));
+                .add(ch1.setInput(new Input("Ch 1 / X").setPos(SIZE * 5, SIZE * 11)))
+                .add(ch2.setInput(new Input("Ch 2 / Y").setPos(SIZE * 22, SIZE * 11)))
+                .add(ch1.setMag5(new Switch<OffOn>("MAG5").add(OffOn.values()).setPos(SIZE, SIZE * 10)))
+                .add(ch2.setMag5(new Switch<OffOn>("MAG5").add(OffOn.values()).setPos(SIZE * 26, SIZE * 10)));
 
         add(triggerContainer.setPos(SIZE * 48, SIZE));
         add(horizontalContainer.setPos(SIZE * 29, SIZE));
@@ -106,6 +119,42 @@ public class Oscilloscope extends Container<Oscilloscope> {
 
         power = new Switch<OffOn>("Power").add(OffOn.values());
         add(power.setPos(SIZE * 2, SIZE * 24));
+
+        power.addObserver(() -> {
+            if (power.is(OffOn.On)) {
+                createNewModel();
+                timer = new Timer(TIME_DELTA_MS, new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        elementComponent.repaint();
+                    }
+                });
+                timer.start();
+            } else {
+                model = null;
+                elementComponent.setModel(null);
+                if (timer != null)
+                    timer.stop();
+            }
+
+        });
+
+        isInXY = horizontal.isXY();
+        horizontal.getTimeBaseKnob().addObserver(() -> {
+            boolean xy = horizontal.isXY();
+            if (xy != isInXY) {
+                isInXY = xy;
+                createNewModel();
+            }
+        });
+    }
+
+    private void createNewModel() {
+        if (isInXY)
+            model = new XYModel(signal1, signal2, Oscilloscope.this);
+        else
+            model = new TimeModel(signal1, signal2, Oscilloscope.this);
+        elementComponent.setModel(model);
     }
 
     public Trigger getTrigger() {
@@ -130,5 +179,22 @@ public class Oscilloscope extends Container<Oscilloscope> {
 
     public Switch<OffOn> getPower() {
         return power;
+    }
+
+    public void setSignalCh1(PeriodicSignal s) {
+        signal1 = s;
+    }
+
+    public void setSignalCh2(PeriodicSignal s) {
+        signal2 = s;
+    }
+
+    public void close() {
+        if (timer != null)
+            timer.stop();
+    }
+
+    public void setElementComponent(ElementComponent elementComponent) {
+        this.elementComponent = elementComponent;
     }
 }

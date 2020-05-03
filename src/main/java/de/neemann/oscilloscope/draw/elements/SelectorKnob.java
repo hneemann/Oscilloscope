@@ -2,6 +2,7 @@ package de.neemann.oscilloscope.draw.elements;
 
 
 import de.neemann.oscilloscope.draw.graphics.*;
+import de.neemann.oscilloscope.gui.Observer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +13,7 @@ public class SelectorKnob<T> extends Element<SelectorKnob<T>> {
     private final int radius;
     private final ArrayList<T> items;
     private final String name;
+    private ArrayList<Observer> observers;
     private int selectedPosition;
 
     public SelectorKnob(String name, int radius) {
@@ -32,6 +34,12 @@ public class SelectorKnob<T> extends Element<SelectorKnob<T>> {
 
     public T getSelected() {
         return items.get(selectedPosition);
+    }
+
+    public void addObserver(Observer observer) {
+        if (observers == null)
+            observers = new ArrayList<>();
+        observers.add(observer);
     }
 
     @Override
@@ -63,14 +71,24 @@ public class SelectorKnob<T> extends Element<SelectorKnob<T>> {
 
     @Override
     public void down() {
-        if (selectedPosition < items.size() - 1)
+        if (selectedPosition < items.size() - 1) {
             selectedPosition++;
+            hasChanged();
+        }
     }
 
     @Override
     public void up() {
-        if (selectedPosition > 0)
+        if (selectedPosition > 0) {
             selectedPosition--;
+            hasChanged();
+        }
+    }
+
+    private void hasChanged() {
+        if (observers != null)
+            for (Observer o : observers)
+                o.hasChanged();
     }
 
 }

@@ -4,15 +4,16 @@ import de.neemann.oscilloscope.draw.elements.*;
 
 public class Channel {
 
-    private SelectorKnob<Magnify> mag;
+    private SelectorKnob<Magnify> amplitude;
     private Poti pos;
     private Poti var;
     private Switch<Coupling> coupling;
     private Input input;
     private Switch<OffOn> inv;
+    private Switch<OffOn> mag5;
 
-    public SelectorKnob<Magnify> setMag(SelectorKnob<Magnify> mag) {
-        this.mag = mag;
+    public SelectorKnob<Magnify> setAmplitude(SelectorKnob<Magnify> mag) {
+        this.amplitude = mag;
         return mag;
     }
 
@@ -41,12 +42,19 @@ public class Channel {
         return inv;
     }
 
-    public double getMag() {
-        return mag.getSelected().getMag();
+    public double getAmplitude() {
+        if (isMag5())
+            return amplitude.getSelected().getMag() / 5;
+        else
+            return amplitude.getSelected().getMag();
     }
 
     public double getPos() {
         return pos.get();
+    }
+
+    public Poti getPosPoti() {
+        return pos;
     }
 
     public double getVar() {
@@ -65,5 +73,14 @@ public class Channel {
         if (inv == null)
             return false;
         return inv.is(OffOn.On);
+    }
+
+    public Switch<OffOn> setMag5(Switch<OffOn> mag5) {
+        this.mag5 = mag5;
+        return mag5;
+    }
+
+    public boolean isMag5() {
+        return mag5.is(OffOn.On);
     }
 }
