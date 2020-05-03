@@ -7,18 +7,36 @@ import java.util.ArrayList;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 
+/**
+ * A Container tha holds other elements
+ *
+ * @param <T> the type of the container
+ */
 public class Container<T extends Container<?>> extends Element<T> {
     private static final int PAD = Switch.SIZE;
 
     private final String name;
     private final int dx;
     private final Polygon polygon;
-    private ArrayList<Element> elements;
+    private final ArrayList<Element<?>> elements;
 
+    /**
+     * Creates a new container
+     *
+     * @param dx the width
+     * @param dy the height
+     */
     public Container(int dx, int dy) {
         this(null, dx, dy);
     }
 
+    /**
+     * Creates a new container
+     *
+     * @param name the name used as a heading
+     * @param dx   the width
+     * @param dy   the height
+     */
     public Container(String name, int dx, int dy) {
         this.name = name;
         this.dx = dx;
@@ -35,7 +53,13 @@ public class Container<T extends Container<?>> extends Element<T> {
                 .add(new Vector(-PAD, -PAD), new Vector(0, -PAD));
     }
 
-    public Container add(Element e) {
+    /**
+     * Adds a element to the container
+     *
+     * @param e the element to add
+     * @return this for chained calls
+     */
+    public Container<T> add(Element<?> e) {
         elements.add(e);
         return this;
     }
@@ -45,16 +69,22 @@ public class Container<T extends Container<?>> extends Element<T> {
         if (name != null && !name.isEmpty())
             gr.drawText(new Vector(dx / 2, -PAD - SIZE2 / 2), name, Orientation.CENTERBOTTOM, Style.PRINT);
         gr.drawPolygon(polygon, Style.PRINT);
-        for (Element e : elements)
+        for (Element<?> e : elements)
             e.draw(gr);
     }
 
-    public Element getElementAt(Vector pos) {
+    /**
+     * Returns the element at the given position
+     *
+     * @param pos the position
+     * @return the element or null if no element was found
+     */
+    public Element<?> getElementAt(Vector pos) {
         Vector p = getTransform().invert().transform(pos);
-        for (Element e : elements) {
+        for (Element<?> e : elements) {
             if (e.getBoundingBox().match(p)) {
                 if (e instanceof Container)
-                    return ((Container) e).getElementAt(p);
+                    return ((Container<?>) e).getElementAt(p);
                 else
                     return e;
             }

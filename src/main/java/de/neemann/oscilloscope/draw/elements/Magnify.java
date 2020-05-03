@@ -2,12 +2,20 @@ package de.neemann.oscilloscope.draw.elements;
 
 import java.util.Locale;
 
+/**
+ * Abstraction of a magnitude
+ */
 public class Magnify {
 
     private static final String[] UNIT = new String[]{"", "m", "u", "n"};
     private final double value;
     private final String str;
 
+    /**
+     * Create a new magnify item
+     *
+     * @param value the mag value
+     */
     public Magnify(double value) {
         this.value = value;
         str = toStr(value);
@@ -34,6 +42,9 @@ public class Magnify {
         return str;
     }
 
+    /**
+     * @return the mag value
+     */
     public double getMag() {
         return value;
     }

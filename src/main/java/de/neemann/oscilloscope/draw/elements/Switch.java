@@ -72,6 +72,11 @@ public class Switch<T> extends Element<Switch<T>> {
         return this;
     }
 
+    /**
+     * Adds a observer to this switch
+     *
+     * @param observer the observer to add
+     */
     public void addObserver(Observer observer) {
         if (observers == null)
             observers = new ArrayList<>();
@@ -130,6 +135,12 @@ public class Switch<T> extends Element<Switch<T>> {
                 o.hasChanged();
     }
 
+    /**
+     * Returns true if the switch matches the given value
+     *
+     * @param val the value
+     * @return true if the switch matches the given value
+     */
     public boolean is(T val) {
         return getSelected().equals(val);
     }

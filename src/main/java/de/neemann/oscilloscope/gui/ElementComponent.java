@@ -13,12 +13,20 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+/**
+ * Component to render the GUI elements
+ */
 public class ElementComponent extends JComponent {
     private final Container<?> container;
     private BufferedImage buffer;
     private Grid grid;
     private Model model;
 
+    /**
+     * Creates a new component to render the GUI elements
+     *
+     * @param container the container
+     */
     public ElementComponent(Container<?> container) {
         this.container = container;
         addMouseWheelListener(mouseWheelEvent -> {
@@ -39,7 +47,7 @@ public class ElementComponent extends JComponent {
         });
     }
 
-    public BufferedImage createBuffer() {
+    private BufferedImage createBuffer() {
         BufferedImage buffer = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(getWidth(), getHeight());
         Graphics2D g2d = buffer.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -53,6 +61,11 @@ public class ElementComponent extends JComponent {
         return buffer;
     }
 
+    /**
+     * Sets the mode to use to generate the trace
+     *
+     * @param model the model
+     */
     public void setModel(Model model) {
         this.model = model;
     }
@@ -77,7 +90,7 @@ public class ElementComponent extends JComponent {
         private final VectorInterface p1;
         private final VectorInterface p2;
 
-        public GridLine(VectorInterface p1, VectorInterface p2) {
+        private GridLine(VectorInterface p1, VectorInterface p2) {
             this.p1 = p1;
             this.p2 = p2;
         }
@@ -92,7 +105,7 @@ public class ElementComponent extends JComponent {
         private int ymin;
         private int ymax;
 
-        public Grid(GraphicSwing parent) {
+        private Grid(GraphicSwing parent) {
             this.parent = parent;
             this.grid = new ArrayList<>();
         }

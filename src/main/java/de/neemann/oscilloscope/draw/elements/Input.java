@@ -5,11 +5,19 @@ import de.neemann.oscilloscope.draw.graphics.*;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 
+/**
+ * Abstraction of a input
+ */
 public class Input extends Element<Input> {
     private static final int RAD = SIZE + SIZE2;
     private static final int PIN = Style.MAXLINETHICK;
     private final String name;
 
+    /**
+     * Creates an input
+     *
+     * @param name the name of the input
+     */
     public Input(String name) {
         this.name = name;
     }

@@ -1,7 +1,25 @@
 package de.neemann.oscilloscope.draw.elements;
 
+/**
+ * the trigger source
+ */
 public enum TrigSource {
-    Ch_1, Ch_2, LINE, EXT;
+    /**
+     * Trigger on channel 1
+     */
+    Ch_1,
+    /**
+     * Trigger on channel 2
+     */
+    Ch_2,
+    /**
+     * Trigger on mains
+     */
+    LINE,
+    /**
+     * Trigger on an external signal
+     */
+    EXT;
 
     private String name;
 

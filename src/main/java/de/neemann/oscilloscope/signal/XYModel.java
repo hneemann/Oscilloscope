@@ -6,8 +6,11 @@ import de.neemann.oscilloscope.draw.graphics.Style;
 import java.awt.*;
 import java.awt.image.*;
 
+/**
+ * The simulation used for x-y mode
+ */
 public class XYModel implements Model {
-    private static final LookupTable lookup;
+    private static final LookupTable LOOKUP;
 
     static {
         byte[] data = new byte[256];
@@ -16,7 +19,7 @@ public class XYModel implements Model {
             data[i] = (byte) i;
         for (int i = green; i < 256; i++)
             data[i] = (byte) Math.max(green, i - 2);
-        lookup = new ByteLookupTable(0, data);
+        LOOKUP = new ByteLookupTable(0, data);
     }
 
     private final Signal xFrontend;
@@ -31,6 +34,13 @@ public class XYModel implements Model {
     private double timeDelta = 0.0001;
     private boolean slow = false;
 
+    /**
+     * Creates a new model for x-y mode
+     *
+     * @param x    the x signal
+     * @param y    the y signal
+     * @param osco the used oscilloscope
+     */
     public XYModel(PeriodicSignal x, PeriodicSignal y, Oscilloscope osco) {
         if (!osco.getHorizontal().isXY())
             throw new RuntimeException("wrong model");
@@ -42,7 +52,7 @@ public class XYModel implements Model {
         lastTime = System.currentTimeMillis() / 1000.0;
     }
 
-    public void createBuffer(int width, int height) {
+    private void createBuffer(int width, int height) {
         buffer = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(width, height);
         g2d = buffer.createGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -54,8 +64,8 @@ public class XYModel implements Model {
 
     @Override
     public void drawTo(Graphics g, int xmin, int xmax, int ymin, int ymax) {
-        long time_ms = System.currentTimeMillis();
-        double time = time_ms / 1000.0;
+        long timeMs = System.currentTimeMillis();
+        double time = timeMs / 1000.0;
 
         int width = xmax - xmin;
         int height = ymax - ymin;
@@ -63,7 +73,7 @@ public class XYModel implements Model {
         if (buffer == null)
             createBuffer(width, height);
 
-        LookupOp op = new LookupOp(lookup, null);
+        LookupOp op = new LookupOp(LOOKUP, null);
         op.filter(buffer, buffer);
 
         g2d.setColor(Color.GREEN);
@@ -85,7 +95,7 @@ public class XYModel implements Model {
             lastyPos = yPos;
         }
 
-        long dur = System.currentTimeMillis() - time_ms;
+        long dur = System.currentTimeMillis() - timeMs;
         slow = dur > Oscilloscope.TIME_DELTA_MS;
 
 

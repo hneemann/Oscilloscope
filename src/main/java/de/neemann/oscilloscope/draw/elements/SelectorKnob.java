@@ -9,6 +9,11 @@ import java.util.Collection;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 
+/**
+ * Abstraction of a selector knob
+ *
+ * @param <T> type of the items
+ */
 public class SelectorKnob<T> extends Element<SelectorKnob<T>> {
     private final int radius;
     private final ArrayList<T> items;
@@ -16,26 +21,52 @@ public class SelectorKnob<T> extends Element<SelectorKnob<T>> {
     private ArrayList<Observer> observers;
     private int selectedPosition;
 
+    /**
+     * Creates a new selector knob
+     *
+     * @param name   the name
+     * @param radius the size
+     */
     public SelectorKnob(String name, int radius) {
         this.name = name;
         items = new ArrayList<>();
         this.radius = radius;
     }
 
+    /**
+     * Adds a item to the knob
+     *
+     * @param item the list of items
+     * @return this for chained calls
+     */
     public SelectorKnob<T> add(T item) {
         items.add(item);
         return this;
     }
 
+    /**
+     * Adds all items to the knob
+     *
+     * @param items the list of items
+     * @return this for chained calls
+     */
     public SelectorKnob<T> addAll(Collection<T> items) {
         this.items.addAll(items);
         return this;
     }
 
+    /**
+     * @return the selected setting
+     */
     public T getSelected() {
         return items.get(selectedPosition);
     }
 
+    /**
+     * Adds a observer ot the knob
+     *
+     * @param observer the observer
+     */
     public void addObserver(Observer observer) {
         if (observers == null)
             observers = new ArrayList<>();

@@ -1,10 +1,19 @@
 package de.neemann.oscilloscope.signal;
 
+/**
+ * A sin signal
+ */
 public class Sin implements PeriodicSignal {
 
     private final double ampl;
     private final double freq;
 
+    /**
+     * Creates a new sine signals
+     *
+     * @param ampl the amplitude
+     * @param freq the frequency
+     */
     public Sin(double ampl, double freq) {
         this.ampl = ampl;
         this.freq = freq;

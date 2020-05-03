@@ -183,49 +183,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <finalName>Digital</finalName>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <attach>false</attach>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>de.neemann.oscilloscope.gui.Main</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <Build-SCM-Revision>${git.commit.id.describe}</Build-SCM-Revision>
-                            <Build-Time>${maven.build.timestamp}</Build-Time>
-                            <SplashScreen-Image>icons/splash.png</SplashScreen-Image>
-                        </manifestEntries>
-                    </archive>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>make-dstribution</id>
-                        <phase>install</phase>
-                        <configuration>
-                            <descriptor>distribution/Assembly.xml</descriptor>
-                        </configuration>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.4</version>

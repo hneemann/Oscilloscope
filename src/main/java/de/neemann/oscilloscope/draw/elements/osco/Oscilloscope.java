@@ -15,9 +15,12 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  * The oscilloscope
  */
 public class Oscilloscope extends Container<Oscilloscope> {
+    /**
+     * The screen update period
+     */
     public static final int TIME_DELTA_MS = 20;
-    private static final ArrayList<TimeBase> times = createTimes();
-    private static final ArrayList<Magnify> magnify = createMagnify();
+    private static final ArrayList<TimeBase> TIMES = createTimes();
+    private static final ArrayList<Magnify> MAGNIFY = createMagnify();
 
     private final Trigger trigger;
     private final Horizontal horizontal;
@@ -75,6 +78,9 @@ public class Oscilloscope extends Container<Oscilloscope> {
         return t;
     }
 
+    /**
+     * Creates a new oscilloscope.
+     */
     public Oscilloscope() {
         super(SIZE * 58, SIZE * 26);
 
@@ -91,16 +97,16 @@ public class Oscilloscope extends Container<Oscilloscope> {
                 .add(horizontal.setPos(new Poti("POS", 20).setPos(SIZE, SIZE * 2)))
                 .add(horizontal.setVar(new Poti("VAR", 20).setPos(SIZE * 4, SIZE * 2)))
                 .add(horizontal.setMag(new Switch<OffOn>("MAG10").add(OffOn.values()).setPos(SIZE * 2, SIZE * 7)))
-                .add(horizontal.setTimeBase(new SelectorKnob<TimeBase>("TIME/DIV", 80).addAll(times).setPos(SIZE * 11, SIZE * 5 + SIZE2)));
+                .add(horizontal.setTimeBase(new SelectorKnob<TimeBase>("TIME/DIV", 80).addAll(TIMES).setPos(SIZE * 11, SIZE * 5 + SIZE2)));
 
         ch1 = new Channel();
         ch2 = new Channel();
         mode = new Switch<Mode>("Mode").add(Mode.values());
         Container<?> verticalContainer = new Container<>("Vertical", SIZE * 28, SIZE * 12)
-                .add(ch1.setAmplitude(new SelectorKnob<Magnify>("VOLTS/DIV", 40).addAll(magnify).setPos(SIZE * 3, SIZE * 5)))
+                .add(ch1.setAmplitude(new SelectorKnob<Magnify>("VOLTS/DIV", 40).addAll(MAGNIFY).setPos(SIZE * 3, SIZE * 5)))
                 .add(ch1.setPos(new Poti("POS", 20).setPos(SIZE * 9, SIZE * 2)))
                 .add(ch1.setVar(new Poti("VAR", 20).setPos(SIZE * 9, SIZE * 6)))
-                .add(ch2.setAmplitude(new SelectorKnob<Magnify>("VOLTS/DIV", 40).addAll(magnify).setPos(SIZE * 24, SIZE * 5)))
+                .add(ch2.setAmplitude(new SelectorKnob<Magnify>("VOLTS/DIV", 40).addAll(MAGNIFY).setPos(SIZE * 24, SIZE * 5)))
                 .add(ch2.setPos(new Poti("POS", 20).setPos(SIZE * 18, SIZE * 2)))
                 .add(ch2.setVar(new Poti("VAR", 20).setPos(SIZE * 18, SIZE * 6)))
                 .add(mode.setPos(SIZE * 13, SIZE * 3))
@@ -157,43 +163,72 @@ public class Oscilloscope extends Container<Oscilloscope> {
         elementComponent.setModel(model);
     }
 
+    /**
+     * @return the trigger unit
+     */
     public Trigger getTrigger() {
         return trigger;
     }
 
+    /**
+     * @return the horizontal unit
+     */
     public Horizontal getHorizontal() {
         return horizontal;
     }
 
+    /**
+     * @return channel 1
+     */
     public Channel getCh1() {
         return ch1;
     }
 
+    /**
+     * @return channel 2
+     */
     public Channel getCh2() {
         return ch2;
     }
 
+    /**
+     * @return the mode switch
+     */
     public Switch<Mode> getMode() {
         return mode;
     }
 
-    public Switch<OffOn> getPower() {
-        return power;
-    }
-
+    /**
+     * Sets the signal for channel 1
+     *
+     * @param s the signal
+     */
     public void setSignalCh1(PeriodicSignal s) {
         signal1 = s;
     }
 
+    /**
+     * Sets the signal for channel 2
+     *
+     * @param s the signal
+     */
     public void setSignalCh2(PeriodicSignal s) {
         signal2 = s;
     }
 
+    /**
+     * Closes the oscilloscope. Stops all timers.
+     */
     public void close() {
         if (timer != null)
             timer.stop();
     }
 
+    /**
+     * Sets the component containing this oscilloscope
+     *
+     * @param elementComponent the component
+     */
     public void setElementComponent(ElementComponent elementComponent) {
         this.elementComponent = elementComponent;
     }

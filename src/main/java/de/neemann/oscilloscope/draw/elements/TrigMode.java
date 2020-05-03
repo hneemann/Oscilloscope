@@ -1,7 +1,25 @@
 package de.neemann.oscilloscope.draw.elements;
 
+/**
+ * The trigger mode
+ */
 public enum TrigMode {
-    NORM, AUTO, TV_V, TV_H;
+    /**
+     * Normal trigger
+     */
+    NORM,
+    /**
+     * AUTO trigger
+     */
+    AUTO,
+    /**
+     * TV vertical
+     */
+    TV_V,
+    /**
+     * TV horizontal
+     */
+    TV_H;
 
     private String name;
 

@@ -10,9 +10,14 @@ import java.awt.event.WindowEvent;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 
+/**
+ * The main frame.
+ */
 public class Main extends JFrame {
 
-
+    /**
+     * Creates a new main window.
+     */
     public Main() {
         super("Oscilloscope");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -37,6 +42,11 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    /**
+     * Starts the main programm
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().setVisible(true));
     }

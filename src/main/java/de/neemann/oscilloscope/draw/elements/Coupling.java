@@ -1,5 +1,19 @@
 package de.neemann.oscilloscope.draw.elements;
 
+/**
+ * The coupling
+ */
 public enum Coupling {
-    AC, GND, DC
+    /**
+     * AC coupling
+     */
+    AC,
+    /**
+     * Ground
+     */
+    GND,
+    /**
+     * DC coupling
+     */
+    DC
 }

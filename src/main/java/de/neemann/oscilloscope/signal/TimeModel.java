@@ -9,6 +9,9 @@ import de.neemann.oscilloscope.draw.elements.osco.Trigger;
 
 import java.awt.*;
 
+/**
+ * Scope model in normal time mode
+ */
 public class TimeModel implements Model {
     private final Frontend frontend1;
     private final Frontend frontend2;
@@ -20,6 +23,13 @@ public class TimeModel implements Model {
     private final PeriodicSignal signal2;
     private final Switch<Mode> mode;
 
+    /**
+     * Used to simulate the scope in normal mode
+     *
+     * @param signal1 signal channel 1
+     * @param signal2 signal channel 2
+     * @param osco    the oscilloscope
+     */
     public TimeModel(PeriodicSignal signal1, PeriodicSignal signal2, Oscilloscope osco) {
         this.signal1 = signal1;
         this.signal2 = signal2;

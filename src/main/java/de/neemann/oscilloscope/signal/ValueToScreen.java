@@ -2,11 +2,20 @@ package de.neemann.oscilloscope.signal;
 
 import de.neemann.oscilloscope.draw.elements.Poti;
 
-final class ValueToScreen implements ToScreen {
+/**
+ * Transfers a voltage ti a pixel number on the screen
+ */
+public class ValueToScreen implements ToScreen {
     private final Poti pos;
     private final int divs;
     private final int ofs;
 
+    /**
+     * Creates a new screen transformation
+     *
+     * @param pos  the pos poti
+     * @param divs the number of divs on the screen
+     */
     public ValueToScreen(Poti pos, int divs) {
         this.pos = pos;
         this.divs = divs;

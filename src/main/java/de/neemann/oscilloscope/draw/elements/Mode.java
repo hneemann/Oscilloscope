@@ -1,7 +1,25 @@
 package de.neemann.oscilloscope.draw.elements;
 
+/**
+ * The main oscilloscope mode
+ */
 public enum Mode {
-    Ch_1, Ch_2, DUAL, ADD;
+    /**
+     * show channel 1
+     */
+    Ch_1,
+    /**
+     * show channel 1
+     */
+    Ch_2,
+    /**
+     * show both channels
+     */
+    DUAL,
+    /**
+     * adds both channels
+     */
+    ADD;
 
     private String name;
 
