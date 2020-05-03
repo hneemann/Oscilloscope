@@ -2,7 +2,9 @@ package de.neemann.oscilloscope.draw.elements;
 
 
 import de.neemann.oscilloscope.draw.graphics.*;
+import de.neemann.oscilloscope.draw.graphics.Polygon;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
@@ -19,6 +21,7 @@ public class Container<T extends Container<?>> extends Element<T> {
     private final int dx;
     private final Polygon polygon;
     private final ArrayList<Element<?>> elements;
+    private Style background;
 
     /**
      * Creates a new container
@@ -64,6 +67,18 @@ public class Container<T extends Container<?>> extends Element<T> {
     }
 
     /**
+     * Sets the background color.
+     * If not set the shape is transparent.
+     *
+     * @param background the color
+     * @return this for chained calls
+     */
+    public Container<T> setBackground(Color background) {
+        this.background = Style.NORMAL.deriveFillStyle(background);
+        return this;
+    }
+
+    /**
      * Adds a element to the container
      *
      * @param e the element to add
@@ -78,8 +93,12 @@ public class Container<T extends Container<?>> extends Element<T> {
     public void drawToOrigin(Graphic gr) {
         if (name != null && !name.isEmpty())
             gr.drawText(new Vector(dx / 2, -PAD - SIZE2 / 2), name, Orientation.CENTERBOTTOM, Style.PRINT);
-        if (polygon != null)
+        if (polygon != null) {
+            if (background != null)
+                gr.drawPolygon(polygon, background);
+
             gr.drawPolygon(polygon, Style.PRINT);
+        }
         for (Element<?> e : elements)
             e.draw(gr);
     }

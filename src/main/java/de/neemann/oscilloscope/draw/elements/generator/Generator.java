@@ -1,9 +1,11 @@
 package de.neemann.oscilloscope.draw.elements.generator;
 
 import de.neemann.oscilloscope.draw.elements.*;
+import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.gui.Observer;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
@@ -52,6 +54,7 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
         freqFine.addObserver(freqChanged);
         freqChanged.hasChanged();
 
+        setBackground(Color.WHITE);
         add(freq.setPos(SIZE * 18, SIZE * 3));
         add(freqFine.setPos(SIZE * 18, SIZE * 8));
         add(form.setPos(SIZE * 9, SIZE * 3));

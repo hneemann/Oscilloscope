@@ -1,10 +1,12 @@
 package de.neemann.oscilloscope.draw.elements.osco;
 
 import de.neemann.oscilloscope.draw.elements.*;
+import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.gui.ElementComponent;
 import de.neemann.oscilloscope.signal.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
@@ -118,6 +120,7 @@ public class Oscilloscope extends Container<Oscilloscope> {
                 .add(ch1.setMag5(new Switch<OffOn>("MAG5").add(OffOn.values()).setPos(SIZE, SIZE * 10)))
                 .add(ch2.setMag5(new Switch<OffOn>("MAG5").add(OffOn.values()).setPos(SIZE * 26, SIZE * 10)));
 
+        setBackground(Color.WHITE);
         add(triggerContainer.setPos(SIZE * 48, SIZE));
         add(horizontalContainer.setPos(SIZE * 29, SIZE));
         add(verticalContainer.setPos(SIZE * 29, SIZE * 13)).setPos(SIZE, SIZE);
