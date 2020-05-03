@@ -1,7 +1,8 @@
 package de.neemann.oscilloscope.gui;
 
+import de.neemann.oscilloscope.draw.elements.Container;
+import de.neemann.oscilloscope.draw.elements.generator.Generator;
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
-import de.neemann.oscilloscope.signal.Sin;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -22,13 +23,23 @@ public class Main extends JFrame {
         super("Oscilloscope");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
+
         Oscilloscope oscilloscope = new Oscilloscope();
-        ElementComponent el = new ElementComponent(oscilloscope.setPos(SIZE + SIZE2, SIZE + SIZE2));
+        Generator gen1 = new Generator();
+        Generator gen2 = new Generator();
+
+        Container<?> main = new Container<>()
+                .add(oscilloscope.setPos(SIZE + SIZE2, SIZE + SIZE2))
+                .add(gen1.setPos(SIZE + SIZE2, SIZE * 31+SIZE2))
+                .add(gen2.setPos(SIZE * 32 + SIZE2, SIZE * 31+SIZE2));
+
+
+        ElementComponent el = new ElementComponent(main);
         getContentPane().add(el);
         oscilloscope.setElementComponent(el);
 
-        oscilloscope.setSignalCh1(new Sin(1, 40.00));
-        oscilloscope.setSignalCh2(new Sin(1, 51.73));
+        oscilloscope.setSignalCh1(gen1);
+        oscilloscope.setSignalCh2(gen2);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -38,7 +49,7 @@ public class Main extends JFrame {
         });
 
         pack();
-        setSize(SIZE * 61, SIZE * 31);
+        setSize(SIZE * 61, SIZE * 45);
         setLocationRelativeTo(null);
     }
 

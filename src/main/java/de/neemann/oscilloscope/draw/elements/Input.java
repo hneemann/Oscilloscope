@@ -23,7 +23,7 @@ public class Input extends Element<Input> {
     }
 
     @Override
-    void drawToOrigin(Graphic gr) {
+    public void drawToOrigin(Graphic gr) {
         gr.drawCircle(new Vector(-RAD, -RAD), new Vector(RAD, RAD), Style.PRINT);
 
         gr.drawPolygon(new Polygon(true)

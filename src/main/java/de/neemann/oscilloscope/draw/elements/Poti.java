@@ -7,7 +7,7 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 /**
  * Abstraction of a poti
  */
-public class Poti extends Element<Poti> {
+public class Poti extends ObservableElement<Poti> {
     private static final int MAX = 500;
     private static final long SPEED = 50;
 
@@ -35,7 +35,7 @@ public class Poti extends Element<Poti> {
     }
 
     @Override
-    void drawToOrigin(Graphic gr) {
+    public void drawToOrigin(Graphic gr) {
         gr.drawCircle(new Vector(-radius, -radius), new Vector(radius, radius), Style.NORMAL);
         int r = radius - Style.MAXLINETHICK * 2;
         gr.drawCircle(new Vector(-r, -r), new Vector(r, r), Style.SWITCH);
@@ -68,16 +68,22 @@ public class Poti extends Element<Poti> {
 
     @Override
     public void down() {
-        selectedPosition += getDela();
-        if (selectedPosition > MAX)
-            selectedPosition = MAX;
+        if (selectedPosition < MAX) {
+            selectedPosition += getDela();
+            if (selectedPosition > MAX)
+                selectedPosition = MAX;
+            hasChanged();
+        }
     }
 
     @Override
     public void up() {
-        selectedPosition -= getDela();
-        if (selectedPosition < 0)
-            selectedPosition = 0;
+        if (selectedPosition > 0) {
+            selectedPosition -= getDela();
+            if (selectedPosition < 0)
+                selectedPosition = 0;
+            hasChanged();
+        }
     }
 
 }

@@ -19,9 +19,8 @@ public class TimeModel implements Model {
     private final ValueToScreen screen2;
     private final Horizontal horizontal;
     private final Trigger trigger;
-    private final PeriodicSignal signal1;
-    private final PeriodicSignal signal2;
     private final Switch<Mode> mode;
+    private final long timeOffset;
 
     /**
      * Used to simulate the scope in normal mode
@@ -31,8 +30,6 @@ public class TimeModel implements Model {
      * @param osco    the oscilloscope
      */
     public TimeModel(PeriodicSignal signal1, PeriodicSignal signal2, Oscilloscope osco) {
-        this.signal1 = signal1;
-        this.signal2 = signal2;
         if (osco.getHorizontal().isXY())
             throw new RuntimeException("wrong model");
 
@@ -43,6 +40,7 @@ public class TimeModel implements Model {
         this.horizontal = osco.getHorizontal();
         this.trigger = osco.getTrigger();
         this.mode = osco.getMode();
+        timeOffset = System.currentTimeMillis();
     }
 
     @Override
@@ -50,7 +48,7 @@ public class TimeModel implements Model {
         int width = xmax - xmin;
         int heigth = ymax - ymin;
         double timePerPixel = horizontal.getTimePerDiv() * 10 / width;
-        double t0 = System.currentTimeMillis() / 1000.0;
+        double t0 = (System.currentTimeMillis() - timeOffset) / 1000.0;
 
         if (trigger.getTrigMode() == TrigMode.TV_H || trigger.getTrigMode() == TrigMode.TV_V)
             return;

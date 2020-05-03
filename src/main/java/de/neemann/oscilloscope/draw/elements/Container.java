@@ -22,6 +22,13 @@ public class Container<T extends Container<?>> extends Element<T> {
 
     /**
      * Creates a new container
+     */
+    public Container() {
+        this(null, 0, 0);
+    }
+
+    /**
+     * Creates a new container
      *
      * @param dx the width
      * @param dy the height
@@ -41,16 +48,19 @@ public class Container<T extends Container<?>> extends Element<T> {
         this.name = name;
         this.dx = dx;
         this.elements = new ArrayList<>();
-        polygon = new Polygon(true)
-                .add(0, -PAD)
-                .add(dx, -PAD)
-                .add(new Vector(dx + PAD, -PAD), new Vector(dx + PAD, 0))
-                .add(dx + PAD, dy)
-                .add(new Vector(dx + PAD, dy + PAD), new Vector(dx, dy + PAD))
-                .add(0, dy + PAD)
-                .add(new Vector(-PAD, dy + PAD), new Vector(-PAD, dy))
-                .add(-PAD, 0)
-                .add(new Vector(-PAD, -PAD), new Vector(0, -PAD));
+        if (dx > 0 && dy > 0)
+            polygon = new Polygon(true)
+                    .add(0, -PAD)
+                    .add(dx, -PAD)
+                    .add(new Vector(dx + PAD, -PAD), new Vector(dx + PAD, 0))
+                    .add(dx + PAD, dy)
+                    .add(new Vector(dx + PAD, dy + PAD), new Vector(dx, dy + PAD))
+                    .add(0, dy + PAD)
+                    .add(new Vector(-PAD, dy + PAD), new Vector(-PAD, dy))
+                    .add(-PAD, 0)
+                    .add(new Vector(-PAD, -PAD), new Vector(0, -PAD));
+        else
+            polygon = null;
     }
 
     /**
@@ -65,10 +75,11 @@ public class Container<T extends Container<?>> extends Element<T> {
     }
 
     @Override
-    void drawToOrigin(Graphic gr) {
+    public void drawToOrigin(Graphic gr) {
         if (name != null && !name.isEmpty())
             gr.drawText(new Vector(dx / 2, -PAD - SIZE2 / 2), name, Orientation.CENTERBOTTOM, Style.PRINT);
-        gr.drawPolygon(polygon, Style.PRINT);
+        if (polygon != null)
+            gr.drawPolygon(polygon, Style.PRINT);
         for (Element<?> e : elements)
             e.draw(gr);
     }

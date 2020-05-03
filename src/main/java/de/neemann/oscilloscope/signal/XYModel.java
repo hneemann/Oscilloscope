@@ -18,7 +18,7 @@ public class XYModel implements Model {
         for (int i = 0; i <= green; i++)
             data[i] = (byte) i;
         for (int i = green; i < 256; i++)
-            data[i] = (byte) Math.max(green, i - 2);
+            data[i] = (byte) Math.max(green, i - 5);
         LOOKUP = new ByteLookupTable(0, data);
     }
 
@@ -26,6 +26,7 @@ public class XYModel implements Model {
     private final Signal yFrontend;
     private final ToScreen xScreen;
     private final ToScreen yScreen;
+    private final long timeOffset;
     private double lastTime;
     private BufferedImage buffer;
     private Graphics2D g2d;
@@ -49,7 +50,12 @@ public class XYModel implements Model {
         this.xScreen = new ValueToScreen(osco.getCh1().getPosPoti(), 10);
         this.yFrontend = new Frontend(y, osco.getCh2());
         this.yScreen = new ValueToScreen(osco.getCh2().getPosPoti(), 8);
-        lastTime = System.currentTimeMillis() / 1000.0;
+        timeOffset = System.currentTimeMillis();
+        lastTime = getTimeInMillis() / 1000.0;
+    }
+
+    private long getTimeInMillis() {
+        return System.currentTimeMillis() - timeOffset;
     }
 
     private void createBuffer(int width, int height) {
@@ -64,7 +70,7 @@ public class XYModel implements Model {
 
     @Override
     public void drawTo(Graphics g, int xmin, int xmax, int ymin, int ymax) {
-        long timeMs = System.currentTimeMillis();
+        long timeMs = getTimeInMillis();
         double time = timeMs / 1000.0;
 
         int width = xmax - xmin;
@@ -95,12 +101,12 @@ public class XYModel implements Model {
             lastyPos = yPos;
         }
 
-        long dur = System.currentTimeMillis() - timeMs;
+        long dur = getTimeInMillis() - timeMs;
         slow = dur > Oscilloscope.TIME_DELTA_MS;
 
 
         g.drawImage(buffer, xmin, ymin, null);
-        g.drawString("" + lastxPos + "," + lastyPos + ", " + timeDelta, xmin + 5, ymin + 15);
+//        g.drawString("" + lastxPos + "," + lastyPos + ", " + timeDelta, xmin + 5, ymin + 15);
     }
 
     private boolean isOnScreen(int x, int y, int width, int height) {

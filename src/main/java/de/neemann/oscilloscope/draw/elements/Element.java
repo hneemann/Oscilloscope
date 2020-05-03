@@ -16,7 +16,7 @@ public abstract class Element<T extends Element<?>> {
      *
      * @param gr Graphic instance to draw to
      */
-    abstract void drawToOrigin(Graphic gr);
+    public abstract void drawToOrigin(Graphic gr);
 
     /**
      * Draws the component to the given Graphic instance

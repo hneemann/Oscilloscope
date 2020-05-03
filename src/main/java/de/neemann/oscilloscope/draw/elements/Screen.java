@@ -29,7 +29,7 @@ public class Screen extends Element<Screen> {
     }
 
     @Override
-    void drawToOrigin(Graphic gr) {
+    public void drawToOrigin(Graphic gr) {
         gr.drawPolygon(polygon, Style.SCREEN);
 
         for (int x = 0; x <= 10; x++)

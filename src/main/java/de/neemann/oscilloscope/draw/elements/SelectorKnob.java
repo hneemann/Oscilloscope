@@ -2,9 +2,9 @@ package de.neemann.oscilloscope.draw.elements;
 
 
 import de.neemann.oscilloscope.draw.graphics.*;
-import de.neemann.oscilloscope.gui.Observer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
@@ -14,11 +14,10 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  *
  * @param <T> type of the items
  */
-public class SelectorKnob<T> extends Element<SelectorKnob<T>> {
+public class SelectorKnob<T> extends ObservableElement<SelectorKnob<T>> {
     private final int radius;
     private final ArrayList<T> items;
     private final String name;
-    private ArrayList<Observer> observers;
     private int selectedPosition;
 
     /**
@@ -56,25 +55,24 @@ public class SelectorKnob<T> extends Element<SelectorKnob<T>> {
     }
 
     /**
+     * Adds all items to the knob
+     *
+     * @param items the list of items
+     * @return this for chained calls
+     */
+    public SelectorKnob<T> addAll(T[] items) {
+        return addAll(Arrays.asList(items));
+    }
+
+    /**
      * @return the selected setting
      */
     public T getSelected() {
         return items.get(selectedPosition);
     }
 
-    /**
-     * Adds a observer ot the knob
-     *
-     * @param observer the observer
-     */
-    public void addObserver(Observer observer) {
-        if (observers == null)
-            observers = new ArrayList<>();
-        observers.add(observer);
-    }
-
     @Override
-    void drawToOrigin(Graphic gr) {
+    public void drawToOrigin(Graphic gr) {
         gr.drawCircle(new Vector(-radius, -radius), new Vector(radius, radius), Style.NORMAL);
         int r = radius - Style.MAXLINETHICK * 2;
         gr.drawCircle(new Vector(-r, -r), new Vector(r, r), Style.SWITCH);
@@ -114,12 +112,6 @@ public class SelectorKnob<T> extends Element<SelectorKnob<T>> {
             selectedPosition--;
             hasChanged();
         }
-    }
-
-    private void hasChanged() {
-        if (observers != null)
-            for (Observer o : observers)
-                o.hasChanged();
     }
 
 }
