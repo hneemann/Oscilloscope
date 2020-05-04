@@ -25,6 +25,11 @@ public final class Style {
     public static final Style NORMAL = new Builder().build();
 
     /**
+     * Used for the power LED
+     */
+    public static final Style LED = new Builder(NORMAL).setFilled(true).setColor(Color.GREEN).build();
+
+    /**
      * Style used for interactive elements
      */
     public static final Style SWITCH = new Builder().setFilled(true).setColor(Color.GRAY).build();

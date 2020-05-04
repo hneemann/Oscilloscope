@@ -47,9 +47,9 @@ public class XYModel implements Model {
             throw new RuntimeException("wrong model");
 
         this.xFrontend = new Frontend(x, osco.getCh1());
-        this.xScreen = new ValueToScreen(osco.getCh1().getPosPoti(), 10);
+        this.xScreen = new YValueToScreen(osco.getCh1().getPosPoti(), 10);
         this.yFrontend = new Frontend(y, osco.getCh2());
-        this.yScreen = new ValueToScreen(osco.getCh2().getPosPoti(), 8);
+        this.yScreen = new YValueToScreen(osco.getCh2().getPosPoti(), 8);
         timeOffset = System.currentTimeMillis();
         lastTime = getTimeInMillis() / 1000.0;
     }

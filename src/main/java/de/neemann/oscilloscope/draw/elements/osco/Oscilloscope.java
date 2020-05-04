@@ -126,7 +126,7 @@ public class Oscilloscope extends Container<Oscilloscope> {
         add(verticalContainer.setPos(SIZE * 29, SIZE * 13)).setPos(SIZE, SIZE);
         add(new Container<>(SIZE * 25, SIZE * 20).add(new Screen(SIZE2)).setPos(SIZE, SIZE));
 
-        power = new Switch<OffOn>("Power").add(OffOn.values());
+        power = new PowerSwitch();
         add(power.setPos(SIZE * 2, SIZE * 24));
 
         power.addObserver(() -> {

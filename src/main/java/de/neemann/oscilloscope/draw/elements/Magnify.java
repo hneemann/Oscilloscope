@@ -7,7 +7,7 @@ import java.util.Locale;
  */
 public class Magnify {
 
-    private static final String[] SMALL = new String[]{"", "m", "u", "n"};
+    private static final String[] SMALL = new String[]{"", "m", "µ", "n"};
     private static final String[] LARGE = new String[]{"", "k", "M", "G"};
     private final double value;
     private final String str;

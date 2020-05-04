@@ -34,6 +34,18 @@ public class Poti extends ObservableElement<Poti> {
         return ((double) selectedPosition) / MAX;
     }
 
+    /**
+     * Sets the potis value
+     *
+     * @param v the new value
+     * @return this for chained calls
+     */
+    public Poti set(double v) {
+        selectedPosition = (int) (v * MAX);
+        hasChanged();
+        return this;
+    }
+
     @Override
     public void drawToOrigin(Graphic gr) {
         gr.drawCircle(new Vector(-radius, -radius), new Vector(radius, radius), Style.NORMAL);

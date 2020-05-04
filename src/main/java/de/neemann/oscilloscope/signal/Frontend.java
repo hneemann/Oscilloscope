@@ -23,10 +23,15 @@ public class Frontend implements PeriodicSignal {
 
     @Override
     public double v(double t) {
-        if (channel.getCoupling() == Coupling.GND)
+        Coupling coupling = channel.getCoupling();
+        if (coupling == Coupling.GND)
             return 0;
         else {
             double v = s.v(t);
+
+            if (coupling == Coupling.AC)
+                v -= s.mean();
+
             if (channel.isInv())
                 v = -v;
             return v / channel.getAmplitude() * (1 + channel.getVar() * 2);
@@ -36,5 +41,12 @@ public class Frontend implements PeriodicSignal {
     @Override
     public double period() {
         return s.period();
+    }
+
+    @Override
+    public double mean() {
+        if (channel.getCoupling() == Coupling.DC)
+            return s.mean();
+        return 0;
     }
 }

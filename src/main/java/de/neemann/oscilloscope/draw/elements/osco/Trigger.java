@@ -98,7 +98,7 @@ public class Trigger {
      * @return the trigger event
      */
     public Trig getTriggerTime(Frontend frontend, double timePerPixel, double t0) {
-        double level = (0.5 - trigLevel.get()) * 16;
+        double level = (trigLevel.get()-0.5) * 16;
         boolean up = trigSlope.is("+");
         double t = t0;
         double tEnd = t + frontend.period();
@@ -107,7 +107,7 @@ public class Trigger {
             t += timePerPixel;
             boolean ol1 = frontend.v(t) > level;
             if (ol0 ^ ol1) {
-                if (ol0 == up) {
+                if (ol1 == up) {
                     return new Trig(t, true);
                 }
             }

@@ -15,8 +15,8 @@ import java.awt.*;
 public class TimeModel implements Model {
     private final Frontend frontend1;
     private final Frontend frontend2;
-    private final ValueToScreen screen1;
-    private final ValueToScreen screen2;
+    private final YValueToScreen screen1;
+    private final YValueToScreen screen2;
     private final Horizontal horizontal;
     private final Trigger trigger;
     private final Switch<Mode> mode;
@@ -34,9 +34,9 @@ public class TimeModel implements Model {
             throw new RuntimeException("wrong model");
 
         this.frontend1 = new Frontend(signal1, osco.getCh1());
-        this.screen1 = new ValueToScreen(osco.getCh1().getPosPoti(), 8);
+        this.screen1 = new YValueToScreen(osco.getCh1().getPosPoti(), 8);
         this.frontend2 = new Frontend(signal2, osco.getCh2());
-        this.screen2 = new ValueToScreen(osco.getCh2().getPosPoti(), 8);
+        this.screen2 = new YValueToScreen(osco.getCh2().getPosPoti(), 8);
         this.horizontal = osco.getHorizontal();
         this.trigger = osco.getTrigger();
         this.mode = osco.getMode();
