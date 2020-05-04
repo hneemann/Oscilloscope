@@ -35,7 +35,7 @@ public class Wire {
         Vector p0 = a.getScreenPos(new Vector(0, 0));
         Vector p1 = b.getScreenPos(new Vector(0, 0));
 
-        Vector c = new Vector((p0.x + p1.x) / 2, Math.max(p0.y, p1.y) + SIZE * 6);
+        Vector c = new Vector((p0.x + p1.x) / 2, Math.max(p0.y, p1.y) + SIZE * 8);
 
         g2d.setColor(new Color(0, 0, 0, 192));
         g2d.setStroke(new BasicStroke(12, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));

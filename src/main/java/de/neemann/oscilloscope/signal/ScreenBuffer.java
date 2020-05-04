@@ -20,7 +20,7 @@ public class ScreenBuffer {
         for (int i = 0; i <= green; i++)
             data[i] = (byte) i;
         for (int i = green; i < 256; i++)
-            data[i] = (byte) Math.max(green, i - 5);
+            data[i] = (byte) Math.max(green, i - 8);
         LOOKUP = new ByteLookupTable(0, data);
     }
 
@@ -78,7 +78,7 @@ public class ScreenBuffer {
     }
 
     /**
-     * Draws a trace
+     * Draws a trace, color depends on distance
      *
      * @param x0 x0
      * @param y0 y0
@@ -89,6 +89,13 @@ public class ScreenBuffer {
         if (isOnScreen(x0, y0) || isOnScreen(x1, y1)) {
             int distOnScreenSqr = sqr(x0 - x1) + sqr(y0 - y1);
             g2d.setColor(SPEEDCOLOR[Math.min(distOnScreenSqr, SPEEDCOLORS - 1)]);
+            g2d.drawLine(x0, y0, x1, y1);
+        }
+    }
+
+    public void drawBrightTrace(int x0, int y0, int x1, int y1) {
+        if (isOnScreen(x0, y0) || isOnScreen(x1, y1)) {
+            g2d.setColor(Color.GREEN);
             g2d.drawLine(x0, y0, x1, y1);
         }
     }

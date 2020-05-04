@@ -123,9 +123,13 @@ public class ModelTimeRT implements Model {
         int y0 = screen.v(t1);
         int x = (int) ((t1 - t0) / timePerPixel);
         while (t1 < t2) {
+            int ym = screen.v(t1 + timePerPixel / 2);
             t1 += timePerPixel;
             int y1 = screen.v(t1);
-            buffer.drawTrace(x - 1, y0, x, y1);
+            if (ym==y1 || ym==y0)
+                buffer.drawTrace(x - 1, y0, x, y1);
+            else
+                buffer.drawBrightTrace(x - 1, y0, x, y1);
             y0 = y1;
             x++;
         }
