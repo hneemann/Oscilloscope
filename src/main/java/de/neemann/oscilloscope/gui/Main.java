@@ -19,7 +19,7 @@ public class Main extends JFrame {
     /**
      * Creates a new main window.
      */
-    public Main() {
+    public Main(boolean preset) {
         super("Oscilloscope");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
@@ -30,8 +30,8 @@ public class Main extends JFrame {
 
         Container<?> main = new Container<>()
                 .add(oscilloscope.setPos(SIZE + SIZE2, SIZE + SIZE2))
-                .add(gen1.setPos(SIZE + SIZE2, SIZE * 31+SIZE2))
-                .add(gen2.setPos(SIZE * 32 + SIZE2, SIZE * 31+SIZE2));
+                .add(gen1.setPos(SIZE + SIZE2, SIZE * 31 + SIZE2))
+                .add(gen2.setPos(SIZE * 32 + SIZE2, SIZE * 31 + SIZE2));
 
 
         ElementComponent el = new ElementComponent(main);
@@ -55,20 +55,22 @@ public class Main extends JFrame {
         setSize(SIZE * 61, SIZE * 45);
         setLocationRelativeTo(null);
 
-        oscilloscope.getCh1().getPosPoti().set(0.5);
-        oscilloscope.getCh1().getCouplingSwitch().set(2);
-        oscilloscope.getCh2().getPosPoti().set(0.5);
-        oscilloscope.getCh2().getCouplingSwitch().set(2);
-        oscilloscope.getPowerSwitch().set(1);
-        oscilloscope.getTrigger().getLevelPoti().set(0.5);
+        if (preset) {
+            oscilloscope.getCh1().getPosPoti().set(0.5);
+            oscilloscope.getCh1().getCouplingSwitch().set(2);
+            oscilloscope.getCh2().getPosPoti().set(0.5);
+            oscilloscope.getCh2().getCouplingSwitch().set(2);
+            oscilloscope.getPowerSwitch().set(1);
+            oscilloscope.getTrigger().getLevelPoti().set(0.5);
 
-        gen1.getPowerSwitch().set(1);
-        gen1.getAmplitude().set(1);
-        gen1.setFrequencySwitch().down(false);
-        gen2.getPowerSwitch().set(1);
-        gen2.getAmplitude().set(1);
-        gen2.setFrequencySwitch().down(false);
-        gen2.setFrequencyFinePoti().set(0.3);
+            gen1.getPowerSwitch().set(1);
+            gen1.getAmplitude().set(1);
+            gen1.setFrequencySwitch().down(false);
+            gen2.getPowerSwitch().set(1);
+            gen2.getAmplitude().set(1);
+            gen2.setFrequencySwitch().down(false);
+            gen2.setFrequencyFinePoti().set(0.3);
+        }
 
     }
 
@@ -78,7 +80,7 @@ public class Main extends JFrame {
      * @param args the arguments
      */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Main().setVisible(true));
+        SwingUtilities.invokeLater(() -> new Main(args.length > 0).setVisible(true));
     }
 
 }
