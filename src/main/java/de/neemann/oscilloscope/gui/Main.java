@@ -18,6 +18,8 @@ public class Main extends JFrame {
 
     /**
      * Creates a new main window.
+     *
+     * @param preset if true, the system is setup properly
      */
     public Main(boolean preset) {
         super("Oscilloscope");
