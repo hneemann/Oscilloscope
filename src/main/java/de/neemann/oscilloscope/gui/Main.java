@@ -60,18 +60,20 @@ public class Main extends JFrame {
         if (preset) {
             oscilloscope.getCh1().getPosPoti().set(0.5);
             oscilloscope.getCh1().getCouplingSwitch().set(2);
+            oscilloscope.getCh1().getAmplitudeSwitch().down(false);
             oscilloscope.getCh2().getPosPoti().set(0.5);
             oscilloscope.getCh2().getCouplingSwitch().set(2);
+            oscilloscope.getCh2().getAmplitudeSwitch().down(false);
             oscilloscope.getPowerSwitch().set(1);
             oscilloscope.getTrigger().getLevelPoti().set(0.5);
 
             gen1.getPowerSwitch().set(1);
-            gen1.getAmplitude().set(1.1);
+            gen1.getAmplitude().set(0.7);
             gen1.setFrequencySwitch().down(false);
             gen2.getPowerSwitch().set(1);
-            gen2.getAmplitude().set(1.1);
+            gen2.getAmplitude().set(0.7);
             gen2.setFrequencySwitch().down(false);
-            gen2.setFrequencyFinePoti().set(0.3);
+            gen2.setFrequencyFinePoti().set(Math.log(3)/Math.log(10));
         }
 
     }

@@ -159,4 +159,11 @@ public class Channel {
     public Switch<Coupling> getCouplingSwitch() {
         return coupling;
     }
+
+    /**
+     * @return the amplitude knob
+     */
+    public SelectorKnob<Magnify> getAmplitudeSwitch() {
+        return amplitude;
+    }
 }
