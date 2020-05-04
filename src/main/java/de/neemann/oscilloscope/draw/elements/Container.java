@@ -86,6 +86,7 @@ public class Container<T extends Container<?>> extends Element<T> {
      */
     public Container<T> add(Element<?> e) {
         elements.add(e);
+        e.setParent(this);
         return this;
     }
 

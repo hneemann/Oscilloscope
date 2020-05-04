@@ -10,6 +10,7 @@ import de.neemann.oscilloscope.draw.graphics.*;
 public abstract class Element<T extends Element<?>> {
     private Transform transform = Transform.IDENTITY;
     private GraphicMinMax minMax;
+    private Container<?> parent;
 
     /**
      * Used to draw the element relative to the origin
@@ -69,6 +70,18 @@ public abstract class Element<T extends Element<?>> {
     }
 
     /**
+     * Returns the position on screen
+     *
+     * @param pos position in local coordinate system
+     * @return screen coordinates
+     */
+    public Vector getScreenPos(Vector pos) {
+        if (parent != null)
+            pos = parent.getScreenPos(pos);
+        return transform.transform(pos);
+    }
+
+    /**
      * Called if the mouse wheel is turned upwards.
      */
     public void up() {
@@ -78,5 +91,14 @@ public abstract class Element<T extends Element<?>> {
      * Called if the mouse wheel is turned downwards.
      */
     public void down() {
+    }
+
+    /**
+     * Sets te parent container
+     *
+     * @param parent the parent container
+     */
+    void setParent(Container<?> parent) {
+        this.parent = parent;
     }
 }

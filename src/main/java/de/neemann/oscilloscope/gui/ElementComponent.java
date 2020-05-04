@@ -18,6 +18,7 @@ import java.util.ArrayList;
  */
 public class ElementComponent extends JComponent {
     private final Container<?> container;
+    private final ArrayList<Wire> wires;
     private BufferedImage buffer;
     private Grid grid;
     private Model model;
@@ -29,6 +30,7 @@ public class ElementComponent extends JComponent {
      */
     public ElementComponent(Container<?> container) {
         this.container = container;
+        wires = new ArrayList<>();
         addMouseWheelListener(mouseWheelEvent -> {
             Element<?> el = container.getElementAt(new Vector(mouseWheelEvent.getX(), mouseWheelEvent.getY()));
             if (el != null) {
@@ -58,6 +60,10 @@ public class ElementComponent extends JComponent {
         GraphicSwing gr = new GraphicSwing(g2d);
         grid = new Grid(gr);
         container.draw(grid);
+
+        for (Wire w : wires)
+            w.drawTo(g2d);
+
         return buffer;
     }
 
@@ -68,6 +74,17 @@ public class ElementComponent extends JComponent {
      */
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    /**
+     * Adds a wire.
+     *
+     * @param w the wire
+     * @return this for chained calls
+     */
+    public ElementComponent add(Wire w) {
+        wires.add(w);
+        return this;
     }
 
     @Override

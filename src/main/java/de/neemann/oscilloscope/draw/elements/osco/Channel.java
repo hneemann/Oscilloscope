@@ -11,7 +11,7 @@ public class Channel {
     private Poti pos;
     private Poti var;
     private Switch<Coupling> coupling;
-    private Input input;
+    private BNC input;
     private Switch<OffOn> inv;
     private Switch<OffOn> mag5;
 
@@ -65,7 +65,7 @@ public class Channel {
      * @param input the input
      * @return the given value for chained calls
      */
-    public Input setInput(Input input) {
+    public BNC setInput(BNC input) {
         this.input = input;
         return input;
     }
@@ -122,7 +122,7 @@ public class Channel {
     /**
      * @return the input
      */
-    public Input getInput() {
+    public BNC getInput() {
         return input;
     }
 

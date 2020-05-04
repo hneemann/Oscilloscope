@@ -24,6 +24,8 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
     private final Poti offset;
     private final Poti amplitude;
     private final Switch<OffOn> power;
+    private final BNC output;
+    private final BNC trigOut;
     private double freqency;
 
     private static ArrayList<Magnify> createFrequencies() {
@@ -67,8 +69,10 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
         add(power.setPos(SIZE * 25, SIZE));
         add(amplitude.setPos(SIZE * 25, SIZE * 8));
 
-        add(new Input("Out").setPos(SIZE * 2, SIZE * 8));
-        add(new Input("Trig").setPos(SIZE * 2, SIZE * 3));
+        output = new BNC("Out");
+        add(output.setPos(SIZE * 2, SIZE * 8));
+        trigOut = new BNC("Trig");
+        add(trigOut.setPos(SIZE * 2, SIZE * 3));
 
     }
 
@@ -104,4 +108,17 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
         return (offset.get() - 0.5) * 2 * MAX_AMPL;
     }
 
+    /**
+     * @return the output connector
+     */
+    public BNC getOutput() {
+        return output;
+    }
+
+    /**
+     * @return the trigger connector
+     */
+    public BNC getTrigOutput() {
+        return trigOut;
+    }
 }

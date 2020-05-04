@@ -8,7 +8,7 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 /**
  * Abstraction of a input
  */
-public class Input extends Element<Input> {
+public class BNC extends Element<BNC> {
     private static final int RAD = SIZE + SIZE2;
     private static final int PIN = Style.MAXLINETHICK;
     private final String name;
@@ -18,7 +18,7 @@ public class Input extends Element<Input> {
      *
      * @param name the name of the input
      */
-    public Input(String name) {
+    public BNC(String name) {
         this.name = name;
     }
 

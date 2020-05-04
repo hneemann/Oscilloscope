@@ -41,6 +41,9 @@ public class Main extends JFrame {
         oscilloscope.setSignalCh1(gen1);
         oscilloscope.setSignalCh2(gen2);
 
+        el.add(new Wire(gen1.getOutput(), oscilloscope.getCh1().getInput()));
+        el.add(new Wire(gen2.getOutput(), oscilloscope.getCh2().getInput()));
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {

@@ -92,7 +92,7 @@ public class Oscilloscope extends Container<Oscilloscope> {
                 .add(trigger.setMode(new Switch<TrigMode>("Mode").add(TrigMode.values()).setPos(SIZE * 3, SIZE)))
                 .add(trigger.setSource(new Switch<TrigSource>("Source").add(TrigSource.values()).setPos(SIZE * 7, SIZE)))
                 .add(trigger.setSlope(new Switch<String>("Slope").add("+").add("-").setPos(SIZE * 4, SIZE * 7)))
-                .add(trigger.setIn(new Input("Trig. In").setPos(SIZE * 8, SIZE * 8)));
+                .add(trigger.setIn(new BNC("Trig. In").setPos(SIZE * 8, SIZE * 8)));
 
         horizontal = new Horizontal();
         Container<?> horizontalContainer = new Container<>("Horizontal", SIZE * 16, SIZE * 9)
@@ -115,8 +115,8 @@ public class Oscilloscope extends Container<Oscilloscope> {
                 .add(ch1.setCoupling(new Switch<Coupling>("").add(Coupling.values()).set(1).setPos(SIZE * 9, SIZE * 9)))
                 .add(ch2.setCoupling(new Switch<Coupling>("").add(Coupling.values()).set(1).setPos(SIZE * 17, SIZE * 9)))
                 .add(ch2.setInv(new Switch<OffOn>("Ch 2 INV").add(OffOn.values()).setPos(SIZE * 13, SIZE * 9)))
-                .add(ch1.setInput(new Input("Ch 1 / X").setPos(SIZE * 5, SIZE * 11)))
-                .add(ch2.setInput(new Input("Ch 2 / Y").setPos(SIZE * 22, SIZE * 11)))
+                .add(ch1.setInput(new BNC("Ch 1 / X").setPos(SIZE * 5, SIZE * 11)))
+                .add(ch2.setInput(new BNC("Ch 2 / Y").setPos(SIZE * 22, SIZE * 11)))
                 .add(ch1.setMag5(new Switch<OffOn>("MAG5").add(OffOn.values()).setPos(SIZE, SIZE * 10)))
                 .add(ch2.setMag5(new Switch<OffOn>("MAG5").add(OffOn.values()).setPos(SIZE * 26, SIZE * 10)));
 
