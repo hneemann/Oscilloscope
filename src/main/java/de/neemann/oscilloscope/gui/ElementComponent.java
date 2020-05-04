@@ -2,15 +2,14 @@ package de.neemann.oscilloscope.gui;
 
 import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.draw.elements.Element;
-import de.neemann.oscilloscope.draw.graphics.*;
 import de.neemann.oscilloscope.draw.graphics.Polygon;
+import de.neemann.oscilloscope.draw.graphics.*;
 import de.neemann.oscilloscope.signal.Model;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 

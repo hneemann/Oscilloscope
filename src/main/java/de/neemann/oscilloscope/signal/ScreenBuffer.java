@@ -93,6 +93,14 @@ public class ScreenBuffer {
         }
     }
 
+    /**
+     * Draws a bright trace
+     *
+     * @param x0 x0
+     * @param y0 y0
+     * @param x1 x1
+     * @param y1 y1
+     */
     public void drawBrightTrace(int x0, int y0, int x1, int y1) {
         if (isOnScreen(x0, y0) || isOnScreen(x1, y1)) {
             g2d.setColor(Color.GREEN);
