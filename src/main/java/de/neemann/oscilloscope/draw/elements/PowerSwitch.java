@@ -4,6 +4,9 @@ import de.neemann.oscilloscope.draw.graphics.Graphic;
 import de.neemann.oscilloscope.draw.graphics.Style;
 import de.neemann.oscilloscope.draw.graphics.Vector;
 
+/**
+ * A power switch
+ */
 public class PowerSwitch extends Switch<OffOn> {
     private static final Vector RAD = new Vector(SIZE2, SIZE2);
     private static final Vector POS = new Vector(SIZE * 2, SIZE);
