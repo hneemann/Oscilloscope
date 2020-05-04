@@ -98,12 +98,24 @@ public class Trigger {
      * @return the trigger event
      */
     public Trig getTriggerTime(Frontend frontend, double timePerPixel, double t0) {
-        double level = (trigLevel.get()-0.5) * 16;
+        return wasTrig(frontend, timePerPixel, t0, t0 + frontend.period());
+    }
+
+    /**
+     * Tests if there was a trigger in between t0 and t1
+     *
+     * @param frontend     the frontend containing the signal
+     * @param timePerPixel the time used for a single pixel on the screen
+     * @param t0           the time to start the search
+     * @param t1           the time to stop the search
+     * @return the trigger event
+     */
+    public Trig wasTrig(Frontend frontend, double timePerPixel, double t0, double t1) {
+        double level = (trigLevel.get() - 0.5) * 16;
         boolean up = trigSlope.is("+");
         double t = t0;
-        double tEnd = t + frontend.period();
         boolean ol0 = frontend.v(t) > level;
-        while (t < tEnd) {
+        while (t < t1) {
             t += timePerPixel;
             boolean ol1 = frontend.v(t) > level;
             if (ol0 ^ ol1) {
@@ -114,6 +126,13 @@ public class Trigger {
             ol0 = ol1;
         }
         return new Trig(t0, false);
+    }
+
+    /**
+     * @return the level poti
+     */
+    public Poti getLevelPoti() {
+        return trigLevel;
     }
 
     /**

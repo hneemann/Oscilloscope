@@ -152,4 +152,11 @@ public class Channel {
     public boolean isMag5() {
         return mag5.is(OffOn.On);
     }
+
+    /**
+     * @return the coupling switch
+     */
+    public Switch<Coupling> getCouplingSwitch() {
+        return coupling;
+    }
 }

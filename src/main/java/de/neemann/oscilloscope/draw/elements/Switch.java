@@ -67,6 +67,7 @@ public class Switch<T> extends ObservableElement<Switch<T>> {
      */
     public Switch<T> set(int i) {
         selectedPosition = i;
+        hasChanged();
         return this;
     }
 

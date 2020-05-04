@@ -6,13 +6,25 @@ import de.neemann.oscilloscope.draw.elements.TrigMode;
 import de.neemann.oscilloscope.draw.elements.osco.Horizontal;
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 import de.neemann.oscilloscope.draw.elements.osco.Trigger;
+import de.neemann.oscilloscope.draw.graphics.Style;
 
 import java.awt.*;
 
 /**
  * Scope model in normal time mode
  */
-public class TimeModel implements Model {
+public class ModelTimeCalc implements Model {
+    /**
+     * Speed dependent trace color
+     */
+    private static final Color[] SPEEDCOLOR = new Color[16];
+
+    static {
+        int c0 = Style.SCREEN.getColor().getGreen();
+        for (int s = 0; s < 16; s++)
+            SPEEDCOLOR[s] = new Color(0, 255 - s * (255 - c0) / 15, 0);
+    }
+
     private final Frontend frontend1;
     private final Frontend frontend2;
     private final YValueToScreen screen1;
@@ -29,7 +41,7 @@ public class TimeModel implements Model {
      * @param signal2 signal channel 2
      * @param osco    the oscilloscope
      */
-    public TimeModel(PeriodicSignal signal1, PeriodicSignal signal2, Oscilloscope osco) {
+    public ModelTimeCalc(PeriodicSignal signal1, PeriodicSignal signal2, Oscilloscope osco) {
         if (osco.getHorizontal().isXY())
             throw new RuntimeException("wrong model");
 
@@ -74,20 +86,19 @@ public class TimeModel implements Model {
             show = trig.isFound() || trigger.getTrigMode() == TrigMode.AUTO;
 
         if (show) {
-            g.setColor(Color.GREEN);
             switch (mode.getSelected()) {
                 case Ch_1:
-                    drawTrace(g, t -> screen1.v(frontend1.v(t), heigth) + ymin, xmin, xmax, timePerPixel, triggerTime);
+                    drawTrace(g, t -> screen1.v(frontend1.v(t), heigth) + ymin, xmin, xmax, timePerPixel, triggerTime, heigth);
                     break;
                 case Ch_2:
-                    drawTrace(g, t -> screen2.v(frontend2.v(t), heigth) + ymin, xmin, xmax, timePerPixel, triggerTime);
+                    drawTrace(g, t -> screen2.v(frontend2.v(t), heigth) + ymin, xmin, xmax, timePerPixel, triggerTime, heigth);
                     break;
                 case DUAL:
-                    drawTrace(g, t -> screen1.v(frontend1.v(t), heigth) + ymin, xmin, xmax, timePerPixel, triggerTime);
-                    drawTrace(g, t -> screen2.v(frontend2.v(t), heigth) + ymin, xmin, xmax, timePerPixel, triggerTime);
+                    drawTrace(g, t -> screen1.v(frontend1.v(t), heigth) + ymin, xmin, xmax, timePerPixel, triggerTime, heigth);
+                    drawTrace(g, t -> screen2.v(frontend2.v(t), heigth) + ymin, xmin, xmax, timePerPixel, triggerTime, heigth);
                     break;
                 case ADD:
-                    drawTrace(g, t -> screen1.v(frontend1.v(t) + frontend2.v(t), heigth) + ymin, xmin, xmax, timePerPixel, triggerTime);
+                    drawTrace(g, t -> screen1.v(frontend1.v(t) + frontend2.v(t), heigth) + ymin, xmin, xmax, timePerPixel, triggerTime, heigth);
             }
         }
     }
@@ -96,11 +107,16 @@ public class TimeModel implements Model {
         int v(double t);
     }
 
-    private void drawTrace(Graphics g, Screen screen, int xmin, int xmax, double timePerPixel, double t) {
+    private void drawTrace(Graphics g, Screen screen, int xmin, int xmax, double timePerPixel, double t, int height) {
         int y0 = screen.v(t);
         for (int x = xmin + 1; x <= xmax; x++) {
             t += timePerPixel;
             int y1 = screen.v(t);
+
+            // speed on screen, 0 slow, 15 is very fast
+            int speed = Math.min(Math.abs(y0 - y1) * 70 / height, 15);
+            g.setColor(SPEEDCOLOR[speed]);
+
             g.drawLine(x - 1, y0, x, y1);
             y0 = y1;
         }

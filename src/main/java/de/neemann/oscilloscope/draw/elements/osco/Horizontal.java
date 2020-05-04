@@ -93,4 +93,11 @@ public class Horizontal {
     public boolean isXY() {
         return timeBase.getSelected().getMag() == 0;
     }
+
+    /**
+     * @return true if real time simulation is required
+     */
+    public boolean requiresRT() {
+        return timeBase.getSelected().getMag() > 0.011;
+    }
 }

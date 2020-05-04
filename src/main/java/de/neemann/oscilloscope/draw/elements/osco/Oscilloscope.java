@@ -30,11 +30,12 @@ public class Oscilloscope extends Container<Oscilloscope> {
     private final Channel ch2;
 
     private final Switch<Mode> mode;
-    private final Switch<OffOn> power;
+    private final PowerSwitch power;
 
     private PeriodicSignal signal1;
     private PeriodicSignal signal2;
     private boolean isInXY;
+    private boolean useRT;
     private Model model;
     private Timer timer;
     private ElementComponent elementComponent;
@@ -139,6 +140,7 @@ public class Oscilloscope extends Container<Oscilloscope> {
                     }
                 });
                 timer.start();
+                System.out.println("timer started");
             } else {
                 model = null;
                 elementComponent.setModel(null);
@@ -149,10 +151,13 @@ public class Oscilloscope extends Container<Oscilloscope> {
         });
 
         isInXY = horizontal.isXY();
+        useRT = horizontal.requiresRT();
         horizontal.getTimeBaseKnob().addObserver(() -> {
             boolean xy = horizontal.isXY();
-            if (xy != isInXY) {
+            boolean rt = horizontal.requiresRT();
+            if (xy != isInXY || rt != useRT) {
                 isInXY = xy;
+                useRT = rt;
                 createNewModel();
             }
         });
@@ -160,9 +165,11 @@ public class Oscilloscope extends Container<Oscilloscope> {
 
     private void createNewModel() {
         if (isInXY)
-            model = new XYModel(signal1, signal2, Oscilloscope.this);
+            model = new ModelXY(signal1, signal2, Oscilloscope.this);
+        else if (useRT)
+            model = new ModelTimeRT(signal1, signal2, Oscilloscope.this);
         else
-            model = new TimeModel(signal1, signal2, Oscilloscope.this);
+            model = new ModelTimeCalc(signal1, signal2, Oscilloscope.this);
         elementComponent.setModel(model);
     }
 
@@ -234,5 +241,12 @@ public class Oscilloscope extends Container<Oscilloscope> {
      */
     public void setElementComponent(ElementComponent elementComponent) {
         this.elementComponent = elementComponent;
+    }
+
+    /**
+     * @return the power switch
+     */
+    public PowerSwitch getPowerSwitch() {
+        return power;
     }
 }

@@ -23,7 +23,7 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
     private final Poti phase;
     private final Poti offset;
     private final Poti amplitude;
-    private final Switch<OffOn> power;
+    private final PowerSwitch power;
     private final BNC output;
     private final BNC trigOut;
     private double freqency;
@@ -36,7 +36,6 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
         f.add(new Magnify(1000));
         f.add(new Magnify(10000));
         f.add(new Magnify(100000));
-        f.add(new Magnify(1000000));
         return f;
     }
 
@@ -46,8 +45,8 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
     public Generator() {
         super(SIZE * 27, SIZE * 10);
 
-        freq = new SelectorKnob<Magnify>("Freq", 30).addAll(createFrequencies());
-        freqFine = new Poti("Fine", 30);
+        freq = new SelectorKnob<Magnify>("Freq/Hz", 30).addAll(createFrequencies());
+        freqFine = new Poti("Freq Fine", 30);
         phase = new Poti("Phase", 30);
         offset = new Poti("Offset", 30).set(0.5);
         amplitude = new Poti("Ampl.", 30);
@@ -66,7 +65,7 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
         add(form.setPos(SIZE * 11, SIZE2));
         add(phase.setPos(SIZE * 7, SIZE * 8));
         add(offset.setPos(SIZE * 13, SIZE * 8));
-        add(power.setPos(SIZE * 25, SIZE));
+        add(power.setPos(SIZE * 24 + SIZE2, SIZE));
         add(amplitude.setPos(SIZE * 25, SIZE * 8));
 
         output = new BNC("Out");
@@ -98,7 +97,7 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
                 return (vt < 0.5 ? ampl * (4 * vt - 1) : ampl * (4 * (1 - vt) - 1)) + mean();
             case SAWTOOTH:
                 double vs = arg - Math.floor(arg);
-                return (1 - vs * 2) * ampl + mean();
+                return (vs * 2 - 1) * ampl + mean();
         }
         return 0;
     }
@@ -120,5 +119,33 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
      */
     public BNC getTrigOutput() {
         return trigOut;
+    }
+
+    /**
+     * @return the power switch
+     */
+    public PowerSwitch getPowerSwitch() {
+        return power;
+    }
+
+    /**
+     * @return the amplitude poti
+     */
+    public Poti getAmplitude() {
+        return amplitude;
+    }
+
+    /**
+     * @return the frequency knob
+     */
+    public SelectorKnob<Magnify> setFrequencySwitch() {
+        return freq;
+    }
+
+    /**
+     * @return the frequency fine poti
+     */
+    public Poti setFrequencyFinePoti() {
+        return freqFine;
     }
 }
