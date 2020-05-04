@@ -2,4 +2,6 @@
 
 Simple Oscilloscope Simulator 
 
-The scope is controlled completely by the mouse wheel. 
+All switches and knobs of the scope and the frequency generators are controlled completely by the mouse wheel.
+
+![screnshot](screenShot.png) 
