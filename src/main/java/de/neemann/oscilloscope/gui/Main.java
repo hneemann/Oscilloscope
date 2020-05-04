@@ -64,10 +64,10 @@ public class Main extends JFrame {
 
         gen1.getPowerSwitch().set(1);
         gen1.getAmplitude().set(1);
-//        gen1.setFrequencySwitch().down();
+        gen1.setFrequencySwitch().down(false);
         gen2.getPowerSwitch().set(1);
         gen2.getAmplitude().set(1);
-//        gen2.setFrequencySwitch().down();
+        gen2.setFrequencySwitch().down(false);
         gen2.setFrequencyFinePoti().set(0.3);
 
     }

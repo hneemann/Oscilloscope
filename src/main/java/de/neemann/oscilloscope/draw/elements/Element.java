@@ -83,14 +83,18 @@ public abstract class Element<T extends Element<?>> {
 
     /**
      * Called if the mouse wheel is turned upwards.
+     *
+     * @param ctrl ctrl is pressed
      */
-    public void up() {
+    public void up(boolean ctrl) {
     }
 
     /**
      * Called if the mouse wheel is turned downwards.
+     *
+     * @param ctrl ctrl is pressed
      */
-    public void down() {
+    public void down(boolean ctrl) {
     }
 
     /**

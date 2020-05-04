@@ -8,7 +8,7 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  * Abstraction of a poti
  */
 public class Poti extends ObservableElement<Poti> {
-    private static final int MAX = 500;
+    private static final int MAX = 5000;
     private static final long SPEED = 50;
 
     private final int radius;
@@ -68,20 +68,25 @@ public class Poti extends ObservableElement<Poti> {
     }
 
 
-    private int getDela() {
+    private int getDela(boolean ctrl) {
         long t = System.currentTimeMillis();
-        long delta = SPEED - (t - time);
-        if (delta < 1)
-            delta = 1;
+        long delta = 1;
+        if (!ctrl) {
+            delta = SPEED - (t - time);
+            if (delta < 1)
+                delta = 1;
+
+            delta *= 10;
+        }
 
         time = t;
         return (int) delta;
     }
 
     @Override
-    public void down() {
+    public void down(boolean ctrl) {
         if (selectedPosition < MAX) {
-            selectedPosition += getDela();
+            selectedPosition += getDela(ctrl);
             if (selectedPosition > MAX)
                 selectedPosition = MAX;
             hasChanged();
@@ -89,9 +94,9 @@ public class Poti extends ObservableElement<Poti> {
     }
 
     @Override
-    public void up() {
+    public void up(boolean ctrl) {
         if (selectedPosition > 0) {
-            selectedPosition -= getDela();
+            selectedPosition -= getDela(ctrl);
             if (selectedPosition < 0)
                 selectedPosition = 0;
             hasChanged();

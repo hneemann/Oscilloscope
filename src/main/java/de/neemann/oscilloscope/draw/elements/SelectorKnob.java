@@ -99,7 +99,7 @@ public class SelectorKnob<T> extends ObservableElement<SelectorKnob<T>> {
     }
 
     @Override
-    public void down() {
+    public void down(boolean ctrl) {
         if (selectedPosition < items.size() - 1) {
             selectedPosition++;
             hasChanged();
@@ -107,7 +107,7 @@ public class SelectorKnob<T> extends ObservableElement<SelectorKnob<T>> {
     }
 
     @Override
-    public void up() {
+    public void up(boolean ctrl) {
         if (selectedPosition > 0) {
             selectedPosition--;
             hasChanged();

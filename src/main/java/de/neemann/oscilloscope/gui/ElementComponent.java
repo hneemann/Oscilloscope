@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -34,9 +35,10 @@ public class ElementComponent extends JComponent {
         addMouseWheelListener(mouseWheelEvent -> {
             Element<?> el = container.getElementAt(new Vector(mouseWheelEvent.getX(), mouseWheelEvent.getY()));
             if (el != null) {
+                boolean ctrl = mouseWheelEvent.isControlDown();
                 int d = mouseWheelEvent.getWheelRotation();
-                if (d < 0) el.up();
-                else if (d > 0) el.down();
+                if (d < 0) el.up(ctrl);
+                else if (d > 0) el.down(ctrl);
                 buffer = null;
                 repaint();
             }
