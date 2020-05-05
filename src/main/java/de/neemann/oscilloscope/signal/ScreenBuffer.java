@@ -8,6 +8,8 @@ import java.awt.image.ByteLookupTable;
 import java.awt.image.LookupOp;
 import java.awt.image.LookupTable;
 
+import static de.neemann.oscilloscope.signal.ModelTimeCalc.MIN_TRACE_BRIGHT;
+
 /**
  * The scope screen buffer
  */
@@ -31,7 +33,7 @@ public class ScreenBuffer {
     static final Color[] SPEEDCOLOR = new Color[SPEEDCOLORS];
 
     static {
-        int c0 = Style.SCREEN.getColor().getGreen();
+        int c0 = Style.SCREEN.getColor().getGreen() + MIN_TRACE_BRIGHT;
         for (int doss = 0; doss < SPEEDCOLORS; doss++) {
             double dos = Math.sqrt(doss);
             SPEEDCOLOR[doss] = new Color(0, (int) (255 - dos * (255 - c0) / Math.sqrt(SPEEDCOLORS - 1)), 0);

@@ -19,8 +19,13 @@ public class ModelTimeCalc implements Model {
      */
     private static final Color[] SPEEDCOLOR = new Color[16];
 
+    /**
+     * minimal trace brightness
+     */
+    public static final int MIN_TRACE_BRIGHT = 30;
+
     static {
-        int c0 = Style.SCREEN.getColor().getGreen();
+        int c0 = Style.SCREEN.getColor().getGreen() + MIN_TRACE_BRIGHT;
         for (int s = 0; s < 16; s++)
             SPEEDCOLOR[s] = new Color(0, 255 - s * (255 - c0) / 15, 0);
     }
