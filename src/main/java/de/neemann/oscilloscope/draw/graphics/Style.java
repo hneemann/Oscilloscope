@@ -42,7 +42,7 @@ public final class Style {
     /**
      * Style used for the grid
      */
-    public static final Style GRID = new Builder(PRINT).setThickness(1).build();
+    public static final Style GRID = new Builder(PRINT).setColor(new Color(158, 158, 158, 128)).setThickness(1).build();
 
     /**
      * Style used for the screen
