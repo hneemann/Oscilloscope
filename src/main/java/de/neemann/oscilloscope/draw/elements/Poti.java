@@ -7,7 +7,7 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 /**
  * Abstraction of a poti
  */
-public class Poti extends ObservableElement<Poti> {
+public class Poti extends ObservableElement<Poti> implements PotiInterface {
     private static final int MAX = 5000;
     private static final long SPEED = 50;
 
@@ -30,6 +30,7 @@ public class Poti extends ObservableElement<Poti> {
     /**
      * @return the value of the poti in the range 0-1
      */
+    @Override
     public double get() {
         return ((double) selectedPosition) / MAX;
     }

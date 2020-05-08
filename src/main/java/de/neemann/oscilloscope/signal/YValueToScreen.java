@@ -1,12 +1,12 @@
 package de.neemann.oscilloscope.signal;
 
-import de.neemann.oscilloscope.draw.elements.Poti;
+import de.neemann.oscilloscope.draw.elements.PotiInterface;
 
 /**
  * Transfers a voltage ti a pixel number on the screen
  */
 public class YValueToScreen implements ToScreen {
-    private final Poti pos;
+    private final PotiInterface pos;
     private final int divs;
     private final int ofs;
 
@@ -16,7 +16,7 @@ public class YValueToScreen implements ToScreen {
      * @param pos  the pos poti
      * @param divs the number of divs on the screen
      */
-    public YValueToScreen(Poti pos, int divs) {
+    public YValueToScreen(PotiInterface pos, int divs) {
         this.pos = pos;
         this.divs = divs;
         ofs = divs / 2;
@@ -24,7 +24,7 @@ public class YValueToScreen implements ToScreen {
 
     @Override
     public int v(double v, int pixels) {
-        double div = -v + ofs + (pos.get() - 0.5) * 20;
+        double div = -v + ofs + (0.5-pos.get()) * 20;
         return (int) (div * pixels / divs);
     }
 }

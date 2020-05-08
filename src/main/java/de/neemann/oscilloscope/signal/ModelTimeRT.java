@@ -121,17 +121,25 @@ public class ModelTimeRT implements Model {
 
     private void drawTrace(Screen screen, double t0, double t1, double t2, double timePerPixel) {
         int y0 = screen.v(t1);
-        int x = (int) ((t1 - t0) / timePerPixel);
+        int x1 = (int) ((t1 - t0) / timePerPixel);
+        int x0 = x1;
+
+        double deltaTime = timePerPixel;
+        double pixels = (t2 - t1) / deltaTime;
+        if (pixels < 20)
+            deltaTime = (t2 - t1) / 20;
+
         while (t1 < t2) {
-            int ym = screen.v(t1 + timePerPixel / 2);
-            t1 += timePerPixel;
+            int ym = screen.v(t1 + deltaTime / 2);
+            t1 += deltaTime;
+            x1 = (int) ((t1 - t0) / timePerPixel);
             int y1 = screen.v(t1);
-            if (ym==y1 || ym==y0)
-                buffer.drawTrace(x - 1, y0, x, y1);
+            if (ym == y1 || ym == y0)
+                buffer.drawTrace(x0, y0, x1, y1);
             else
-                buffer.drawBrightTrace(x - 1, y0, x, y1);
+                buffer.drawBrightTrace(x0, y0, x1, y1);
             y0 = y1;
-            x++;
+            x0 = x1;
         }
     }
 }

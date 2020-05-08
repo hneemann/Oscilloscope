@@ -64,6 +64,13 @@ public class Horizontal {
     }
 
     /**
+     * @return the pos poti
+     */
+    public Poti getPosPoti() {
+        return pos;
+    }
+
+    /**
      * @return tue if mag10 is on
      */
     public boolean isMag() {

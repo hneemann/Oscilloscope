@@ -22,7 +22,7 @@ public class ScreenBuffer {
         for (int i = 0; i <= green; i++)
             data[i] = (byte) i;
         for (int i = green; i < 256; i++)
-            data[i] = (byte) Math.max(green, i - 8);
+            data[i] = (byte) Math.max(green, i - 40);
         LOOKUP = new ByteLookupTable(0, data);
     }
 
