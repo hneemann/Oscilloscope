@@ -1,6 +1,7 @@
 package de.neemann.oscilloscope.gui;
 
 import de.neemann.oscilloscope.draw.elements.Container;
+import de.neemann.oscilloscope.draw.elements.diode.Diode;
 import de.neemann.oscilloscope.draw.elements.generator.Generator;
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 
@@ -32,7 +33,9 @@ public class Main extends JFrame {
         Container<?> main = new Container<>()
                 .add(oscilloscope.setPos(SIZE + SIZE2, SIZE + SIZE2))
                 .add(gen1.setPos(SIZE + SIZE2, SIZE * 31 + SIZE2))
-                .add(gen2.setPos(SIZE * 32 + SIZE2, SIZE * 31 + SIZE2));
+//                .add(gen2.setPos(SIZE * 32 + SIZE2, SIZE * 31 + SIZE2));
+                .add(new Diode().setPos(SIZE*32, SIZE*31+SIZE2));
+
 
         ElementComponent el = new ElementComponent(main);
         getContentPane().add(el);

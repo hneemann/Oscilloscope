@@ -30,7 +30,7 @@ public class ModelXY implements Model {
             throw new RuntimeException("wrong model");
 
         this.xFrontend = new Frontend(osco.getSignal1(), osco.getCh1());
-        this.xScreen = new YValueToScreen(() -> 1-osco.getHorizontal().getPos(), 10);
+        this.xScreen = new XValueToScreen(osco.getHorizontal().getPosPoti(), 10);
         this.yFrontend = new Frontend(osco.getSignal2(), osco.getCh2());
         this.yScreen = new YValueToScreen(osco.getCh2().getPosPoti(), 8);
         timeOffset = System.currentTimeMillis();
