@@ -2,6 +2,7 @@ package de.neemann.oscilloscope.draw.elements.diode;
 
 import de.neemann.oscilloscope.draw.elements.diode.Solver.FunctionDeriv;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
+import de.neemann.oscilloscope.signal.PeriodicSignalMean;
 
 /**
  * The model of the diode
@@ -29,14 +30,14 @@ public class DiodeModel {
      * @return the signal describing the diodes voltage
      */
     public PeriodicSignal getVoltageDiode() {
-        return new Ud();
+        return new PeriodicSignalMean(new Ud());
     }
 
     /**
      * @return the signal describing the resistance voltage
      */
     public PeriodicSignal getVoltageResistor() {
-        return new Ur();
+        return new PeriodicSignalMean(new Ur());
     }
 
     private double iGes;
@@ -51,7 +52,7 @@ public class DiodeModel {
             } else {
                 Solver s = new Solver(new DiodeFunc(uGes));
                 uD = s.newton(0.6, 1e-4);
-                iGes = IS * Math.exp(uD / N / UT);
+                iGes = (uGes - uD) / R;
             }
             lastTime = t;
         }
