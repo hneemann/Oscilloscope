@@ -26,9 +26,9 @@ public class Diode extends Container<Diode> {
 
         DiodeModel m = new DiodeModel();
 
-        add(new BNCInput("").setPos(SIZE * 1, SIZE * 5).setInputSetter(m::setInput));
+        add(new BNCInput("").setPos(SIZE, SIZE * 5).setInputSetter(m::setInput));
 
-        add(new BNCOutput("").setPos(SIZE * 9, SIZE * 1).setOutput(m::getVoltageDiode));
+        add(new BNCOutput("").setPos(SIZE * 9, SIZE).setOutput(m::getVoltageDiode));
         add(new BNCOutput("").setPos(SIZE * 9, SIZE * 9).setOutput(m::getVoltageResistor));
 
         setBackground(Color.WHITE);
@@ -40,38 +40,47 @@ public class Diode extends Container<Diode> {
         super.drawToOrigin(gr);
 
         gr.drawPolygon(new Polygon(false)
-                .add(SIZE * 1, SIZE * 5)
-                .add(SIZE * 1, SIZE * 1)
-                .add(SIZE * 5, SIZE * 1)
-                .add(SIZE * 5, SIZE * 2), Style.NORMAL);
+                .add(SIZE, SIZE * 5)
+                .add(SIZE, SIZE)
+                .add(SIZE * 5, SIZE)
+                .add(SIZE * 5, SIZE * 2), Style.PRINT);
         gr.drawPolygon(new Polygon(false)
                 .add(SIZE * 5, SIZE * 8)
                 .add(SIZE * 5, SIZE * 9)
-                .add(SIZE * 1, SIZE * 9)
-                .add(SIZE * 1, SIZE * 6), Style.NORMAL);
+                .add(SIZE, SIZE * 9)
+                .add(SIZE, SIZE * 6), Style.PRINT);
 
         gr.drawPolygon(new Polygon(true)
                 .add(SIZE * 5 - SIZE2, SIZE * 5)
                 .add(SIZE * 5 + SIZE2, SIZE * 5)
                 .add(SIZE * 5 + SIZE2, SIZE * 8)
-                .add(SIZE * 5 - SIZE2, SIZE * 8), Style.NORMAL);
+                .add(SIZE * 5 - SIZE2, SIZE * 8), Style.PRINT);
 
         gr.drawPolygon(new Polygon(true)
                 .add(SIZE * 5 - SIZE2, SIZE * 2)
                 .add(SIZE * 5 + SIZE2, SIZE * 2)
-                .add(SIZE * 5, SIZE * 3), Style.NORMAL);
+                .add(SIZE * 5, SIZE * 3), Style.PRINT);
 
-        gr.drawLine(new Vector(SIZE * 5 - SIZE2, SIZE * 3), new Vector(SIZE * 5 + SIZE2, SIZE * 3), Style.NORMAL);
-        gr.drawLine(new Vector(SIZE * 5, SIZE * 3), new Vector(SIZE * 5, SIZE * 5), Style.NORMAL);
-
-
-        gr.drawLine(new Vector(SIZE * 5, SIZE * 4), new Vector(SIZE * 9, SIZE * 4), Style.NORMAL);
-        gr.drawLine(new Vector(SIZE * 9, SIZE * 2), new Vector(SIZE * 9, SIZE * 8), Style.NORMAL);
+        gr.drawLine(new Vector(SIZE * 5 - SIZE2, SIZE * 3), new Vector(SIZE * 5 + SIZE2, SIZE * 3), Style.PRINT);
+        gr.drawLine(new Vector(SIZE * 5, SIZE * 3), new Vector(SIZE * 5, SIZE * 5), Style.PRINT);
 
 
-        gr.drawLine(new Vector(SIZE * 5, SIZE * 1), new Vector(SIZE * 9, SIZE * 1), Style.NORMAL);
-        gr.drawLine(new Vector(SIZE * 5, SIZE * 9), new Vector(SIZE * 9, SIZE * 9), Style.NORMAL);
+        gr.drawLine(new Vector(SIZE * 5, SIZE * 4), new Vector(SIZE * 9, SIZE * 4), Style.PRINT);
+        gr.drawLine(new Vector(SIZE * 9, SIZE * 2), new Vector(SIZE * 9, SIZE * 8), Style.PRINT);
 
 
+        gr.drawLine(new Vector(SIZE * 5, SIZE), new Vector(SIZE * 9, SIZE), Style.PRINT);
+        gr.drawLine(new Vector(SIZE * 5, SIZE * 9), new Vector(SIZE * 9, SIZE * 9), Style.PRINT);
+
+        dot(gr, SIZE * 5, SIZE);
+        dot(gr, SIZE * 5, SIZE * 4);
+        dot(gr, SIZE * 9, SIZE * 4);
+        dot(gr, SIZE * 5, SIZE * 9);
+    }
+
+    private static final int RAD = 3;
+
+    private void dot(Graphic gr, int x, int y) {
+        gr.drawCircle(new Vector(x - RAD, y - RAD), new Vector(x + RAD, y + RAD), Style.PRINT);
     }
 }
