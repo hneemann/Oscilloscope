@@ -1,5 +1,7 @@
 package de.neemann.oscilloscope.gui;
 
+import de.neemann.oscilloscope.draw.elements.BNCInput;
+import de.neemann.oscilloscope.draw.elements.BNCOutput;
 import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.draw.elements.Element;
 import de.neemann.oscilloscope.draw.graphics.Polygon;
@@ -8,8 +10,7 @@ import de.neemann.oscilloscope.signal.Model;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 public class ElementComponent extends JComponent {
     private final Container<?> container;
     private final ArrayList<Wire> wires;
+    private Wire pendingWire;
     private BufferedImage buffer;
     private Grid grid;
     private Model model;
@@ -42,6 +44,9 @@ public class ElementComponent extends JComponent {
                 repaint();
             }
         });
+        MyMouseListener l = new MyMouseListener();
+        addMouseListener(l);
+        addMouseMotionListener(l);
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -85,6 +90,22 @@ public class ElementComponent extends JComponent {
      */
     public ElementComponent add(Wire w) {
         wires.add(w);
+        w.connect();
+        buffer = null;
+        return this;
+    }
+
+    /**
+     * Removes a wire.
+     *
+     * @param w the wire
+     * @return this for chained calls
+     */
+    public ElementComponent remove(Wire w) {
+        boolean ok = wires.remove(w);
+        if (ok)
+            w.disconnect();
+        buffer = null;
         return this;
     }
 
@@ -102,6 +123,11 @@ public class ElementComponent extends JComponent {
         }
 
         grid.drawTo(g);
+
+        if (pendingWire != null) {
+            g.setClip(0, 0, getWidth(), getHeight());
+            pendingWire.drawTo((Graphics2D) g);
+        }
     }
 
     private static final class GridLine {
@@ -174,6 +200,75 @@ public class ElementComponent extends JComponent {
             g.setColor(Style.GRID.getColor());
             for (GridLine gl : grid)
                 g.drawLine(gl.p1.getX(), gl.p1.getY(), gl.p2.getX(), gl.p2.getY());
+        }
+    }
+
+    private class MyMouseListener implements MouseListener, MouseMotionListener {
+        private BNCInput pendingInput;
+        private BNCOutput pendingOutput;
+
+        @Override
+        public void mouseClicked(MouseEvent mouseEvent) {
+            if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
+                Element<?> el = container.getElementAt(new Vector(mouseEvent.getX(), mouseEvent.getY()));
+                if (el != null) {
+                    if (el instanceof BNCOutput) {
+                        pendingOutput = (BNCOutput) el;
+                        pendingInput = new BNCInput("").setPos(mouseEvent.getX(), mouseEvent.getY());
+                        pendingWire = new Wire(pendingOutput, pendingInput);
+                    } else if (el instanceof BNCInput) {
+                        BNCInput bncInput = (BNCInput) el;
+                        if (pendingWire != null) {
+                            pendingWire = null;
+                            for (Wire w : wires) {
+                                if (w.getInput() == bncInput)
+                                    return;
+                            }
+                            add(new Wire(pendingOutput, bncInput));
+                        } else {
+                            for (Wire w : wires) {
+                                if (w.getInput() == bncInput) {
+                                    remove(w);
+                                    return;
+                                }
+                            }
+                        }
+                    } else
+                        pendingWire = null;
+                }
+            } else
+                pendingWire = null;
+        }
+
+        @Override
+        public void mousePressed(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent mouseEvent) {
+
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent mouseEvent) {
+            if (pendingWire != null)
+                pendingInput.setPos(mouseEvent.getX(), mouseEvent.getY());
         }
     }
 }

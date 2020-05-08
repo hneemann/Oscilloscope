@@ -32,6 +32,7 @@ public class ModelTimeCalc implements Model {
 
     private final Frontend frontend1;
     private final Frontend frontend2;
+    private final PeriodicSignal triggerIn;
     private final YValueToScreen screen1;
     private final YValueToScreen screen2;
     private final Horizontal horizontal;
@@ -42,19 +43,18 @@ public class ModelTimeCalc implements Model {
     /**
      * Used to simulate the scope in normal mode
      *
-     * @param signal1 signal channel 1
-     * @param signal2 signal channel 2
-     * @param osco    the oscilloscope
+     * @param osco the oscilloscope
      */
-    public ModelTimeCalc(PeriodicSignal signal1, PeriodicSignal signal2, Oscilloscope osco) {
+    public ModelTimeCalc(Oscilloscope osco) {
         if (osco.getHorizontal().isXY())
             throw new RuntimeException("wrong model");
 
-        this.frontend1 = new Frontend(signal1, osco.getCh1());
+        this.frontend1 = new Frontend(osco.getSignal1(), osco.getCh1());
         this.screen1 = new YValueToScreen(osco.getCh1().getPosPoti(), 8);
-        this.frontend2 = new Frontend(signal2, osco.getCh2());
+        this.frontend2 = new Frontend(osco.getSignal2(), osco.getCh2());
         this.screen2 = new YValueToScreen(osco.getCh2().getPosPoti(), 8);
         this.horizontal = osco.getHorizontal();
+        this.triggerIn = osco.getTriggerIn();
         this.trigger = osco.getTrigger();
         this.mode = osco.getMode();
         timeOffset = System.currentTimeMillis();
@@ -77,6 +77,9 @@ public class ModelTimeCalc implements Model {
                 break;
             case Ch_2:
                 trig = trigger.getTriggerTime(frontend2, timePerPixel, t0);
+                break;
+            case EXT:
+                trig = trigger.wasTrig(triggerIn, timePerPixel, t0, t0 + triggerIn.period(), triggerIn.mean());
                 break;
             case LINE:
                 trig = new Trigger.Trig(((long) (t0 / 0.02) + 1) * 0.02, true);

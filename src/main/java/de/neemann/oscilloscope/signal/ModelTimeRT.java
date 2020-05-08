@@ -21,6 +21,7 @@ public class ModelTimeRT implements Model {
     private final Trigger trigger;
     private final Switch<Mode> mode;
     private final long timeOffset;
+    private final PeriodicSignal triggerIn;
     private ScreenBuffer buffer;
     private boolean isRunning = false;
     private double tStart;
@@ -29,18 +30,17 @@ public class ModelTimeRT implements Model {
     /**
      * Used to simulate the scope in normal mode
      *
-     * @param signal1 signal channel 1
-     * @param signal2 signal channel 2
-     * @param osco    the oscilloscope
+     * @param osco the oscilloscope
      */
-    public ModelTimeRT(PeriodicSignal signal1, PeriodicSignal signal2, Oscilloscope osco) {
+    public ModelTimeRT(Oscilloscope osco) {
         if (osco.getHorizontal().isXY())
             throw new RuntimeException("wrong model");
 
-        this.frontend1 = new Frontend(signal1, osco.getCh1());
+        this.frontend1 = new Frontend(osco.getSignal1(), osco.getCh1());
         this.screen1 = new YValueToScreen(osco.getCh1().getPosPoti(), 8);
-        this.frontend2 = new Frontend(signal2, osco.getCh2());
+        this.frontend2 = new Frontend(osco.getSignal2(), osco.getCh2());
         this.screen2 = new YValueToScreen(osco.getCh2().getPosPoti(), 8);
+        this.triggerIn = osco.getTriggerIn();
         this.horizontal = osco.getHorizontal();
         this.trigger = osco.getTrigger();
         this.mode = osco.getMode();
@@ -77,6 +77,9 @@ public class ModelTimeRT implements Model {
                         break;
                     case Ch_2:
                         trig = trigger.wasTrig(frontend2, timePerPixel, tLast, tNow);
+                        break;
+                    case EXT:
+                        trig = trigger.wasTrig(triggerIn, timePerPixel, tLast, tNow, triggerIn.mean());
                         break;
                     case LINE:
                         double nextTrig = ((long) (tLast / 0.02) + 1) * 0.02;

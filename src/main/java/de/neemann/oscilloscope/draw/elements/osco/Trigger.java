@@ -1,7 +1,7 @@
 package de.neemann.oscilloscope.draw.elements.osco;
 
 import de.neemann.oscilloscope.draw.elements.*;
-import de.neemann.oscilloscope.signal.Frontend;
+import de.neemann.oscilloscope.signal.PeriodicSignal;
 
 /**
  * Abstraction of the trigger unit.
@@ -97,7 +97,7 @@ public class Trigger {
      * @param t0           the time to start the search
      * @return the trigger event
      */
-    public Trig getTriggerTime(Frontend frontend, double timePerPixel, double t0) {
+    public Trig getTriggerTime(PeriodicSignal frontend, double timePerPixel, double t0) {
         return wasTrig(frontend, timePerPixel, t0, t0 + frontend.period());
     }
 
@@ -110,14 +110,28 @@ public class Trigger {
      * @param t1           the time to stop the search
      * @return the trigger event
      */
-    public Trig wasTrig(Frontend frontend, double timePerPixel, double t0, double t1) {
+    public Trig wasTrig(PeriodicSignal frontend, double timePerPixel, double t0, double t1) {
         double level = (trigLevel.get() - 0.5) * 16;
+        return wasTrig(frontend, timePerPixel, t0, t1, level);
+    }
+
+    /**
+     * Tests if there was a trigger in between t0 and t1
+     *
+     * @param signal       the signal
+     * @param timePerPixel the time used for a single pixel on the screen
+     * @param t0           the time to start the search
+     * @param t1           the time to stop the search
+     * @param level        the trigger level
+     * @return the trigger event
+     */
+    public Trig wasTrig(PeriodicSignal signal, double timePerPixel, double t0, double t1, double level) {
         boolean up = trigSlope.is("+");
         double t = t0;
-        boolean ol0 = frontend.v(t) > level;
+        boolean ol0 = signal.v(t) > level;
         while (t < t1) {
             t += timePerPixel;
-            boolean ol1 = frontend.v(t) > level;
+            boolean ol1 = signal.v(t) > level;
             if (ol0 ^ ol1) {
                 if (ol1 == up) {
                     return new Trig(t, true);

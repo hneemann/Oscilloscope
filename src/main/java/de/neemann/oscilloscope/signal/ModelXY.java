@@ -23,17 +23,15 @@ public class ModelXY implements Model {
     /**
      * Creates a new model for x-y mode
      *
-     * @param x    the x signal
-     * @param y    the y signal
      * @param osco the used oscilloscope
      */
-    public ModelXY(PeriodicSignal x, PeriodicSignal y, Oscilloscope osco) {
+    public ModelXY(Oscilloscope osco) {
         if (!osco.getHorizontal().isXY())
             throw new RuntimeException("wrong model");
 
-        this.xFrontend = new Frontend(x, osco.getCh1());
+        this.xFrontend = new Frontend(osco.getSignal1(), osco.getCh1());
         this.xScreen = new YValueToScreen(() -> 1-osco.getHorizontal().getPos(), 10);
-        this.yFrontend = new Frontend(y, osco.getCh2());
+        this.yFrontend = new Frontend(osco.getSignal2(), osco.getCh2());
         this.yScreen = new YValueToScreen(osco.getCh2().getPosPoti(), 8);
         timeOffset = System.currentTimeMillis();
         lastTime = getTimeInMillis() / 1000.0;

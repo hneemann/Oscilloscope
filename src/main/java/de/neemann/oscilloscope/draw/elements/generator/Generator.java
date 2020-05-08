@@ -24,8 +24,8 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
     private final Poti offset;
     private final Poti amplitude;
     private final PowerSwitch power;
-    private final BNC output;
-    private final BNC trigOut;
+    private final BNCOutput output;
+    private final BNCOutput trigOut;
     private double freqency;
 
     private static ArrayList<Magnify> createFrequencies() {
@@ -68,11 +68,10 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
         add(power.setPos(SIZE * 24 + SIZE2, SIZE));
         add(amplitude.setPos(SIZE * 25, SIZE * 8));
 
-        output = new BNC("Out");
+        output = new BNCOutput("Out").setOutput(() -> this);
         add(output.setPos(SIZE * 2, SIZE * 8));
-        trigOut = new BNC("Trig");
+        trigOut = new BNCOutput("Trig").setOutput(TriggerOut::new);
         add(trigOut.setPos(SIZE * 2, SIZE * 3));
-
     }
 
     @Override
@@ -110,14 +109,14 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
     /**
      * @return the output connector
      */
-    public BNC getOutput() {
+    public BNCOutput getOutput() {
         return output;
     }
 
     /**
      * @return the trigger connector
      */
-    public BNC getTrigOutput() {
+    public BNCOutput getTrigOutput() {
         return trigOut;
     }
 
@@ -147,5 +146,23 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
      */
     public Poti setFrequencyFinePoti() {
         return freqFine;
+    }
+
+    private class TriggerOut implements PeriodicSignal {
+        @Override
+        public double period() {
+            return Generator.this.period();
+        }
+
+        @Override
+        public double v(double t) {
+            double arg = t * freqency + phase.get();
+            return (arg - Math.floor(arg) < 0.5 ? 5 : 0);
+        }
+
+        @Override
+        public double mean() {
+            return 2.5;
+        }
     }
 }
