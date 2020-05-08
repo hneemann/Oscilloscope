@@ -214,6 +214,7 @@ public class ElementComponent extends JComponent {
                     pendingOutput = (BNCOutput) el;
                     pendingInput = new BNCInput("").setPos(mouseEvent.getX(), mouseEvent.getY());
                     pendingWire = new Wire(pendingOutput, pendingInput);
+                    repaint();
                 } else if (el instanceof BNCInput) {
                     BNCInput bncInput = (BNCInput) el;
                     if (pendingWire != null) {
@@ -268,8 +269,10 @@ public class ElementComponent extends JComponent {
 
         @Override
         public void mouseMoved(MouseEvent mouseEvent) {
-            if (pendingWire != null)
+            if (pendingWire != null) {
                 pendingInput.setPos(mouseEvent.getX(), mouseEvent.getY());
+                repaint();
+            }
         }
     }
 
