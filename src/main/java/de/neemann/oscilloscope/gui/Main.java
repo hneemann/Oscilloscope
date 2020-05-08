@@ -25,7 +25,6 @@ public class Main extends JFrame {
         super("Oscilloscope");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-
         Oscilloscope oscilloscope = new Oscilloscope();
         Generator gen1 = new Generator();
         Generator gen2 = new Generator();
@@ -35,13 +34,9 @@ public class Main extends JFrame {
                 .add(gen1.setPos(SIZE + SIZE2, SIZE * 31 + SIZE2))
                 .add(gen2.setPos(SIZE * 32 + SIZE2, SIZE * 31 + SIZE2));
 
-
         ElementComponent el = new ElementComponent(main);
         getContentPane().add(el);
         oscilloscope.setElementComponent(el);
-
-//        el.add(new Wire(gen1.getOutput(), oscilloscope.getCh1().getInput()));
-//        el.add(new Wire(gen2.getOutput(), oscilloscope.getCh2().getInput()));
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -73,7 +68,11 @@ public class Main extends JFrame {
             gen2.getAmplitude().set(0.1);
             gen2.setFrequencySwitch().down(false);
             gen2.setFrequencySwitch().down(false);
-            gen2.setFrequencyFinePoti().set(Math.log(3)/Math.log(10));
+            gen2.setFrequencyFinePoti().set(Math.log(3) / Math.log(10));
+
+            el.add(new Wire(gen1.getOutput(), oscilloscope.getCh1().getInput()));
+            el.add(new Wire(gen2.getOutput(), oscilloscope.getCh2().getInput()));
+
         }
 
     }

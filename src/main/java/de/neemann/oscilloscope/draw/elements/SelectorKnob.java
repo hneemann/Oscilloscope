@@ -3,6 +3,7 @@ package de.neemann.oscilloscope.draw.elements;
 
 import de.neemann.oscilloscope.draw.graphics.*;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -112,6 +113,14 @@ public class SelectorKnob<T> extends ObservableElement<SelectorKnob<T>> {
             selectedPosition--;
             hasChanged();
         }
+    }
+
+    @Override
+    public void clicked(int button, boolean ctrl) {
+        if (button == MouseEvent.BUTTON1)
+            up(ctrl);
+        else if (button == MouseEvent.BUTTON3)
+            down(ctrl);
     }
 
 }

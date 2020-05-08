@@ -40,8 +40,7 @@ public class ElementComponent extends JComponent {
                 int d = mouseWheelEvent.getWheelRotation();
                 if (d < 0) el.up(ctrl);
                 else if (d > 0) el.down(ctrl);
-                buffer = null;
-                repaint();
+                invalidateGraphic();
             }
         });
         MyMouseListener l = new MyMouseListener();
@@ -91,7 +90,7 @@ public class ElementComponent extends JComponent {
     public ElementComponent add(Wire w) {
         wires.add(w);
         w.connect();
-        buffer = null;
+        invalidateGraphic();
         return this;
     }
 
@@ -105,7 +104,7 @@ public class ElementComponent extends JComponent {
         boolean ok = wires.remove(w);
         if (ok)
             w.disconnect();
-        buffer = null;
+        invalidateGraphic();
         return this;
     }
 
@@ -209,35 +208,37 @@ public class ElementComponent extends JComponent {
 
         @Override
         public void mouseClicked(MouseEvent mouseEvent) {
-            if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
-                Element<?> el = container.getElementAt(new Vector(mouseEvent.getX(), mouseEvent.getY()));
-                if (el != null) {
-                    if (el instanceof BNCOutput) {
-                        pendingOutput = (BNCOutput) el;
-                        pendingInput = new BNCInput("").setPos(mouseEvent.getX(), mouseEvent.getY());
-                        pendingWire = new Wire(pendingOutput, pendingInput);
-                    } else if (el instanceof BNCInput) {
-                        BNCInput bncInput = (BNCInput) el;
-                        if (pendingWire != null) {
-                            pendingWire = null;
+            Element<?> el = container.getElementAt(new Vector(mouseEvent.getX(), mouseEvent.getY()));
+            if (el != null) {
+                if (el instanceof BNCOutput) {
+                    pendingOutput = (BNCOutput) el;
+                    pendingInput = new BNCInput("").setPos(mouseEvent.getX(), mouseEvent.getY());
+                    pendingWire = new Wire(pendingOutput, pendingInput);
+                } else if (el instanceof BNCInput) {
+                    BNCInput bncInput = (BNCInput) el;
+                    if (pendingWire != null) {
+                        pendingWire = null;
+                        if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
                             for (Wire w : wires) {
                                 if (w.getInput() == bncInput)
                                     return;
                             }
                             add(new Wire(pendingOutput, bncInput));
-                        } else {
-                            for (Wire w : wires) {
-                                if (w.getInput() == bncInput) {
-                                    remove(w);
-                                    return;
-                                }
+                        }
+                    } else {
+                        for (Wire w : wires) {
+                            if (w.getInput() == bncInput) {
+                                remove(w);
+                                return;
                             }
                         }
-                    } else
-                        pendingWire = null;
+                    }
+                } else {
+                    el.clicked(mouseEvent.getButton(), mouseEvent.isControlDown());
+                    pendingWire = null;
+                    invalidateGraphic();
                 }
-            } else
-                pendingWire = null;
+            }
         }
 
         @Override
@@ -270,5 +271,10 @@ public class ElementComponent extends JComponent {
             if (pendingWire != null)
                 pendingInput.setPos(mouseEvent.getX(), mouseEvent.getY());
         }
+    }
+
+    private void invalidateGraphic() {
+        buffer = null;
+        repaint();
     }
 }

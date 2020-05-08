@@ -98,6 +98,15 @@ public abstract class Element<T extends Element<?>> {
     }
 
     /**
+     * Called if the mouse buttons are pressed.
+     *
+     * @param button the button
+     * @param ctrl   ctrl is pressed
+     */
+    public void clicked(int button, boolean ctrl) {
+    }
+
+    /**
      * Sets te parent container
      *
      * @param parent the parent container

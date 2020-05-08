@@ -275,7 +275,7 @@ public class Oscilloscope extends Container<Oscilloscope> {
      * @return the channel 2 input signal
      */
     public PeriodicSignal getSignal2() {
-        return signal1;
+        return signal2;
     }
 
     /**
