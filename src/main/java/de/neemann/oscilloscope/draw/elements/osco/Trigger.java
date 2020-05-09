@@ -11,7 +11,7 @@ public class Trigger {
     private Switch<TrigMode> trigMode;
     private Switch<TrigSource> trigSource;
     private Switch<String> trigSlope;
-    private BNC trigIn;
+    private BNCInput trigIn;
 
     /**
      * Sets the level poti
@@ -63,7 +63,7 @@ public class Trigger {
      * @param trigIn the trigger input
      * @return the given value for chained calls
      */
-    public BNC setIn(BNC trigIn) {
+    public BNCInput setIn(BNCInput trigIn) {
         this.trigIn = trigIn;
         return trigIn;
     }
@@ -85,7 +85,7 @@ public class Trigger {
     /**
      * @return the trigger input
      */
-    public BNC getTrigIn() {
+    public BNCInput getTrigIn() {
         return trigIn;
     }
 

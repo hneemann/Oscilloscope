@@ -51,6 +51,30 @@ public class ElementComponent extends JComponent {
         });
     }
 
+    /**
+     * Creates a screen shot
+     *
+     * @return the scrennshot or null if operation is not possible.
+     */
+    public BufferedImage createScreenShot() {
+        if (model == null || grid == null)
+            return null;
+
+        int width = grid.xmax - grid.xmin + 1;
+        int height = grid.ymax - grid.ymin + 1;
+        BufferedImage buffer = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(width, height);
+        Graphics2D g2d = buffer.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2d.setColor(Style.SCREEN.getColor());
+        g2d.fillRect(0, 0, width, height);
+        model.drawTo(g2d, 0, width, 0, height);
+        g2d.translate(-grid.xmin, -grid.ymin);
+        grid.drawTo(g2d);
+        return buffer;
+    }
+
     private BufferedImage createBuffer() {
         BufferedImage buffer = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(getWidth(), getHeight());
         Graphics2D g2d = buffer.createGraphics();

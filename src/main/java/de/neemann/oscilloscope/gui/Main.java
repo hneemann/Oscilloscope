@@ -6,11 +6,16 @@ import de.neemann.oscilloscope.exercises.DiodeExercise;
 import de.neemann.oscilloscope.exercises.Exercise;
 import de.neemann.oscilloscope.exercises.General;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 
@@ -50,6 +55,29 @@ public class Main extends JFrame {
         exercises.add(new JMenuItem(new ExerciseGenerator(new General())));
         exercises.add(new JMenuItem(new ExerciseGenerator(new DiodeExercise())));
 
+        JMenu view = new JMenu("View");
+        bar.add(view);
+        view.add(new JMenuItem(new AbstractAction("Screenshot") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                BufferedImage ss = elementComponent.createScreenShot();
+                if (ss != null) {
+                    JFileChooser fc = new JFileChooser();
+                    fc.addChoosableFileFilter(new FileNameExtensionFilter("Portable Network Graphic", "png"));
+                    if (fc.showSaveDialog(Main.this) == JFileChooser.APPROVE_OPTION) {
+                        File f = fc.getSelectedFile();
+                        if (!f.getName().endsWith(".png"))
+                            f = new File(f.getParent(), f.getName() + ".png");
+                        try {
+                            ImageIO.write(ss, "png", f);
+                        } catch (IOException e) {
+                            showError(e);
+                        }
+                    }
+                }
+            }
+        }));
+
         setJMenuBar(bar);
 
         setExercise(new General());
@@ -57,8 +85,13 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    private void showError(Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Error", e.getMessage(), JOptionPane.ERROR_MESSAGE);
+    }
+
     /**
-     * Stes the main container
+     * Sets the main container
      *
      * @param main the main container
      */
