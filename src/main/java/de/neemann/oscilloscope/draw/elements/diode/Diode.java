@@ -18,6 +18,10 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  */
 public class Diode extends Container<Diode> {
 
+    private final BNCInput input;
+    private final BNCOutput ud;
+    private final BNCOutput ur;
+
     /**
      * Creates a new diode setup
      */
@@ -26,14 +30,37 @@ public class Diode extends Container<Diode> {
 
         DiodeModel m = new DiodeModel();
 
-        add(new BNCInput("").setPos(SIZE, SIZE * 5).setInputSetter(m::setInput));
+        input = new BNCInput("");
+        ud = new BNCOutput("");
+        ur = new BNCOutput("");
 
-        add(new BNCOutput("").setPos(SIZE * 9, SIZE).setOutput(m::getVoltageDiode));
-        add(new BNCOutput("").setPos(SIZE * 9, SIZE * 9).setOutput(m::getVoltageResistor));
+        add(input.setPos(SIZE, SIZE * 5).setInputSetter(m::setInput));
+        add(ud.setPos(SIZE * 9, SIZE).setOutput(m::getVoltageDiode));
+        add(ur.setPos(SIZE * 9, SIZE * 9).setOutput(m::getVoltageResistor));
 
         setBackground(Color.WHITE);
     }
 
+    /**
+     * @return the input connector
+     */
+    public BNCInput getInput() {
+        return input;
+    }
+
+    /**
+     * @return the resistance voltage connector
+     */
+    public BNCOutput getVoltRes() {
+        return ur;
+    }
+
+    /**
+     * @return the diode voltage connector
+     */
+    public BNCOutput getVoltDiode() {
+        return ud;
+    }
 
     @Override
     public void drawToOrigin(Graphic gr) {

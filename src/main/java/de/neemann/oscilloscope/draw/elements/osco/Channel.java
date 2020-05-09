@@ -166,4 +166,11 @@ public class Channel {
     public SelectorKnob<Magnify> getAmplitudeSwitch() {
         return amplitude;
     }
+
+    /**
+     * @return the inv switch
+     */
+    public Switch<OffOn> getInvSwitch() {
+        return inv;
+    }
 }

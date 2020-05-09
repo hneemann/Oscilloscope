@@ -26,6 +26,7 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
     private final PowerSwitch power;
     private final BNCOutput output;
     private final BNCOutput trigOut;
+    private final String name;
     private double freqency;
 
     private static ArrayList<Magnify> createFrequencies() {
@@ -41,9 +42,12 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
 
     /**
      * Creates a new function generator
+     *
+     * @param name the generators name
      */
-    public Generator() {
+    public Generator(String name) {
         super(SIZE * 27, SIZE * 10);
+        this.name = name;
 
         freq = new SelectorKnob<Magnify>("Freq/Hz", 30).addAll(createFrequencies());
         freqFine = new Poti("Freq Fine", 30);
@@ -72,6 +76,13 @@ public class Generator extends Container<Generator> implements PeriodicSignal {
         add(output.setPos(SIZE * 2, SIZE * 8));
         trigOut = new BNCOutput("Trig").setOutput(TriggerOut::new);
         add(trigOut.setPos(SIZE * 2, SIZE * 3));
+    }
+
+    /**
+     * @return the name of the generator
+     */
+    public String getName() {
+        return name;
     }
 
     @Override

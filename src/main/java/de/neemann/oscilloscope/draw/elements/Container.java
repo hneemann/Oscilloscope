@@ -122,4 +122,17 @@ public class Container<T extends Container<?>> extends Element<T> {
         }
         return null;
     }
+
+    @Override
+    public void close() {
+        for (Element<?> e : elements)
+            e.close();
+    }
+
+    @Override
+    public void traverse(Visitor visitor) {
+        super.traverse(visitor);
+        for (Element<?> e : elements)
+            e.traverse(visitor);
+    }
 }

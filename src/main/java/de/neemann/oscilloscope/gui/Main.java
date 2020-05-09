@@ -1,21 +1,27 @@
 package de.neemann.oscilloscope.gui;
 
 import de.neemann.oscilloscope.draw.elements.Container;
-import de.neemann.oscilloscope.draw.elements.diode.Diode;
-import de.neemann.oscilloscope.draw.elements.generator.Generator;
-import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
+import de.neemann.oscilloscope.draw.graphics.GraphicMinMax;
+import de.neemann.oscilloscope.exercises.DiodeExercise;
+import de.neemann.oscilloscope.exercises.Exercise;
+import de.neemann.oscilloscope.exercises.General;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 
 /**
  * The main frame.
  */
 public class Main extends JFrame {
+
+    private final ElementComponent elementComponent;
+    private final boolean preset;
+    private Container<?> mainContainer;
 
     /**
      * Creates a new main window.
@@ -24,60 +30,61 @@ public class Main extends JFrame {
      */
     public Main(boolean preset) {
         super("Oscilloscope");
+        this.preset = preset;
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        Oscilloscope oscilloscope = new Oscilloscope();
-        Generator gen1 = new Generator();
-        Generator gen2 = new Generator();
-
-        Container<?> main = new Container<>()
-                .add(oscilloscope.setPos(SIZE + SIZE2, SIZE + SIZE2))
-                .add(gen1.setPos(SIZE + SIZE2, SIZE * 31 + SIZE2))
-//                .add(gen2.setPos(SIZE * 32 + SIZE2, SIZE * 31 + SIZE2));
-                .add(new Diode().setPos(SIZE*32, SIZE*31+SIZE2));
-
-
-        ElementComponent el = new ElementComponent(main);
-        getContentPane().add(el);
-        oscilloscope.setElementComponent(el);
+        elementComponent = new ElementComponent();
+        getContentPane().add(elementComponent);
 
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                oscilloscope.close();
+                elementComponent.close();
             }
         });
 
-        pack();
-        setSize(SIZE * 61, SIZE * 45);
+        JMenuBar bar = new JMenuBar();
+
+        JMenu exercises = new JMenu("Exercises");
+        bar.add(exercises);
+        exercises.add(new JMenuItem(new ExerciseGenerator(new General())));
+        exercises.add(new JMenuItem(new ExerciseGenerator(new DiodeExercise())));
+
+        setJMenuBar(bar);
+
+        setExercise(new General());
+
         setLocationRelativeTo(null);
+    }
 
-        if (preset) {
-            oscilloscope.getHorizontal().getPosPoti().set(0.5);
-            oscilloscope.getCh1().getPosPoti().set(0.5);
-            oscilloscope.getCh1().getCouplingSwitch().set(2);
-            oscilloscope.getCh1().getAmplitudeSwitch().down(false);
-            oscilloscope.getCh2().getPosPoti().set(0.5);
-            oscilloscope.getCh2().getCouplingSwitch().set(2);
-            oscilloscope.getCh2().getAmplitudeSwitch().down(false);
-            oscilloscope.getPowerSwitch().set(1);
-            oscilloscope.getTrigger().getLevelPoti().set(0.5);
+    /**
+     * Stes the main container
+     *
+     * @param main the main container
+     */
+    public void setMain(Container<?> main) {
+        if (mainContainer != null)
+            mainContainer.close();
 
-            gen1.getPowerSwitch().set(1);
-            gen1.getAmplitude().set(0.1);
-            gen1.setFrequencySwitch().down(false);
-            gen1.setFrequencySwitch().down(false);
-            gen2.getPowerSwitch().set(1);
-            gen2.getAmplitude().set(0.1);
-            gen2.setFrequencySwitch().down(false);
-            gen2.setFrequencySwitch().down(false);
-            gen2.setFrequencyFinePoti().set(Math.log(3) / Math.log(10));
+        mainContainer = main;
 
-            el.add(new Wire(gen1.getOutput(), oscilloscope.getCh1().getInput()));
-            el.add(new Wire(gen2.getOutput(), oscilloscope.getCh2().getInput()));
+        GraphicMinMax minMax = new GraphicMinMax();
+        mainContainer.draw(minMax);
 
-        }
+        elementComponent.setPreferredSize(new Dimension(minMax.getMax().x + SIZE2, minMax.getMax().y + SIZE2));
+        elementComponent.setContainer(mainContainer);
+        pack();
+    }
 
+    /**
+     * Sets an exercise
+     *
+     * @param exercise the exercise to use
+     */
+    public void setExercise(Exercise exercise) {
+        setMain(exercise.create());
+        if (preset)
+            exercise.setup(elementComponent);
     }
 
     /**
@@ -87,6 +94,20 @@ public class Main extends JFrame {
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main(args.length > 0).setVisible(true));
+    }
+
+    private final class ExerciseGenerator extends AbstractAction {
+        private final Exercise exercise;
+
+        private ExerciseGenerator(Exercise exercise) {
+            super(exercise.toString());
+            this.exercise = exercise;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            setExercise(exercise);
+        }
     }
 
 }

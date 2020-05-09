@@ -114,4 +114,20 @@ public abstract class Element<T extends Element<?>> {
     void setParent(Container<?> parent) {
         this.parent = parent;
     }
+
+    /**
+     * Closes down the element.
+     * Stops timers, thread and so on
+     */
+    public void close() {
+    }
+
+    /**
+     * Implements the visitor pattern
+     *
+     * @param visitor the visitor
+     */
+    public void traverse(Visitor visitor) {
+        visitor.visit(this);
+    }
 }

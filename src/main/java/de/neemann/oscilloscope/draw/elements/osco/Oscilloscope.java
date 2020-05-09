@@ -16,7 +16,7 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 /**
  * The oscilloscope
  */
-public class Oscilloscope extends Container<Oscilloscope> {
+public class Oscilloscope extends Container<Oscilloscope> implements ElementComponent.NeedsComponent {
     /**
      * The screen update period
      */
@@ -243,18 +243,11 @@ public class Oscilloscope extends Container<Oscilloscope> {
     /**
      * Closes the oscilloscope. Stops all timers.
      */
+    @Override
     public void close() {
+        super.close();
         if (timer != null)
             timer.stop();
-    }
-
-    /**
-     * Sets the component containing this oscilloscope
-     *
-     * @param elementComponent the component
-     */
-    public void setElementComponent(ElementComponent elementComponent) {
-        this.elementComponent = elementComponent;
     }
 
     /**
@@ -283,5 +276,10 @@ public class Oscilloscope extends Container<Oscilloscope> {
      */
     public PeriodicSignal getTriggerIn() {
         return triggerIn;
+    }
+
+    @Override
+    public void setComponent(ElementComponent elementComponent) {
+        this.elementComponent=elementComponent;
     }
 }

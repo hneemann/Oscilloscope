@@ -1,9 +1,7 @@
 package de.neemann.oscilloscope.gui;
 
-import de.neemann.oscilloscope.draw.elements.BNCInput;
-import de.neemann.oscilloscope.draw.elements.BNCOutput;
+import de.neemann.oscilloscope.draw.elements.*;
 import de.neemann.oscilloscope.draw.elements.Container;
-import de.neemann.oscilloscope.draw.elements.Element;
 import de.neemann.oscilloscope.draw.graphics.Polygon;
 import de.neemann.oscilloscope.draw.graphics.*;
 import de.neemann.oscilloscope.signal.Model;
@@ -18,8 +16,8 @@ import java.util.ArrayList;
  * Component to render the GUI elements
  */
 public class ElementComponent extends JComponent {
-    private final Container<?> container;
     private final ArrayList<Wire> wires;
+    private Container<?> container;
     private Wire pendingWire;
     private BufferedImage buffer;
     private Grid grid;
@@ -27,20 +25,19 @@ public class ElementComponent extends JComponent {
 
     /**
      * Creates a new component to render the GUI elements
-     *
-     * @param container the container
      */
-    public ElementComponent(Container<?> container) {
-        this.container = container;
+    public ElementComponent() {
         wires = new ArrayList<>();
         addMouseWheelListener(mouseWheelEvent -> {
-            Element<?> el = container.getElementAt(new Vector(mouseWheelEvent.getX(), mouseWheelEvent.getY()));
-            if (el != null) {
-                boolean ctrl = mouseWheelEvent.isControlDown();
-                int d = mouseWheelEvent.getWheelRotation();
-                if (d < 0) el.up(ctrl);
-                else if (d > 0) el.down(ctrl);
-                invalidateGraphic();
+            if (container != null) {
+                Element<?> el = container.getElementAt(new Vector(mouseWheelEvent.getX(), mouseWheelEvent.getY()));
+                if (el != null) {
+                    boolean ctrl = mouseWheelEvent.isControlDown();
+                    int d = mouseWheelEvent.getWheelRotation();
+                    if (d < 0) el.up(ctrl);
+                    else if (d > 0) el.down(ctrl);
+                    invalidateGraphic();
+                }
             }
         });
         MyMouseListener l = new MyMouseListener();
@@ -49,7 +46,7 @@ public class ElementComponent extends JComponent {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                buffer = null;
+                invalidateGraphic();
             }
         });
     }
@@ -64,7 +61,8 @@ public class ElementComponent extends JComponent {
         g2d.fillRect(0, 0, getWidth(), getHeight());
         GraphicSwing gr = new GraphicSwing(g2d);
         grid = new Grid(gr);
-        container.draw(grid);
+        if (container != null)
+            container.draw(grid);
 
         for (Wire w : wires)
             w.drawTo(g2d);
@@ -127,6 +125,40 @@ public class ElementComponent extends JComponent {
             g.setClip(0, 0, getWidth(), getHeight());
             pendingWire.drawTo((Graphics2D) g);
         }
+    }
+
+    /**
+     * closes the contained container
+     */
+    public void close() {
+        if (container != null)
+            container.close();
+    }
+
+    /**
+     * Implements the visitor pattern
+     *
+     * @param visitor the visitor
+     */
+    public void traverse(Visitor visitor) {
+        if (container != null)
+            container.traverse(visitor);
+    }
+
+    /**
+     * Sets the container. Maybe null
+     *
+     * @param mainContainer the container, maybe null
+     */
+    public void setContainer(Container<?> mainContainer) {
+        this.container = mainContainer;
+        wires.clear();
+        mainContainer.traverse(element -> {
+            if (element instanceof NeedsComponent)
+                ((NeedsComponent) element).setComponent(ElementComponent.this);
+        });
+        model = null;
+        invalidateGraphic();
     }
 
     private static final class GridLine {
@@ -202,42 +234,49 @@ public class ElementComponent extends JComponent {
         }
     }
 
+    private void invalidateGraphic() {
+        buffer = null;
+        repaint();
+    }
+
     private class MyMouseListener implements MouseListener, MouseMotionListener {
         private BNCInput pendingInput;
         private BNCOutput pendingOutput;
 
         @Override
         public void mouseClicked(MouseEvent mouseEvent) {
-            Element<?> el = container.getElementAt(new Vector(mouseEvent.getX(), mouseEvent.getY()));
-            if (el != null) {
-                if (el instanceof BNCOutput) {
-                    pendingOutput = (BNCOutput) el;
-                    pendingInput = new BNCInput("").setPos(mouseEvent.getX(), mouseEvent.getY());
-                    pendingWire = new Wire(pendingOutput, pendingInput);
-                    repaint();
-                } else if (el instanceof BNCInput) {
-                    BNCInput bncInput = (BNCInput) el;
-                    if (pendingWire != null) {
-                        pendingWire = null;
-                        if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
-                            for (Wire w : wires) {
-                                if (w.getInput() == bncInput)
-                                    return;
+            if (container != null) {
+                Element<?> el = container.getElementAt(new Vector(mouseEvent.getX(), mouseEvent.getY()));
+                if (el != null) {
+                    if (el instanceof BNCOutput) {
+                        pendingOutput = (BNCOutput) el;
+                        pendingInput = new BNCInput("").setPos(mouseEvent.getX(), mouseEvent.getY());
+                        pendingWire = new Wire(pendingOutput, pendingInput);
+                        repaint();
+                    } else if (el instanceof BNCInput) {
+                        BNCInput bncInput = (BNCInput) el;
+                        if (pendingWire != null) {
+                            pendingWire = null;
+                            if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
+                                for (Wire w : wires) {
+                                    if (w.getInput() == bncInput)
+                                        return;
+                                }
+                                add(new Wire(pendingOutput, bncInput));
                             }
-                            add(new Wire(pendingOutput, bncInput));
+                        } else {
+                            for (Wire w : wires) {
+                                if (w.getInput() == bncInput) {
+                                    remove(w);
+                                    return;
+                                }
+                            }
                         }
                     } else {
-                        for (Wire w : wires) {
-                            if (w.getInput() == bncInput) {
-                                remove(w);
-                                return;
-                            }
-                        }
+                        el.clicked(mouseEvent.getButton(), mouseEvent.isControlDown());
+                        pendingWire = null;
+                        invalidateGraphic();
                     }
-                } else {
-                    el.clicked(mouseEvent.getButton(), mouseEvent.isControlDown());
-                    pendingWire = null;
-                    invalidateGraphic();
                 }
             }
         }
@@ -276,8 +315,15 @@ public class ElementComponent extends JComponent {
         }
     }
 
-    private void invalidateGraphic() {
-        buffer = null;
-        repaint();
+    /**
+     * implemented by elements that needs access to the {@link ElementComponent}
+     */
+    public interface NeedsComponent {
+        /**
+         * Calles if the container is added to this component.
+         *
+         * @param elementComponent this component
+         */
+        void setComponent(ElementComponent elementComponent);
     }
 }
