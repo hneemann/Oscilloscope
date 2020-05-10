@@ -56,7 +56,8 @@ public class Generator extends Container<Generator> {
 
         freq = new SelectorKnob<Magnify>("Freq/Hz", 30).addAll(createFrequencies());
         freqFine = new Poti("Freq Fine", 30);
-        Observer freqChanged = () -> frequency = freq.getSelected().getMag() * Math.exp(freqFine.get() * Math.log(10));
+        // the generator frequency is slightly of, to emulate non synchronized clocks in osco and generator.
+        Observer freqChanged = () -> frequency = freq.getSelected().getMag() * 1.001 * Math.exp(freqFine.get() * Math.log(10));
         freq.addObserver(freqChanged);
         freqFine.addObserver(freqChanged);
         freq.addObserver(signalOut);

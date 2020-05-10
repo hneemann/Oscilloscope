@@ -8,12 +8,16 @@ import java.awt.image.ByteLookupTable;
 import java.awt.image.LookupOp;
 import java.awt.image.LookupTable;
 
-import static de.neemann.oscilloscope.signal.ModelTimeCalc.MIN_TRACE_BRIGHT;
 
 /**
  * The scope screen buffer
  */
 public class ScreenBuffer {
+    /**
+     * minimal trace brightness
+     */
+    public static final int MIN_TRACE_BRIGHT = 30;
+
     private static final LookupTable LOOKUP;
 
     static {
@@ -60,23 +64,48 @@ public class ScreenBuffer {
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setColor(Style.SCREEN.getColor());
-        g2d.fillRect(0, 0, width, height);
+        clear();
+    }
+
+    /**
+     * @return the width of the screen
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * @return the height of the screen
+     */
+    public int getHeight() {
+        return height;
     }
 
     /**
      * Makes the complete screen darker
      */
-    public void darken() {
+    public synchronized void darken() {
         LookupOp op = new LookupOp(LOOKUP, null);
         op.filter(buffer, buffer);
     }
 
     /**
-     * @return the image buffer
+     * Clears the screen
      */
-    public BufferedImage getBuffer() {
-        return buffer;
+    public synchronized void clear() {
+        g2d.setColor(Style.SCREEN.getColor());
+        g2d.fillRect(0, 0, width, height);
+    }
+
+    /**
+     * Draws the buffer to the given {@link Graphics2D} instance.
+     *
+     * @param gr the {@link Graphics2D} instance to draw to
+     * @param x  x-pos
+     * @param y  y-pos
+     */
+    public synchronized void drawBufferTo(Graphics2D gr, int x, int y) {
+        gr.drawImage(buffer, x, y, null);
     }
 
     /**
@@ -87,7 +116,7 @@ public class ScreenBuffer {
      * @param x1 x1
      * @param y1 y1
      */
-    public void drawTrace(int x0, int y0, int x1, int y1) {
+    public synchronized void drawTrace(int x0, int y0, int x1, int y1) {
         if (isOnScreen(x0, y0) || isOnScreen(x1, y1)) {
             int distOnScreenSqr = sqr(x0 - x1) + sqr(y0 - y1);
             g2d.setColor(SPEEDCOLOR[Math.min(distOnScreenSqr, SPEEDCOLORS - 1)]);
@@ -103,7 +132,7 @@ public class ScreenBuffer {
      * @param x1 x1
      * @param y1 y1
      */
-    public void drawBrightTrace(int x0, int y0, int x1, int y1) {
+    public synchronized void drawBrightTrace(int x0, int y0, int x1, int y1) {
         if (isOnScreen(x0, y0) || isOnScreen(x1, y1)) {
             g2d.setColor(Color.GREEN);
             g2d.drawLine(x0, y0, x1, y1);

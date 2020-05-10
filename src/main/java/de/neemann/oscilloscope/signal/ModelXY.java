@@ -2,8 +2,6 @@ package de.neemann.oscilloscope.signal;
 
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 
-import java.awt.*;
-
 /**
  * The simulation used for x-y mode
  */
@@ -42,16 +40,11 @@ public class ModelXY implements Model {
     }
 
     @Override
-    public void drawTo(Graphics g, int xmin, int xmax, int ymin, int ymax) {
+    public void updateBuffer(ScreenBuffer screenBuffer) {
         double time = getTimeInMillis() / 1000.0;
 
-        int width = xmax - xmin;
-        int height = ymax - ymin;
-
-        if (buffer == null)
-            buffer = new ScreenBuffer(width, height);
-
-        buffer.darken();
+        int width = screenBuffer.getWidth();
+        int height = screenBuffer.getHeight();
 
         double period = Math.max(xFrontend.period(), yFrontend.period());
 
@@ -62,15 +55,14 @@ public class ModelXY implements Model {
         if (n > MAX_LOOP)
             timeDelta = (time - lastTime) / MAX_LOOP;
 
+        screenBuffer.darken();
         while (lastTime < time) {
             lastTime += timeDelta;
             int xPos = xScreen.v(xFrontend.v(lastTime), width);
             int yPos = yScreen.v(yFrontend.v(lastTime), height);
-            buffer.drawTrace(lastxPos, lastyPos, xPos, yPos);
+            screenBuffer.drawTrace(lastxPos, lastyPos, xPos, yPos);
             lastxPos = xPos;
             lastyPos = yPos;
         }
-
-        g.drawImage(buffer.getBuffer(), xmin, ymin, null);
     }
 }

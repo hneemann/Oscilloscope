@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 
 import java.awt.*;
 
-import static de.neemann.oscilloscope.signal.ModelTimeCalc.MIN_TRACE_BRIGHT;
+import static de.neemann.oscilloscope.signal.ScreenBuffer.MIN_TRACE_BRIGHT;
 
 public class ScreenBufferTest extends TestCase {
 

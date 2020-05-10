@@ -1,14 +1,15 @@
 package de.neemann.oscilloscope.draw.elements.osco;
 
-import de.neemann.oscilloscope.draw.elements.*;
 import de.neemann.oscilloscope.draw.elements.Container;
+import de.neemann.oscilloscope.draw.elements.*;
 import de.neemann.oscilloscope.gui.ElementComponent;
 import de.neemann.oscilloscope.signal.*;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
@@ -31,6 +32,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
 
     private final Switch<Mode> mode;
     private final PowerSwitch power;
+    private final Screen screen;
 
     private PeriodicSignal signal1 = PeriodicSignal.GND;
     private PeriodicSignal signal2 = PeriodicSignal.GND;
@@ -38,8 +40,10 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
     private boolean isInXY;
     private boolean useRT;
     private Model model;
-    private Timer timer;
     private ElementComponent elementComponent;
+    private final ScheduledThreadPoolExecutor executor;
+    private ScheduledFuture<?> timer;
+
 
     private static ArrayList<TimeBase> createTimes() {
         ArrayList<TimeBase> t = new ArrayList<>();
@@ -126,27 +130,35 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
         add(triggerContainer.setPos(SIZE * 48, SIZE));
         add(horizontalContainer.setPos(SIZE * 29, SIZE));
         add(verticalContainer.setPos(SIZE * 29, SIZE * 13)).setPos(SIZE, SIZE);
-        add(new Container<>(SIZE * 25, SIZE * 20).add(new Screen(SIZE2)).setPos(SIZE, SIZE));
+        screen = new Screen(SIZE2);
+        add(new Container<>(SIZE * 25, SIZE * 20).add(screen).setPos(SIZE, SIZE));
 
         power = new PowerSwitch();
         add(power.setPos(SIZE * 2, SIZE * 24));
 
+        executor = new ScheduledThreadPoolExecutor(1);
+
         power.addObserver(() -> {
             if (power.is(OffOn.On)) {
                 createNewModel();
-                timer = new Timer(TIME_DELTA_MS, new AbstractAction() {
+
+                timer = executor.scheduleAtFixedRate(new Runnable() {
                     @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
+                    public void run() {
+                        if (model != null) {
+                            long t = System.currentTimeMillis();
+                            model.updateBuffer(screen.getScreenBuffer());
+                            t = System.currentTimeMillis() - t;
+                            if (t > TIME_DELTA_MS)
+                                System.out.println(t);
+                        }
                         elementComponent.repaint();
                     }
-                });
-                timer.start();
+                }, TIME_DELTA_MS, TIME_DELTA_MS, TimeUnit.MILLISECONDS);
                 System.out.println("timer started");
             } else {
                 model = null;
-                elementComponent.setModel(null);
-                if (timer != null)
-                    timer.stop();
+                stopTimer();
             }
 
         });
@@ -164,6 +176,14 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
         });
     }
 
+    private void stopTimer() {
+        if (timer != null) {
+            timer.cancel(false);
+            timer = null;
+            System.out.println("timer stopped");
+        }
+    }
+
     private void createNewModel() {
         if (isInXY)
             model = new ModelXY(this);
@@ -171,7 +191,6 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
             model = new ModelTimeRT(Oscilloscope.this);
         else
             model = new ModelTimeCalc(Oscilloscope.this);
-        elementComponent.setModel(model);
     }
 
     /**
@@ -246,8 +265,8 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
     @Override
     public void close() {
         super.close();
-        if (timer != null)
-            timer.stop();
+        stopTimer();
+        executor.shutdown();
     }
 
     /**
@@ -280,6 +299,6 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
 
     @Override
     public void setComponent(ElementComponent elementComponent) {
-        this.elementComponent=elementComponent;
+        this.elementComponent = elementComponent;
     }
 }

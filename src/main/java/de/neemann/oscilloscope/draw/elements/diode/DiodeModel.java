@@ -19,6 +19,9 @@ public class DiodeModel implements Observer {
     private final PeriodicSignalInterpolate resistorVoltageSignal;
     private PeriodicSignal input = PeriodicSignal.GND;
 
+    /**
+     * Creates a new diode model
+     */
     public DiodeModel() {
         diodeVoltageSignal = new PeriodicSignalInterpolate();
         resistorVoltageSignal = new PeriodicSignalInterpolate();

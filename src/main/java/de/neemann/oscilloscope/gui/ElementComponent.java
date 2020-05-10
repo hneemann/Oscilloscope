@@ -1,10 +1,10 @@
 package de.neemann.oscilloscope.gui;
 
-import de.neemann.oscilloscope.draw.elements.*;
 import de.neemann.oscilloscope.draw.elements.Container;
-import de.neemann.oscilloscope.draw.graphics.Polygon;
-import de.neemann.oscilloscope.draw.graphics.*;
-import de.neemann.oscilloscope.signal.Model;
+import de.neemann.oscilloscope.draw.elements.*;
+import de.neemann.oscilloscope.draw.graphics.GraphicSwing;
+import de.neemann.oscilloscope.draw.graphics.Vector;
+import de.neemann.oscilloscope.exercises.Exercise;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,21 +13,27 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
- * Component to render the GUI elements
+ * Component to render the GUI elements.
+ * All the switches knobs and so on are drawn to an image to speed up the drawing process.
+ * So if a repaint is required this image is transferred to the screen buffer instead
+ * of drawing all the gui elements over and over again. This image is updated only if a
+ * gui element has changed.
+ * The trace is then drawn to the screen buffer after this image is copied. This is
+ * done by by implementing the {@link PostImageDraw} interface.
  */
 public class ElementComponent extends JComponent {
     private final ArrayList<Wire> wires;
+    private final ArrayList<PostImageDraw> postImageDraws;
     private Container<?> container;
     private Wire pendingWire;
     private BufferedImage buffer;
-    private Grid grid;
-    private Model model;
 
     /**
      * Creates a new component to render the GUI elements
      */
     public ElementComponent() {
         wires = new ArrayList<>();
+        postImageDraws = new ArrayList<>();
         addMouseWheelListener(mouseWheelEvent -> {
             if (container != null) {
                 Element<?> el = container.getElementAt(new Vector(mouseWheelEvent.getX(), mouseWheelEvent.getY()));
@@ -54,25 +60,14 @@ public class ElementComponent extends JComponent {
     /**
      * Creates a screen shot
      *
-     * @return the scrennshot or null if operation is not possible.
+     * @return the screen shot or null if operation is not possible.
      */
     public BufferedImage createScreenShot() {
-        if (model == null || grid == null)
+        Screen screen = Exercise.get(this, e -> e instanceof Screen);
+        if (screen != null)
+            return screen.createScreenShot();
+        else
             return null;
-
-        int width = grid.xmax - grid.xmin + 1;
-        int height = grid.ymax - grid.ymin + 1;
-        BufferedImage buffer = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(width, height);
-        Graphics2D g2d = buffer.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setColor(Style.SCREEN.getColor());
-        g2d.fillRect(0, 0, width, height);
-        model.drawTo(g2d, 0, width, 0, height);
-        g2d.translate(-grid.xmin, -grid.ymin);
-        grid.drawTo(g2d);
-        return buffer;
     }
 
     private BufferedImage createBuffer() {
@@ -83,24 +78,13 @@ public class ElementComponent extends JComponent {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.setColor(Color.LIGHT_GRAY);
         g2d.fillRect(0, 0, getWidth(), getHeight());
-        GraphicSwing gr = new GraphicSwing(g2d);
-        grid = new Grid(gr);
         if (container != null)
-            container.draw(grid);
+            container.draw(new GraphicSwing(g2d));
 
         for (Wire w : wires)
             w.drawTo(g2d);
 
         return buffer;
-    }
-
-    /**
-     * Sets the mode to use to generate the trace
-     *
-     * @param model the model
-     */
-    public void setModel(Model model) {
-        this.model = model;
     }
 
     /**
@@ -117,17 +101,24 @@ public class ElementComponent extends JComponent {
     }
 
     /**
+     * Adds a post {@link PostImageDraw} instance to this ElementComponent
+     *
+     * @param postImageDraw the instance to draw after the image is drawn
+     */
+    public void add(PostImageDraw postImageDraw) {
+        postImageDraws.add(postImageDraw);
+    }
+
+    /**
      * Removes a wire.
      *
      * @param w the wire
-     * @return this for chained calls
      */
-    public ElementComponent remove(Wire w) {
+    public void remove(Wire w) {
         boolean ok = wires.remove(w);
         if (ok)
             w.disconnect();
         invalidateGraphic();
-        return this;
     }
 
     @Override
@@ -137,13 +128,8 @@ public class ElementComponent extends JComponent {
 
         g.drawImage(buffer, 0, 0, null);
 
-        g.setColor(Color.GREEN);
-        if (model != null) {
-            g.setClip(grid.xmin, grid.ymin, grid.xmax - grid.xmin, grid.ymax - grid.ymin);
-            model.drawTo(g, grid.xmin, grid.xmax, grid.ymin, grid.ymax);
-        }
-
-        grid.drawTo(g);
+        for (PostImageDraw pid : postImageDraws)
+            pid.postImageDraw((Graphics2D) g);
 
         if (pendingWire != null) {
             g.setClip(0, 0, getWidth(), getHeight());
@@ -181,81 +167,7 @@ public class ElementComponent extends JComponent {
             if (element instanceof NeedsComponent)
                 ((NeedsComponent) element).setComponent(ElementComponent.this);
         });
-        model = null;
         invalidateGraphic();
-    }
-
-    private static final class GridLine {
-        private final VectorInterface p1;
-        private final VectorInterface p2;
-
-        private GridLine(VectorInterface p1, VectorInterface p2) {
-            this.p1 = p1;
-            this.p2 = p2;
-        }
-    }
-
-    private static final class Grid extends Graphic {
-        private final GraphicSwing parent;
-        private final ArrayList<GridLine> grid;
-        private boolean first = true;
-        private int xmin;
-        private int xmax;
-        private int ymin;
-        private int ymax;
-
-        private Grid(GraphicSwing parent) {
-            this.parent = parent;
-            this.grid = new ArrayList<>();
-        }
-
-        @Override
-        public void drawLine(VectorInterface p1, VectorInterface p2, Style style) {
-            if (style == Style.GRID) {
-                grid.add(new GridLine(p1, p2));
-                check(p1);
-                check(p2);
-            } else
-                parent.drawLine(p1, p2, style);
-        }
-
-        private void check(VectorInterface p) {
-            int x = p.getX();
-            int y = p.getY();
-            if (first) {
-                xmin = x;
-                xmax = x;
-                ymin = y;
-                ymax = y;
-                first = false;
-            } else {
-                if (x < xmin) xmin = x;
-                if (x > xmax) xmax = x;
-                if (y < ymin) ymin = y;
-                if (y > ymax) ymax = y;
-            }
-        }
-
-        @Override
-        public void drawPolygon(Polygon p, Style style) {
-            parent.drawPolygon(p, style);
-        }
-
-        @Override
-        public void drawCircle(VectorInterface p1, VectorInterface p2, Style style) {
-            parent.drawCircle(p1, p2, style);
-        }
-
-        @Override
-        public void drawText(VectorInterface p1, VectorInterface p2, VectorInterface p3, String text, Orientation orientation, Style style) {
-            parent.drawText(p1, p2, p3, text, orientation, style);
-        }
-
-        private void drawTo(Graphics g) {
-            g.setColor(Style.GRID.getColor());
-            for (GridLine gl : grid)
-                g.drawLine(gl.p1.getX(), gl.p1.getY(), gl.p2.getX(), gl.p2.getY());
-        }
     }
 
     private void invalidateGraphic() {
@@ -340,11 +252,24 @@ public class ElementComponent extends JComponent {
     }
 
     /**
+     * Interface implemented by elements that require a post screen buffer output.
+     * Up to now this is only the {@link Screen}
+     */
+    public interface PostImageDraw {
+        /**
+         * Called after the base image is drawn to the component.
+         *
+         * @param graphics2D the graphics object to draw on
+         */
+        void postImageDraw(Graphics2D graphics2D);
+    }
+
+    /**
      * implemented by elements that needs access to the {@link ElementComponent}
      */
     public interface NeedsComponent {
         /**
-         * Calles if the container is added to this component.
+         * Called if the container is added to this component.
          *
          * @param elementComponent this component
          */

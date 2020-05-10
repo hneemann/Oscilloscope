@@ -1,11 +1,20 @@
 package de.neemann.oscilloscope.signal;
 
+/**
+ * Implements a table based periodic signal.
+ */
 public class PeriodicSignalInterpolate extends PeriodicSignal {
 
     private double period;
     private double[] values;
     private double mean;
 
+    /**
+     * Sets the values used for interpolation
+     *
+     * @param period the period
+     * @param values the values
+     */
     public void setValues(double period, double[] values) {
         this.period = period;
         this.values = values;

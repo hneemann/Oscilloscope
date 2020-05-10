@@ -43,7 +43,8 @@ public class Solver {
      * @return the solving value
      */
     public double newton(double x, double deltaMin) {
-        while (true) {
+        int n = 0;
+        while (n++ < 20) {
             f.setX(x);
             double delta = f.f() / f.deriv();
             x = x - delta;
