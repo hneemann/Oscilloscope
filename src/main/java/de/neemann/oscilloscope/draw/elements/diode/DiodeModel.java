@@ -2,29 +2,30 @@ package de.neemann.oscilloscope.draw.elements.diode;
 
 import de.neemann.oscilloscope.draw.elements.diode.Solver.FunctionDeriv;
 import de.neemann.oscilloscope.gui.Observer;
+import de.neemann.oscilloscope.signal.Interpolate;
+import de.neemann.oscilloscope.signal.InterpolateCubic;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
-import de.neemann.oscilloscope.signal.PeriodicSignalInterpolate;
 
 /**
  * The model of the diode
  */
 public class DiodeModel implements Observer {
 
-    private static final int POINTS = 100;
+    private static final int POINTS = 200;
     private static final double R = 1000;
     private static final double UT = 0.025;
     private static final double IS = 1e-10;
     private static final double N = 1.5;
-    private final PeriodicSignalInterpolate diodeVoltageSignal;
-    private final PeriodicSignalInterpolate resistorVoltageSignal;
+    private final Interpolate diodeVoltageSignal;
+    private final Interpolate resistorVoltageSignal;
     private PeriodicSignal input = PeriodicSignal.GND;
 
     /**
      * Creates a new diode model
      */
     public DiodeModel() {
-        diodeVoltageSignal = new PeriodicSignalInterpolate();
-        resistorVoltageSignal = new PeriodicSignalInterpolate();
+        diodeVoltageSignal = new InterpolateCubic();
+        resistorVoltageSignal = new InterpolateCubic();
     }
 
     /**

@@ -51,6 +51,8 @@ public class Solver {
             if (Math.abs(delta) < deltaMin)
                 break;
         }
+        if (n==20)
+            System.out.println("newton does not converge");
         return x;
     }
 
