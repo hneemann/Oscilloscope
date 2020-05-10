@@ -16,6 +16,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.prefs.Preferences;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 
@@ -23,10 +24,11 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  * The main frame.
  */
 public class Main extends JFrame {
-
+    private static final Preferences PREFS = Preferences.userRoot().node("oscilloscope");
     private final ElementComponent elementComponent;
     private final boolean preset;
     private Container<?> mainContainer;
+    private File lastExportFile;
 
     /**
      * Creates a new main window.
@@ -63,12 +65,14 @@ public class Main extends JFrame {
                 BufferedImage ss = elementComponent.createScreenShot();
                 if (ss != null) {
                     JFileChooser fc = new JFileChooser();
+                    fc.setCurrentDirectory(getUserFolder());
                     fc.addChoosableFileFilter(new FileNameExtensionFilter("Portable Network Graphic", "png"));
                     if (fc.showSaveDialog(Main.this) == JFileChooser.APPROVE_OPTION) {
                         File f = fc.getSelectedFile();
                         if (!f.getName().endsWith(".png"))
                             f = new File(f.getParent(), f.getName() + ".png");
                         try {
+                            setUserFolder(f.getParent());
                             ImageIO.write(ss, "png", f);
                         } catch (IOException e) {
                             showError(e);
@@ -83,6 +87,17 @@ public class Main extends JFrame {
         setExercise(new General());
 
         setLocationRelativeTo(null);
+    }
+
+    private File getUserFolder() {
+        String f = PREFS.get("folder", null);
+        if (f == null)
+            return null;
+        return new File(f);
+    }
+
+    private void setUserFolder(String folder) {
+        PREFS.put("folder", folder);
     }
 
     private void showError(Exception e) {

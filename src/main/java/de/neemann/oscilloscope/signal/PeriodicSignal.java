@@ -3,12 +3,12 @@ package de.neemann.oscilloscope.signal;
 /**
  * Used to define a periodic signal.
  */
-public interface PeriodicSignal extends Signal {
+public abstract class PeriodicSignal extends Signal {
 
     /**
      * A simple GND signal
      */
-    PeriodicSignal GND = new PeriodicSignal() {
+    public static final PeriodicSignal GND = new PeriodicSignal() {
         @Override
         public double period() {
             return 1;
@@ -23,12 +23,12 @@ public interface PeriodicSignal extends Signal {
     /**
      * @return the period in seconds
      */
-    double period();
+    public abstract double period();
 
     /**
      * @return the mean value. Used to enable AC coupling
      */
-    default double mean() {
+    public double mean() {
         return 0;
     }
 }

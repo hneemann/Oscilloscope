@@ -1,21 +1,28 @@
 package de.neemann.oscilloscope.draw.elements.diode;
 
 import de.neemann.oscilloscope.draw.elements.diode.Solver.FunctionDeriv;
+import de.neemann.oscilloscope.gui.Observer;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
-import de.neemann.oscilloscope.signal.PeriodicSignalMean;
+import de.neemann.oscilloscope.signal.PeriodicSignalInterpolate;
 
 /**
  * The model of the diode
  */
-public class DiodeModel {
+public class DiodeModel implements Observer {
 
-    private PeriodicSignal input = PeriodicSignal.GND;
-
+    private static final int POINTS = 100;
     private static final double R = 1000;
     private static final double UT = 0.025;
     private static final double IS = 1e-10;
     private static final double N = 1.5;
-    private double lastTime = -Double.MAX_VALUE;
+    private final PeriodicSignalInterpolate diodeVoltageSignal;
+    private final PeriodicSignalInterpolate resistorVoltageSignal;
+    private PeriodicSignal input = PeriodicSignal.GND;
+
+    public DiodeModel() {
+        diodeVoltageSignal = new PeriodicSignalInterpolate();
+        resistorVoltageSignal = new PeriodicSignalInterpolate();
+    }
 
     /**
      * Sets the input signal
@@ -23,39 +30,56 @@ public class DiodeModel {
      * @param signal the input signal
      */
     public void setInput(PeriodicSignal signal) {
+        if (input != null)
+            input.removeObserver(this);
+
         input = signal;
+        if (input == null)
+            input = PeriodicSignal.GND;
+        else
+            input.addObserver(this);
+
+        inputSignalHasChanged();
     }
 
     /**
      * @return the signal describing the diodes voltage
      */
     public PeriodicSignal getVoltageDiode() {
-        return new PeriodicSignalMean(new Ud());
+        return diodeVoltageSignal;
     }
 
     /**
      * @return the signal describing the resistance voltage
      */
     public PeriodicSignal getVoltageResistor() {
-        return new PeriodicSignalMean(new Ur());
+        return resistorVoltageSignal;
     }
 
-    private double iGes;
-    private double uD;
+    @Override
+    public void hasChanged() {
+        inputSignalHasChanged();
+    }
 
-    private void update(double t) {
-        if (t != lastTime) {
-            double uGes = input.v(t);
+    private void inputSignalHasChanged() {
+        System.out.println("recalculate diode");
+        double[] diodeVoltage = new double[POINTS];
+        double[] resistorVoltage = new double[POINTS];
+        double period = input.period();
+        for (int i = 0; i < POINTS; i++) {
+            double uGes = input.v(period * i / POINTS);
             if (uGes < 0) {
-                iGes = 0;
-                uD = uGes;
+                diodeVoltage[i] = uGes;
+                resistorVoltage[i] = 0;
             } else {
                 Solver s = new Solver(new DiodeFunc(uGes));
-                uD = s.newton(0.6, 1e-4);
-                iGes = (uGes - uD) / R;
+                double uD = s.newton(0.6, 1e-4);
+                diodeVoltage[i] = uD;
+                resistorVoltage[i] = uD - uGes;
             }
-            lastTime = t;
         }
+        diodeVoltageSignal.setValues(period, diodeVoltage);
+        resistorVoltageSignal.setValues(period, resistorVoltage);
     }
 
     private static final class DiodeFunc extends FunctionDeriv {
@@ -80,32 +104,6 @@ public class DiodeModel {
         @Override
         public double deriv() {
             return R * iGes / N / UT + 1;
-        }
-    }
-
-    private class Ud implements PeriodicSignal {
-        @Override
-        public double period() {
-            return input.period();
-        }
-
-        @Override
-        public double v(double t) {
-            update(t);
-            return uD;
-        }
-    }
-
-    private class Ur implements PeriodicSignal {
-        @Override
-        public double period() {
-            return input.period();
-        }
-
-        @Override
-        public double v(double t) {
-            update(t);
-            return -iGes * R;
         }
     }
 

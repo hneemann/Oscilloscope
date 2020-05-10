@@ -6,7 +6,7 @@ import de.neemann.oscilloscope.draw.elements.osco.Channel;
 /**
  * Used to describe the frontend
  */
-public class Frontend implements PeriodicSignal {
+public class Frontend extends PeriodicSignal {
     private final PeriodicSignal s;
     private final Channel channel;
 
@@ -18,6 +18,7 @@ public class Frontend implements PeriodicSignal {
      */
     public Frontend(PeriodicSignal s, Channel channel) {
         this.s = s;
+        s.addObserver(this);
         this.channel = channel;
     }
 
