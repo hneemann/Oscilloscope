@@ -105,6 +105,6 @@ public class Horizontal {
      * @return true if real time simulation is required
      */
     public boolean requiresRT() {
-        return timeBase.getSelected().getMag() > 0.011;
+        return timeBase.getSelected().getMag() > 0.009;
     }
 }

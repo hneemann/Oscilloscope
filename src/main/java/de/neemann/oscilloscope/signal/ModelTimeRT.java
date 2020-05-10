@@ -65,32 +65,30 @@ public class ModelTimeRT implements Model {
         }
 
         if (!isRunning) {
-            if (trigger.getTrigMode() == TrigMode.AUTO) {
+            Trigger.Trig trig = null;
+            switch (trigger.getTrigSource()) {
+                case Ch_1:
+                    trig = trigger.wasTrig(frontend1, timePerPixel, tLast, tNow);
+                    break;
+                case Ch_2:
+                    trig = trigger.wasTrig(frontend2, timePerPixel, tLast, tNow);
+                    break;
+                case EXT:
+                    trig = trigger.wasTrig(triggerIn, timePerPixel, tLast, tNow, triggerIn.mean());
+                    break;
+                case LINE:
+                    double nextTrig = ((long) (tLast / 0.02) + 1) * 0.02;
+                    trig = new Trigger.Trig(nextTrig, nextTrig < tNow);
+                    break;
+            }
+            if (trig != null && trig.isFound()) {
+                tStart = trig.getT();
+                tLast = tStart;
+                isRunning = true;
+            } else if (trigger.getTrigMode() == TrigMode.AUTO) {
                 tStart = tNow;
                 tLast = tNow;
                 isRunning = true;
-            } else {
-                Trigger.Trig trig = null;
-                switch (trigger.getTrigSource()) {
-                    case Ch_1:
-                        trig = trigger.wasTrig(frontend1, timePerPixel, tLast, tNow);
-                        break;
-                    case Ch_2:
-                        trig = trigger.wasTrig(frontend2, timePerPixel, tLast, tNow);
-                        break;
-                    case EXT:
-                        trig = trigger.wasTrig(triggerIn, timePerPixel, tLast, tNow, triggerIn.mean());
-                        break;
-                    case LINE:
-                        double nextTrig = ((long) (tLast / 0.02) + 1) * 0.02;
-                        trig = new Trigger.Trig(nextTrig, nextTrig < tNow);
-                        break;
-                }
-                if (trig != null && trig.isFound()) {
-                    tStart = trig.getT();
-                    tLast = tStart;
-                    isRunning = true;
-                }
             }
         }
 
