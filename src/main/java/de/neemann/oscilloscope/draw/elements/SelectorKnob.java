@@ -72,6 +72,13 @@ public class SelectorKnob<T> extends ObservableElement<SelectorKnob<T>> {
         return items.get(selectedPosition);
     }
 
+    /**
+     * @return the items
+     */
+    public ArrayList<T> getItems() {
+        return items;
+    }
+
     @Override
     public void drawToOrigin(Graphic gr) {
         gr.drawCircle(new Vector(-radius, -radius), new Vector(radius, radius), Style.NORMAL);
@@ -84,17 +91,25 @@ public class SelectorKnob<T> extends ObservableElement<SelectorKnob<T>> {
             gr.drawLine(p1, p2, Style.PRINT);
 
             VectorInterface p3 = getOffset(i, radius + Style.MAXLINETHICK * 4);
-            gr.drawText(p3, items.get(i).toString(), Orientation.from(p3), Style.PRINT);
+            gr.drawText(p3, getStringFor(items.get(i)), Orientation.from(p3), Style.PRINT);
         }
 
         VectorInterface p1 = getOffset(selectedPosition, r);
         VectorInterface p2 = getOffset(selectedPosition, r / 3);
         gr.drawLine(p1, p2, Style.NORMAL);
 
-        gr.drawText(new Vector(0, -radius - Style.MAXLINETHICK * 6 - SIZE2), name, Orientation.CENTERBOTTOM, Style.PRINT);
+        gr.drawText(new Vector(0, -radius - Style.MAXLINETHICK * 6 - SIZE2 - getNameOfs()), name, Orientation.CENTERBOTTOM, Style.PRINT);
     }
 
-    private VectorInterface getOffset(int n, int radius) {
+    int getNameOfs() {
+        return 0;
+    }
+
+    String getStringFor(T t) {
+        return t.toString();
+    }
+
+    VectorInterface getOffset(float n, int radius) {
         double a = 3 * Math.PI / 2 * n / (items.size() - 1) + Math.PI * 3 / 4;
         return new VectorFloat((float) (radius * Math.cos(a)), (float) (radius * Math.sin(a)));
     }

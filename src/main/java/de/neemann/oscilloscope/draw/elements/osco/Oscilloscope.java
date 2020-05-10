@@ -73,16 +73,16 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
 
     private static ArrayList<Magnify> createMagnify() {
         ArrayList<Magnify> t = new ArrayList<>();
-        t.add(new TimeBase(5));
-        t.add(new TimeBase(2));
-        t.add(new TimeBase(1));
-        t.add(new TimeBase(0.5));
-        t.add(new TimeBase(0.2));
-        t.add(new TimeBase(0.1));
-        t.add(new TimeBase(0.05));
-        t.add(new TimeBase(0.02));
-        t.add(new TimeBase(0.01));
-        t.add(new TimeBase(0.005));
+        t.add(new Magnify(5));
+        t.add(new Magnify(2));
+        t.add(new Magnify(1));
+        t.add(new Magnify(0.5));
+        t.add(new Magnify(0.2));
+        t.add(new Magnify(0.1));
+        t.add(new Magnify(0.05));
+        t.add(new Magnify(0.02));
+        t.add(new Magnify(0.01));
+        t.add(new Magnify(0.005));
         return t;
     }
 
@@ -105,7 +105,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                 .add(horizontal.setPos(new Poti("POS", 20).setPos(SIZE, SIZE * 2)))
                 .add(horizontal.setVar(new Poti("VAR", 20).setPos(SIZE * 4, SIZE * 2)))
                 .add(horizontal.setMag(new Switch<OffOn>("MAG10").add(OffOn.values()).setPos(SIZE * 2, SIZE * 7)))
-                .add(horizontal.setTimeBase(new SelectorKnob<TimeBase>("TIME/DIV", 80).addAll(TIMES).setPos(SIZE * 11, SIZE * 5 + SIZE2)));
+                .add(horizontal.setTimeBase(new SelectorKnobUnit<TimeBase>("TIME/DIV", 60, "s").addAll(TIMES).setPos(SIZE * 11, SIZE * 5 + SIZE2)));
 
         ch1 = new Channel();
         ch2 = new Channel();

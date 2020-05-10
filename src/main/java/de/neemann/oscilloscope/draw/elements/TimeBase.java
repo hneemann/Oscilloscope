@@ -14,9 +14,10 @@ public class TimeBase extends Magnify {
     }
 
     @Override
-    String toStr(double timeBase) {
-        if (timeBase == 0)
-            return "X-Y";
-        return super.toStr(timeBase);
+    void setupValue(double value) {
+        if (value == 0)
+            setString("X-Y");
+        else
+            super.setupValue(value);
     }
 }
