@@ -213,6 +213,11 @@ public class ElementComponent extends JComponent {
                         pendingWire = null;
                         invalidateGraphic();
                     }
+                } else {
+                    if (pendingWire != null) {
+                        pendingWire = null;
+                        invalidateGraphic();
+                    }
                 }
             }
         }
