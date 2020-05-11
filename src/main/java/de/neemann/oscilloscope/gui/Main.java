@@ -94,23 +94,24 @@ public class Main extends JFrame {
                 }
             }
         }));
-        view.add(new JMenuItem(new AbstractAction("Info") {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                Oscilloscope.setDebug();
-                ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-                long[] ids = bean.findMonitorDeadlockedThreads();
-                if (ids != null) {
-                    ThreadInfo[] threadInfo = bean.getThreadInfo(ids);
-                    for (ThreadInfo ti : threadInfo) {
-                        System.out.println(ti.getThreadName());
-                        for (StackTraceElement st : ti.getStackTrace())
-                            System.out.println(st);
-                    }
-                } else
-                    System.out.println("no deadlock");
-            }
-        }));
+        if (preset)
+            view.add(new JMenuItem(new AbstractAction("Info") {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    Oscilloscope.setDebug();
+                    ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+                    long[] ids = bean.findMonitorDeadlockedThreads();
+                    if (ids != null) {
+                        ThreadInfo[] threadInfo = bean.getThreadInfo(ids);
+                        for (ThreadInfo ti : threadInfo) {
+                            System.out.println(ti.getThreadName());
+                            for (StackTraceElement st : ti.getStackTrace())
+                                System.out.println(st);
+                        }
+                    } else
+                        System.out.println("no deadlock");
+                }
+            }));
         view.add(InfoDialog.getInstance().createMenuItem(this, MESSAGE));
 
         setJMenuBar(bar);
