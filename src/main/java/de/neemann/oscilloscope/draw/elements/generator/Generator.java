@@ -179,7 +179,7 @@ public class Generator extends Container<Generator> {
 
         @Override
         public SinParams getSinParams() {
-            if (form.getSelected() != Form.SINE)
+            if (form.getSelected() != Form.SINE || power.is(OffOn.Off))
                 return null;
             else
                 return new SinParams(amplitude.get() * MAX_AMPL, mean(), 2 * Math.PI * frequency, 2 * Math.PI * phase.get());
