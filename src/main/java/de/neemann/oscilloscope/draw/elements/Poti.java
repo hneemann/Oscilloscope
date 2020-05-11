@@ -57,6 +57,10 @@ public class Poti extends ObservableElement<Poti> implements PotiInterface {
         VectorInterface p2 = getOffset(0, radius + Style.MAXLINETHICK * 3);
         gr.drawLine(p1, p2, Style.PRINT);
 
+        p1 = getOffset(MAX, radius + Style.MAXLINETHICK * 2);
+        p2 = getOffset(MAX, radius + Style.MAXLINETHICK * 3);
+        gr.drawLine(p1, p2, Style.PRINT);
+
         VectorInterface p = getOffset(selectedPosition, r);
         gr.drawLine(new Vector(0, 0), p, Style.NORMAL);
 
