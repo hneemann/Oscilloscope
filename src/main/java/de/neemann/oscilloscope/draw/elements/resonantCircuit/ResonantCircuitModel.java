@@ -64,7 +64,6 @@ public class ResonantCircuitModel implements Observer {
         if (sinParams != null) {
             LOGGER.info("is sine");
             resistorVoltageSignal.setSignal(new RCLSine(sinParams));
-//            resistorVoltageSignal.setSignal(solveDGL());
         } else {
             resistorVoltageSignal.setSignal(solveDGL());
         }
@@ -121,7 +120,7 @@ public class ResonantCircuitModel implements Observer {
 
         private RCLSine(SinParams sinParams) {
             w = sinParams.getOmega();
-            double a = sinParams.getAmpl() * resistor / Math.sqrt(sqr(resistor) + sqr(w * L - 1 / (w * C)));
+            double a = sinParams.getAmpl() * (resistor + RL) / Math.sqrt(sqr(resistor + RL) + sqr(w * L - 1 / (w * C)));
             ampl = a * resistor / (resistor + RL);
 
             double phi = Math.atan((w * L - 1 / (w * C)) / (resistor + RL));
