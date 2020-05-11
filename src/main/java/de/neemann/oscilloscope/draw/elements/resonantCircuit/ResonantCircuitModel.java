@@ -1,9 +1,12 @@
 package de.neemann.oscilloscope.draw.elements.resonantCircuit;
 
+import de.neemann.oscilloscope.draw.elements.OffOn;
+import de.neemann.oscilloscope.draw.elements.Switch;
 import de.neemann.oscilloscope.gui.Observer;
 import de.neemann.oscilloscope.signal.InterpolateLinear;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
 import de.neemann.oscilloscope.signal.PeriodicSignalWrapper;
+import de.neemann.oscilloscope.signal.Sine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +24,7 @@ public class ResonantCircuitModel implements Observer {
     private final PeriodicSignalWrapper resistorVoltageSignal;
     private PeriodicSignal input = PeriodicSignal.GND;
     private double resistor;
+    private Switch<OffOn> debugSwitch;
 
     /**
      * Creates a new diode model
@@ -48,6 +52,16 @@ public class ResonantCircuitModel implements Observer {
     }
 
     /**
+     * Sets the debug switch
+     *
+     * @param debugSwitch the debug switch
+     */
+    public void setDebugSwitch(Switch<OffOn> debugSwitch) {
+        this.debugSwitch = debugSwitch;
+        debugSwitch.addObserver(this);
+    }
+
+    /**
      * @return the signal describing the resistance voltage
      */
     public PeriodicSignal getVoltageResistor() {
@@ -62,8 +76,10 @@ public class ResonantCircuitModel implements Observer {
     private void inputSignalHasChanged() {
         PeriodicSignal.SinParams sinParams = input.getSinParams();
         if (sinParams != null) {
-            LOGGER.info("is sine");
-            resistorVoltageSignal.setSignal(new RCLSine(sinParams));
+            if (debugSwitch == null || debugSwitch.getSelected() == OffOn.Off)
+                resistorVoltageSignal.setSignal(createSines(sinParams));
+            else
+                resistorVoltageSignal.setSignal(solveDGL());
         } else {
             resistorVoltageSignal.setSignal(solveDGL());
         }
@@ -110,6 +126,19 @@ public class ResonantCircuitModel implements Observer {
     public void setResistor(int res) {
         this.resistor = res;
         inputSignalHasChanged();
+    }
+
+    private PeriodicSignal createSines(PeriodicSignal.SinParams sinParams) {
+        LOGGER.info("create sine");
+        double w = sinParams.getOmega();
+        double a = sinParams.getAmpl() * (resistor + RL) / Math.sqrt(sqr(resistor + RL) + sqr(w * L - 1 / (w * C)));
+        double ampl = a * resistor / (resistor + RL);
+
+        double phi = Math.atan((w * L - 1 / (w * C)) / (resistor + RL));
+
+        double phase = sinParams.getPhase() - phi;
+
+        return new Sine(ampl, w, phase, 0);
     }
 
     private final class RCLSine extends PeriodicSignal {

@@ -47,6 +47,7 @@ public final class CapacitorExperiment implements Experiment {
         oscilloscope.getCh2().getInvSwitch().set(1);
         oscilloscope.getMode().set(2);
         oscilloscope.getTrigger().getTrigModeSwitch().set(1);
+        oscilloscope.getTrigger().getTrigSourceSwitch().set(3);
         oscilloscope.getTrigger().getLevelPoti().set(0.5);
         oscilloscope.getPowerSwitch().set(1);
         oscilloscope.getHorizontal().getTimeBaseKnob().set(8);
@@ -58,6 +59,7 @@ public final class CapacitorExperiment implements Experiment {
         component.add(new Wire(gen1.getOutput(), capacitor.getInput()));
         component.add(new Wire(capacitor.getVoltCapacitor(), oscilloscope.getCh1().getInput()));
         component.add(new Wire(capacitor.getVoltRes(), oscilloscope.getCh2().getInput()));
+        component.add(new Wire(gen1.getTrigOutput(), oscilloscope.getTrigger().getTrigIn()));
     }
 
 }

@@ -157,6 +157,13 @@ public class Trigger {
     }
 
     /**
+     * @return the source switch
+     */
+    public Switch<TrigSource> getTrigSourceSwitch() {
+        return trigSource;
+    }
+
+    /**
      * Description of a trigger event
      */
     public static final class Trig {
