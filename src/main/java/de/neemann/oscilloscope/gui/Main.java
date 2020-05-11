@@ -26,11 +26,21 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  * The main frame.
  */
 public class Main extends JFrame {
+    private static final String MESSAGE = "<h1>Oscilloscope</h1>A simple simulation of an analog oscilloscope.\n"
+            + "        Written by H. Neemann in 2020.\n"
+            + "\n"
+            + "        Visit the project at <a href=\"https://github.com/hneemann/oscilloscope\">GitHub</a>.\n"
+            + "        At Github you can also <a href=\"https://github.com/hneemann/oscilloscope/releases/latest\">download</a> "
+            + "        the latest release.\n"
+            + "\n"
+            + "        There you also can file an <a href=\"https://github.com/hneemann/oscilloscope/issues/new?body=version:%20[[version]]&labels=bug\">issue</a> or\n"
+            + "        suggest an <a href=\"https://github.com/hneemann/oscilloscope/issues/new?labels=enhancement\">enhancement</a>";
+
+
     private static final Preferences PREFS = Preferences.userRoot().node("oscilloscope");
     private final ElementComponent elementComponent;
     private final boolean preset;
     private Container<?> mainContainer;
-    private File lastExportFile;
 
     /**
      * Creates a new main window.
@@ -101,11 +111,12 @@ public class Main extends JFrame {
                     System.out.println("no deadlock");
             }
         }));
+        view.add(InfoDialog.getInstance().createMenuItem(this, MESSAGE));
 
         setJMenuBar(bar);
 
-//        Experiment general = Experiments.getInstance().get(General.NAME);
-        Experiment general = Experiments.getInstance().get("Resonant Circuit");
+        Experiment general = Experiments.getInstance().get(General.NAME);
+//        Experiment general = Experiments.getInstance().get("Resonant Circuit");
 
         if (general != null)
             setExercise(general);
