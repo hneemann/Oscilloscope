@@ -4,6 +4,8 @@ import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.draw.elements.*;
 import de.neemann.oscilloscope.gui.ElementComponent;
 import de.neemann.oscilloscope.signal.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,12 +20,21 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  * The oscilloscope
  */
 public class Oscilloscope extends Container<Oscilloscope> implements ElementComponent.NeedsComponent {
+    private static boolean debug = false;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Oscilloscope.class);
     /**
      * The screen update period
      */
     public static final int TIME_DELTA_MS = 20;
     private static final ArrayList<TimeBase> TIMES = createTimes();
     private static final ArrayList<Magnify> MAGNIFY = createMagnify();
+
+    /**
+     * Sets debug mode
+     */
+    public static void setDebug() {
+        debug = true;
+    }
 
     private final Trigger trigger;
     private final Horizontal horizontal;
@@ -145,17 +156,19 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                 timer = executor.scheduleAtFixedRate(new Runnable() {
                     @Override
                     public void run() {
+                        if (debug)
+                            System.out.println("*");
                         if (model != null) {
                             long t = System.currentTimeMillis();
                             model.updateBuffer(screen.getScreenBuffer());
                             t = System.currentTimeMillis() - t;
                             if (t > TIME_DELTA_MS)
-                                System.out.println(t);
+                                LOGGER.info("slow " + t);
                         }
                         elementComponent.repaint();
                     }
                 }, TIME_DELTA_MS, TIME_DELTA_MS, TimeUnit.MILLISECONDS);
-                System.out.println("timer started");
+                LOGGER.info("timer started");
             } else {
                 model = null;
                 stopTimer();
@@ -180,7 +193,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
         if (timer != null) {
             timer.cancel(false);
             timer = null;
-            System.out.println("timer stopped");
+            LOGGER.info("timer stopped");
         }
     }
 

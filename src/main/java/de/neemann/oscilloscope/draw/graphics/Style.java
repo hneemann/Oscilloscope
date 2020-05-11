@@ -40,6 +40,11 @@ public final class Style {
     public static final Style PRINT = new Builder().setColor(Color.GRAY).build();
 
     /**
+     * Style used for front panel print
+     */
+    public static final Style PRINT_FILLED = new Builder(PRINT).setFilled(true).build();
+
+    /**
      * Style used for the grid
      */
     public static final Style GRID = new Builder(PRINT).setColor(new Color(158, 158, 158, 128)).setThickness(1).build();

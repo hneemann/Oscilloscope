@@ -176,6 +176,14 @@ public class Generator extends Container<Generator> {
         public double mean() {
             return (offset.get() - 0.5) * 2 * MAX_AMPL;
         }
+
+        @Override
+        public SinParams getSinParams() {
+            if (form.getSelected() != Form.SINE)
+                return null;
+            else
+                return new SinParams(amplitude.get() * MAX_AMPL, mean(), 2 * Math.PI * frequency, 2 * Math.PI * phase.get());
+        }
     }
 
     private class TriggerOut extends PeriodicSignal {
@@ -189,7 +197,7 @@ public class Generator extends Container<Generator> {
             if (power.is(OffOn.Off))
                 return 0;
 
-            double arg = t * frequency + phase.get();
+            double arg = t * frequency;
             return (arg - Math.floor(arg) < 0.5 ? 5 : 0);
         }
 

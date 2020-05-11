@@ -1,6 +1,7 @@
 package de.neemann.oscilloscope.gui;
 
 import de.neemann.oscilloscope.draw.elements.Container;
+import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 import de.neemann.oscilloscope.draw.graphics.GraphicMinMax;
 import de.neemann.oscilloscope.experiments.*;
 
@@ -14,6 +15,9 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.util.prefs.Preferences;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
@@ -80,10 +84,29 @@ public class Main extends JFrame {
                 }
             }
         }));
+        view.add(new JMenuItem(new AbstractAction("Info") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                Oscilloscope.setDebug();
+                ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+                long[] ids = bean.findMonitorDeadlockedThreads();
+                if (ids != null) {
+                    ThreadInfo[] threadInfo = bean.getThreadInfo(ids);
+                    for (ThreadInfo ti : threadInfo) {
+                        System.out.println(ti.getThreadName());
+                        for (StackTraceElement st : ti.getStackTrace())
+                            System.out.println(st);
+                    }
+                } else
+                    System.out.println("no deadlock");
+            }
+        }));
 
         setJMenuBar(bar);
 
-        Experiment general = Experiments.getInstance().get(General.NAME);
+//        Experiment general = Experiments.getInstance().get(General.NAME);
+        Experiment general = Experiments.getInstance().get("Resonant Circuit");
+
         if (general != null)
             setExercise(general);
         else {

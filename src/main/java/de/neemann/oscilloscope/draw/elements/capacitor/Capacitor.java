@@ -12,11 +12,17 @@ import java.awt.*;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
+import static de.neemann.oscilloscope.draw.elements.diode.Diode.dot;
 
 /**
  * The capacitor experimental setup
  */
 public class Capacitor extends Container<Capacitor> {
+
+    /**
+     * capacitor padding
+     */
+    public static final int CAP_PAD = 5;
 
     private final BNCInput input;
     private final BNCOutput uc;
@@ -66,12 +72,11 @@ public class Capacitor extends Container<Capacitor> {
     public void drawToOrigin(Graphic gr) {
         super.drawToOrigin(gr);
 
-        int pad = 5;
         gr.drawPolygon(new Polygon(false)
                 .add(SIZE, SIZE * 5)
                 .add(SIZE, SIZE)
                 .add(SIZE * 5, SIZE)
-                .add(SIZE * 5, SIZE * 2 + pad), Style.PRINT);
+                .add(SIZE * 5, SIZE * 2 + CAP_PAD), Style.PRINT);
         gr.drawPolygon(new Polygon(false)
                 .add(SIZE * 5, SIZE * 8)
                 .add(SIZE * 5, SIZE * 9)
@@ -84,10 +89,10 @@ public class Capacitor extends Container<Capacitor> {
                 .add(SIZE * 5 + SIZE2, SIZE * 8)
                 .add(SIZE * 5 - SIZE2, SIZE * 8), Style.PRINT);
 
-        gr.drawLine(new Vector(SIZE * 5 - SIZE, SIZE * 3 - pad), new Vector(SIZE * 5 + SIZE, SIZE * 3 - pad), Style.PRINT);
-        gr.drawLine(new Vector(SIZE * 5 - SIZE, SIZE * 2 + pad), new Vector(SIZE * 5 + SIZE, SIZE * 2 + pad), Style.PRINT);
+        gr.drawLine(new Vector(SIZE * 5 - SIZE, SIZE * 3 - CAP_PAD), new Vector(SIZE * 5 + SIZE, SIZE * 3 - CAP_PAD), Style.PRINT);
+        gr.drawLine(new Vector(SIZE * 5 - SIZE, SIZE * 2 + CAP_PAD), new Vector(SIZE * 5 + SIZE, SIZE * 2 + CAP_PAD), Style.PRINT);
 
-        gr.drawLine(new Vector(SIZE * 5, SIZE * 3 - pad), new Vector(SIZE * 5, SIZE * 5), Style.PRINT);
+        gr.drawLine(new Vector(SIZE * 5, SIZE * 3 - CAP_PAD), new Vector(SIZE * 5, SIZE * 5), Style.PRINT);
 
 
         gr.drawLine(new Vector(SIZE * 5, SIZE * 4), new Vector(SIZE * 9, SIZE * 4), Style.PRINT);
@@ -103,9 +108,4 @@ public class Capacitor extends Container<Capacitor> {
         dot(gr, SIZE * 5, SIZE * 9);
     }
 
-    private static final int RAD = 3;
-
-    private void dot(Graphic gr, int x, int y) {
-        gr.drawCircle(new Vector(x - RAD, y - RAD), new Vector(x + RAD, y + RAD), Style.PRINT);
-    }
 }

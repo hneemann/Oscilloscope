@@ -26,6 +26,7 @@ public final class Experiments implements Iterable<Experiment> {
         register(new General());
         register(new DiodeExperiment());
         register(new CapacitorExperiment());
+        register(new ResonantCircuitExperiment());
     }
 
     private void register(Experiment experiment) {

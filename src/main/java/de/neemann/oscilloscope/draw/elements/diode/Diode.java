@@ -107,7 +107,14 @@ public class Diode extends Container<Diode> {
 
     private static final int RAD = 3;
 
-    private void dot(Graphic gr, int x, int y) {
+    /**
+     * Adds a dot to a circuit
+     *
+     * @param gr the {@link Graphic} instance to use
+     * @param x  x pos
+     * @param y  y pos
+     */
+    public static void dot(Graphic gr, int x, int y) {
         gr.drawCircle(new Vector(x - RAD, y - RAD), new Vector(x + RAD, y + RAD), Style.PRINT);
     }
 }

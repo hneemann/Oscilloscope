@@ -9,6 +9,22 @@ public class InterpolateLinear extends Interpolate {
     private double[] values;
     private double mean;
 
+    /**
+     * Creates a new instance
+     */
+    public InterpolateLinear() {
+    }
+
+    /**
+     * Creates a new instance
+     *
+     * @param period the period
+     * @param values the table values
+     */
+    public InterpolateLinear(double period, double[] values) {
+        setValues(period, values);
+    }
+
     @Override
     public void setValues(double period, double[] values) {
         double sum = 0;
