@@ -2,9 +2,7 @@ package de.neemann.oscilloscope.gui;
 
 import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.draw.graphics.GraphicMinMax;
-import de.neemann.oscilloscope.exercises.DiodeExercise;
-import de.neemann.oscilloscope.exercises.Exercise;
-import de.neemann.oscilloscope.exercises.General;
+import de.neemann.oscilloscope.experiments.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -52,10 +50,11 @@ public class Main extends JFrame {
 
         JMenuBar bar = new JMenuBar();
 
-        JMenu exercises = new JMenu("Exercises");
+        JMenu exercises = new JMenu("Experiments");
         bar.add(exercises);
-        exercises.add(new JMenuItem(new ExerciseGenerator(new General())));
-        exercises.add(new JMenuItem(new ExerciseGenerator(new DiodeExercise())));
+        for (Experiment e : Experiments.getInstance())
+            exercises.add(new JMenuItem(new ExerciseGenerator(e)));
+
 
         JMenu view = new JMenu("View");
         bar.add(view);
@@ -84,7 +83,12 @@ public class Main extends JFrame {
 
         setJMenuBar(bar);
 
-        setExercise(new General());
+        Experiment general = Experiments.getInstance().get(General.NAME);
+        if (general != null)
+            setExercise(general);
+        else {
+            setSize(800, 600);
+        }
 
         setLocationRelativeTo(null);
     }
@@ -127,12 +131,12 @@ public class Main extends JFrame {
     /**
      * Sets an exercise
      *
-     * @param exercise the exercise to use
+     * @param experiment the exercise to use
      */
-    public void setExercise(Exercise exercise) {
-        setMain(exercise.create());
+    public void setExercise(Experiment experiment) {
+        setMain(experiment.create());
         if (preset)
-            exercise.setup(elementComponent);
+            experiment.setup(elementComponent);
     }
 
     /**
@@ -145,16 +149,16 @@ public class Main extends JFrame {
     }
 
     private final class ExerciseGenerator extends AbstractAction {
-        private final Exercise exercise;
+        private final Experiment experiment;
 
-        private ExerciseGenerator(Exercise exercise) {
-            super(exercise.toString());
-            this.exercise = exercise;
+        private ExerciseGenerator(Experiment experiment) {
+            super(experiment.toString());
+            this.experiment = experiment;
         }
 
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            setExercise(exercise);
+            setExercise(experiment);
         }
     }
 

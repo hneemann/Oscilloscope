@@ -51,7 +51,7 @@ public class Solver {
             if (Math.abs(delta) < deltaMin)
                 break;
         }
-        if (n==20)
+        if (n == 20)
             System.out.println("newton does not converge");
         return x;
     }
@@ -91,9 +91,17 @@ public class Solver {
             this.x = x;
         }
 
-        abstract double f();
+        /**
+         * Implements the function
+         *
+         * @return the function value
+         */
+        public abstract double f();
 
-        abstract double deriv();
+        /**
+         * @return the derivative of the function
+         */
+        public abstract double deriv();
     }
 
 }

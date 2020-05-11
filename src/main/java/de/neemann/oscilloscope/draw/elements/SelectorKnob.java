@@ -138,4 +138,20 @@ public class SelectorKnob<T> extends ObservableElement<SelectorKnob<T>> {
             down(ctrl);
     }
 
+    /**
+     * Sets the position of the knob
+     *
+     * @param i the new position
+     */
+    public void set(int i) {
+        if (i < 0)
+            i = 0;
+        else if (i >= items.size())
+            i = items.size() - 1;
+
+        if (i != selectedPosition) {
+            selectedPosition = i;
+            hasChanged();
+        }
+    }
 }

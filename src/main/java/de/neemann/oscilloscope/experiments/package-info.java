@@ -1,4 +1,4 @@
 /**
  * The different exercises available
  */
-package de.neemann.oscilloscope.exercises;
+package de.neemann.oscilloscope.experiments;

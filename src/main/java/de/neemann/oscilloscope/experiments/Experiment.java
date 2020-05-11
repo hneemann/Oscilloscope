@@ -1,4 +1,4 @@
-package de.neemann.oscilloscope.exercises;
+package de.neemann.oscilloscope.experiments;
 
 import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.draw.elements.Element;
@@ -10,7 +10,7 @@ import de.neemann.oscilloscope.gui.ElementComponent;
 /**
  * Implements a certain exercise.
  */
-public interface Exercise {
+public interface Experiment {
 
     /**
      * Creates the exercise

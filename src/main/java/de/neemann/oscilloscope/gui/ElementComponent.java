@@ -4,7 +4,7 @@ import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.draw.elements.*;
 import de.neemann.oscilloscope.draw.graphics.GraphicSwing;
 import de.neemann.oscilloscope.draw.graphics.Vector;
-import de.neemann.oscilloscope.exercises.Exercise;
+import de.neemann.oscilloscope.experiments.Experiment;
 
 import javax.swing.*;
 import java.awt.*;
@@ -63,7 +63,7 @@ public class ElementComponent extends JComponent {
      * @return the screen shot or null if operation is not possible.
      */
     public BufferedImage createScreenShot() {
-        Screen screen = Exercise.get(this, e -> e instanceof Screen);
+        Screen screen = Experiment.get(this, e -> e instanceof Screen);
         if (screen != null)
             return screen.createScreenShot();
         else

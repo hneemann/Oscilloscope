@@ -1,4 +1,4 @@
-package de.neemann.oscilloscope.exercises;
+package de.neemann.oscilloscope.experiments;
 
 import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.draw.elements.generator.Generator;
@@ -12,11 +12,19 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 /**
  * A simple setup with two generators available
  */
-public final class General implements Exercise {
+public final class General implements Experiment {
+
+    /**
+     * The name of the general exercise.
+     */
+    public static final String NAME = "General";
+
+    General() {
+    }
 
     @Override
     public String toString() {
-        return "General";
+        return NAME;
     }
 
     @Override
@@ -29,29 +37,25 @@ public final class General implements Exercise {
 
     @Override
     public void setup(ElementComponent component) {
-        Oscilloscope oscilloscope = Exercise.getOscilloscope(component);
-        Generator gen1 = Exercise.getGenerator(component, "gen1");
-        Generator gen2 = Exercise.getGenerator(component, "gen2");
+        Oscilloscope oscilloscope = Experiment.getOscilloscope(component);
+        Generator gen1 = Experiment.getGenerator(component, "gen1");
+        Generator gen2 = Experiment.getGenerator(component, "gen2");
 
         oscilloscope.getHorizontal().getPosPoti().set(0.5);
         oscilloscope.getCh1().getPosPoti().set(0.5);
         oscilloscope.getCh1().getCouplingSwitch().set(2);
-        oscilloscope.getCh1().getAmplitudeSwitch().down(false);
-        oscilloscope.getCh1().getAmplitudeSwitch().down(false);
+        oscilloscope.getCh1().getAmplitudeSwitch().set(2);
         oscilloscope.getCh2().getPosPoti().set(0.5);
         oscilloscope.getCh2().getCouplingSwitch().set(2);
-        oscilloscope.getCh2().getAmplitudeSwitch().down(false);
-        oscilloscope.getCh2().getAmplitudeSwitch().down(false);
+        oscilloscope.getCh2().getAmplitudeSwitch().set(2);
         oscilloscope.getPowerSwitch().set(1);
 
         gen1.getPowerSwitch().set(1);
         gen1.getAmplitude().set(0.18);
-        gen1.setFrequencySwitch().down(false);
-        gen1.setFrequencySwitch().down(false);
+        gen1.setFrequencySwitch().set(2);
         gen2.getPowerSwitch().set(1);
         gen2.getAmplitude().set(0.18);
-        gen2.setFrequencySwitch().down(false);
-        gen2.setFrequencySwitch().down(false);
+        gen2.setFrequencySwitch().set(2);
         gen2.setFrequencyFinePoti().set(Math.log(3) / Math.log(10));
 
         component.add(new Wire(gen1.getOutput(), oscilloscope.getCh1().getInput()));

@@ -150,6 +150,13 @@ public class Trigger {
     }
 
     /**
+     * @return the mode switch
+     */
+    public Switch<TrigMode> getTrigModeSwitch() {
+        return trigMode;
+    }
+
+    /**
      * Description of a trigger event
      */
     public static final class Trig {
