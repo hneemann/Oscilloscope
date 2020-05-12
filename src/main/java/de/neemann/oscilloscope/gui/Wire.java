@@ -13,7 +13,7 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
 /**
  * A wire to connect BNC connectors
  */
-public class Wire {
+public class Wire implements Observer {
     private final BNCOutput out;
     private final BNCInput in;
 
@@ -48,14 +48,16 @@ public class Wire {
      * disconnects this wire
      */
     public void connect() {
-        in.setInput(out.getOutput());
+        out.getOutputProvider().addObserver(this);
+        hasChanged();
     }
 
     /**
-     * Connects this wire
+     * Disconnects this wire
      */
     public void disconnect() {
-        in.setInput(PeriodicSignal.GND);
+        out.getOutputProvider().removeObserver(this);
+        in.setSignal(PeriodicSignal.GND);
     }
 
     /**
@@ -63,5 +65,10 @@ public class Wire {
      */
     public BNCInput getInput() {
         return in;
+    }
+
+    @Override
+    public void hasChanged() {
+        in.setSignal(out.getSignal());
     }
 }

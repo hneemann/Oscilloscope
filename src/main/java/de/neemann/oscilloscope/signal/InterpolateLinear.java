@@ -3,17 +3,11 @@ package de.neemann.oscilloscope.signal;
 /**
  * Implements a table based periodic signal.
  */
-public class InterpolateLinear extends Interpolate {
+public class InterpolateLinear implements PeriodicSignal {
 
-    private double period;
-    private double[] values;
-    private double mean;
-
-    /**
-     * Creates a new instance
-     */
-    public InterpolateLinear() {
-    }
+    private final double period;
+    private final double[] values;
+    private final double mean;
 
     /**
      * Creates a new instance
@@ -22,18 +16,11 @@ public class InterpolateLinear extends Interpolate {
      * @param values the table values
      */
     public InterpolateLinear(double period, double[] values) {
-        setValues(period, values);
-    }
-
-    @Override
-    public void setValues(double period, double[] values) {
         double sum = 0;
         for (double value : values) sum += value;
         mean = sum / values.length;
         this.period = period;
         this.values = values;
-
-        hasChanged();
     }
 
     @Override

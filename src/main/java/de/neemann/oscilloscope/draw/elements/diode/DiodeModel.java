@@ -2,61 +2,50 @@ package de.neemann.oscilloscope.draw.elements.diode;
 
 import de.neemann.oscilloscope.draw.elements.diode.Solver.FunctionDeriv;
 import de.neemann.oscilloscope.gui.Observer;
-import de.neemann.oscilloscope.signal.Interpolate;
 import de.neemann.oscilloscope.signal.InterpolateCubic;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
+import de.neemann.oscilloscope.signal.SignalProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The model of the diode
  */
 public class DiodeModel implements Observer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DiodeModel.class);
 
     private static final int POINTS = 200;
     private static final double R = 1000;
     private static final double UT = 0.025;
     private static final double IS = 1e-10;
     private static final double N = 1.5;
-    private final Interpolate diodeVoltageSignal;
-    private final Interpolate resistorVoltageSignal;
-    private PeriodicSignal input = PeriodicSignal.GND;
+    private final SignalProvider inputProvider;
+    private final SignalProvider diodeVoltageSignal;
+    private final SignalProvider resistorVoltageSignal;
 
     /**
      * Creates a new diode model
-     */
-    public DiodeModel() {
-        diodeVoltageSignal = new InterpolateCubic();
-        resistorVoltageSignal = new InterpolateCubic();
-    }
-
-    /**
-     * Sets the input signal
      *
-     * @param signal the input signal
+     * @param inputProvider the provider for the input signal
      */
-    public void setInput(PeriodicSignal signal) {
-        if (input != null)
-            input.removeObserver(this);
-
-        input = signal;
-        if (input == null)
-            input = PeriodicSignal.GND;
-        else
-            input.addObserver(this);
-
-        inputSignalHasChanged();
+    public DiodeModel(SignalProvider inputProvider) {
+        this.inputProvider = inputProvider;
+        inputProvider.addObserver(this);
+        diodeVoltageSignal = new SignalProvider();
+        resistorVoltageSignal = new SignalProvider();
     }
 
     /**
      * @return the signal describing the diodes voltage
      */
-    public PeriodicSignal getVoltageDiode() {
+    public SignalProvider getVoltageDiode() {
         return diodeVoltageSignal;
     }
 
     /**
      * @return the signal describing the resistance voltage
      */
-    public PeriodicSignal getVoltageResistor() {
+    public SignalProvider getVoltageResistor() {
         return resistorVoltageSignal;
     }
 
@@ -66,7 +55,8 @@ public class DiodeModel implements Observer {
     }
 
     private void inputSignalHasChanged() {
-        System.out.println("recalculate diode");
+        LOGGER.info("recalculate diode");
+        PeriodicSignal input = inputProvider.getSignal();
         double[] diodeVoltage = new double[POINTS];
         double[] resistorVoltage = new double[POINTS];
         double period = input.period();
@@ -82,8 +72,8 @@ public class DiodeModel implements Observer {
                 resistorVoltage[i] = uD - uGes;
             }
         }
-        diodeVoltageSignal.setValues(period, diodeVoltage);
-        resistorVoltageSignal.setValues(period, resistorVoltage);
+        diodeVoltageSignal.setSignal(new InterpolateCubic(period, diodeVoltage));
+        resistorVoltageSignal.setSignal(new InterpolateCubic(period, resistorVoltage));
     }
 
     private static final class DiodeFunc extends FunctionDeriv {

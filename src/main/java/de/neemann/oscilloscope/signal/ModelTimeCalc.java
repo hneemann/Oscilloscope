@@ -3,6 +3,7 @@ package de.neemann.oscilloscope.signal;
 import de.neemann.oscilloscope.draw.elements.Mode;
 import de.neemann.oscilloscope.draw.elements.Switch;
 import de.neemann.oscilloscope.draw.elements.TrigMode;
+import de.neemann.oscilloscope.draw.elements.osco.Channel;
 import de.neemann.oscilloscope.draw.elements.osco.Horizontal;
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 import de.neemann.oscilloscope.draw.elements.osco.Trigger;
@@ -11,15 +12,13 @@ import de.neemann.oscilloscope.draw.elements.osco.Trigger;
  * Scope model in normal time mode
  */
 public class ModelTimeCalc implements Model {
-    private final Frontend frontend1;
-    private final Frontend frontend2;
-    private final PeriodicSignal triggerIn;
-    private final YValueToScreen screen1;
-    private final YValueToScreen screen2;
     private final Horizontal horizontal;
     private final Trigger trigger;
     private final Switch<Mode> mode;
     private final long timeOffset;
+    private final SignalProvider triggerInProvider;
+    private final Channel channel1;
+    private final Channel channel2;
 
     /**
      * Used to simulate the scope in normal mode
@@ -30,12 +29,10 @@ public class ModelTimeCalc implements Model {
         if (osco.getHorizontal().isXY())
             throw new RuntimeException("wrong model");
 
-        this.frontend1 = new Frontend(osco.getSignal1(), osco.getCh1());
-        this.screen1 = new YValueToScreen(osco.getCh1().getPosPoti(), 8);
-        this.frontend2 = new Frontend(osco.getSignal2(), osco.getCh2());
-        this.screen2 = new YValueToScreen(osco.getCh2().getPosPoti(), 8);
+        channel1 = osco.getCh1();
+        channel2 = osco.getCh2();
         this.horizontal = osco.getHorizontal();
-        this.triggerIn = osco.getTriggerIn();
+        this.triggerInProvider = osco.getTrigger().getTrigIn().getSignalProvider();
         this.trigger = osco.getTrigger();
         this.mode = osco.getMode();
         timeOffset = System.currentTimeMillis();
@@ -43,6 +40,12 @@ public class ModelTimeCalc implements Model {
 
     @Override
     public void updateBuffer(ScreenBuffer screenBuffer) {
+        Frontend frontend1 = new Frontend(channel1);
+        YValueToScreen screen1 = new YValueToScreen(channel1.getPos(), 8);
+        Frontend frontend2 = new Frontend(channel2);
+        YValueToScreen screen2 = new YValueToScreen(channel2.getPos(), 8);
+        PeriodicSignal triggerIn = triggerInProvider.getSignal();
+
         int width = screenBuffer.getWidth();
         int heigth = screenBuffer.getHeight();
         double timePerPixel = horizontal.getTimePerDiv() * 10 / width;

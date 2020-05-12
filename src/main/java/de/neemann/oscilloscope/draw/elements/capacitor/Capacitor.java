@@ -33,15 +33,15 @@ public class Capacitor extends Container<Capacitor> {
     public Capacitor() {
         super(SIZE * 10, SIZE * 10);
 
-        CapacitorModel m = new CapacitorModel();
-
         input = new BNCInput("");
-        uc = new BNCOutput("");
-        ur = new BNCOutput("");
+        CapacitorModel m = new CapacitorModel(input.getSignalProvider());
 
-        add(input.setPos(SIZE, SIZE * 5).setInputSetter(m::setInput));
-        add(uc.setPos(SIZE * 9, SIZE).setOutput(m::getVoltageCapacitor));
-        add(ur.setPos(SIZE * 9, SIZE * 9).setOutput(m::getVoltageResistor));
+        uc = new BNCOutput("", m.getVoltageCapacitor());
+        ur = new BNCOutput("", m.getVoltageResistor());
+
+        add(input.setPos(SIZE, SIZE * 5));
+        add(uc.setPos(SIZE * 9, SIZE));
+        add(ur.setPos(SIZE * 9, SIZE * 9));
 
 //        Switch<OffOn> debugSwitch = new Switch<OffOn>("").add(OffOn.values());
 //        add(debugSwitch.setPos(0, 0));

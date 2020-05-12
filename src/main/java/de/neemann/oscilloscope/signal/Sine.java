@@ -3,7 +3,7 @@ package de.neemann.oscilloscope.signal;
 /**
  * A sine signal
  */
-public final class Sine extends PeriodicSignal {
+public final class Sine implements PeriodicSignal {
     private final double ampl;
     private final double w;
     private final double phase;
@@ -41,8 +41,31 @@ public final class Sine extends PeriodicSignal {
         return offset;
     }
 
-    @Override
-    public SinParams getSinParams() {
-        return new SinParams(ampl, offset, w, phase);
+    /**
+     * @return the amplitude
+     */
+    public double getAmpl() {
+        return ampl;
+    }
+
+    /**
+     * @return the circular frequency omega
+     */
+    public double getOmega() {
+        return w;
+    }
+
+    /**
+     * @return the phase
+     */
+    public double getPhase() {
+        return phase;
+    }
+
+    /**
+     * @return The sine offset
+     */
+    public double getOffset() {
+        return offset;
     }
 }

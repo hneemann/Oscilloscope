@@ -1,12 +1,13 @@
 package de.neemann.oscilloscope.draw.elements;
 
 import de.neemann.oscilloscope.signal.PeriodicSignal;
+import de.neemann.oscilloscope.signal.SignalProvider;
 
 /**
  * A BNC input connector
  */
 public class BNCInput extends BNC<BNCInput> {
-    private InputSetter setter;
+    private final SignalProvider signalProvider = new SignalProvider();
 
     /**
      * Creates an input
@@ -18,34 +19,18 @@ public class BNCInput extends BNC<BNCInput> {
     }
 
     /**
-     * Sets the setter which is used to publish a signal if the setter is called.
-     *
-     * @param setter the setter
-     * @return this for chained calls
+     * @return the signal provider for this connector
      */
-    public BNCInput setInputSetter(InputSetter setter) {
-        this.setter = setter;
-        return this;
+    public SignalProvider getSignalProvider() {
+        return signalProvider;
     }
 
     /**
-     * Sets the input signal
+     * Set the signal which is connected to this input
      *
-     * @param signal the signal to set
+     * @param signal the signal
      */
-    public void setInput(PeriodicSignal signal) {
-        setter.setSignal(signal);
-    }
-
-    /**
-     * The input setter interface
-     */
-    public interface InputSetter {
-        /**
-         * Calles to set an input
-         *
-         * @param signal the signal to set
-         */
-        void setSignal(PeriodicSignal signal);
+    public void setSignal(PeriodicSignal signal) {
+        signalProvider.setSignal(signal);
     }
 }

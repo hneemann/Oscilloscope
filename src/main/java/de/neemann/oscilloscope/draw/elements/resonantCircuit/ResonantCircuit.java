@@ -29,14 +29,14 @@ public class ResonantCircuit extends Container<ResonantCircuit> {
     public ResonantCircuit() {
         super(SIZE * 15, SIZE * 10);
 
-        ResonantCircuitModel m = new ResonantCircuitModel();
-
         input = new BNCInput("");
-        ur = new BNCOutput("");
+        ResonantCircuitModel m = new ResonantCircuitModel(input.getSignalProvider());
+
+        ur = new BNCOutput("", m.getVoltageResistor());
         resSwitch = new Switch<Integer>("R/Ω").add(100).add(500).add(1000);
 
-        add(input.setPos(SIZE, SIZE * 5).setInputSetter(m::setInput));
-        add(ur.setPos(SIZE * 14, SIZE * 5).setOutput(m::getVoltageResistor));
+        add(input.setPos(SIZE, SIZE * 5));
+        add(ur.setPos(SIZE * 14, SIZE * 5));
         add(resSwitch.setPos(SIZE * 9 - SIZE2, SIZE * 4 - SIZE2));
 
         m.setResistor(resSwitch.getSelected());

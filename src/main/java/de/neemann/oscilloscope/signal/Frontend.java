@@ -6,25 +6,29 @@ import de.neemann.oscilloscope.draw.elements.osco.Channel;
 /**
  * Used to describe the frontend
  */
-public class Frontend extends PeriodicSignal {
+public class Frontend implements PeriodicSignal {
     private final PeriodicSignal s;
-    private final Channel channel;
+    private final Coupling coupling;
+    private final boolean isInv;
+    private final double amplitude;
+    private final double var;
 
     /**
      * Creates a new frontend
      *
-     * @param s       the periodic signal
      * @param channel the channel parameters
      */
-    public Frontend(PeriodicSignal s, Channel channel) {
-        this.s = s;
-        s.addObserver(this);
-        this.channel = channel;
+    public Frontend(Channel channel) {
+        this.s = channel.getInput().getSignalProvider().getSignal();
+        coupling = channel.getCoupling();
+        amplitude = channel.getAmplitude();
+        var = channel.getVar();
+        isInv = channel.isInv();
     }
+
 
     @Override
     public double v(double t) {
-        Coupling coupling = channel.getCoupling();
         if (coupling == Coupling.GND)
             return 0;
         else {
@@ -33,9 +37,9 @@ public class Frontend extends PeriodicSignal {
             if (coupling == Coupling.AC)
                 v -= s.mean();
 
-            if (channel.isInv())
+            if (isInv)
                 v = -v;
-            return v / channel.getAmplitude() * (1 + channel.getVar() * 2);
+            return v / amplitude * (1 + var * 2);
         }
     }
 
@@ -46,7 +50,7 @@ public class Frontend extends PeriodicSignal {
 
     @Override
     public double mean() {
-        if (channel.getCoupling() == Coupling.DC)
+        if (coupling == Coupling.DC)
             return s.mean();
         return 0;
     }

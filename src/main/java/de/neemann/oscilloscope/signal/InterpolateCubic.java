@@ -5,17 +5,23 @@ package de.neemann.oscilloscope.signal;
  * Uses a very basic cubic interpolation make the curve more smooth.
  * ToDo: Add a proper B-spline interpolation!
  */
-public class InterpolateCubic extends Interpolate {
+public class InterpolateCubic implements PeriodicSignal {
+    private final double period;
+    private final double[] a;
+    private final double[] b;
+    private final double[] c;
+    private final double[] d;
+    private final double mean;
 
-    private double period;
-    private double[] a;
-    private double[] b;
-    private double[] c;
-    private double[] d;
-    private double mean;
+    /**
+     * Creates a new instance
+     *
+     * @param period the period
+     * @param v      the table values
+     */
+    public InterpolateCubic(double period, double[] v) {
+        this.period = period;
 
-    @Override
-    public void setValues(double period, double[] v) {
         double sum = 0;
         double[] g = new double[v.length];
         for (int i = 0; i < v.length; i++) {
@@ -23,11 +29,12 @@ public class InterpolateCubic extends Interpolate {
             double dy = v[inc(i, v.length)] - v[dec(i, v.length)];
             g[i] = dy / 2;
         }
+        mean = sum / v.length;
 
-        double[] a = new double[v.length];
-        double[] b = new double[v.length];
-        double[] c = new double[v.length];
-        double[] d = new double[v.length];
+        a = new double[v.length];
+        b = new double[v.length];
+        c = new double[v.length];
+        d = new double[v.length];
 
         for (int i0 = 0; i0 < v.length; i0++) {
             int i1 = inc(i0, v.length);
@@ -36,15 +43,6 @@ public class InterpolateCubic extends Interpolate {
             c[i0] = g[i0];
             d[i0] = v[i0];
         }
-
-        mean = sum / v.length;
-        this.period = period;
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-
-        hasChanged();
     }
 
     private int dec(int i, int length) {

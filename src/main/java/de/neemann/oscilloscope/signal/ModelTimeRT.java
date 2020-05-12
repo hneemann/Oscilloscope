@@ -3,6 +3,7 @@ package de.neemann.oscilloscope.signal;
 import de.neemann.oscilloscope.draw.elements.Mode;
 import de.neemann.oscilloscope.draw.elements.Switch;
 import de.neemann.oscilloscope.draw.elements.TrigMode;
+import de.neemann.oscilloscope.draw.elements.osco.Channel;
 import de.neemann.oscilloscope.draw.elements.osco.Horizontal;
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 import de.neemann.oscilloscope.draw.elements.osco.Trigger;
@@ -11,15 +12,13 @@ import de.neemann.oscilloscope.draw.elements.osco.Trigger;
  * Scope model in normal time mode
  */
 public class ModelTimeRT implements Model {
-    private final Frontend frontend1;
-    private final Frontend frontend2;
-    private final YValueToScreen screen1;
-    private final YValueToScreen screen2;
     private final Horizontal horizontal;
     private final Trigger trigger;
     private final Switch<Mode> mode;
     private final long timeOffset;
-    private final PeriodicSignal triggerIn;
+    private final SignalProvider triggerInProvider;
+    private final Channel channel1;
+    private final Channel channel2;
     private boolean isRunning = false;
     private double tStart;
     private double tLast;
@@ -33,11 +32,9 @@ public class ModelTimeRT implements Model {
         if (osco.getHorizontal().isXY())
             throw new RuntimeException("wrong model");
 
-        this.frontend1 = new Frontend(osco.getSignal1(), osco.getCh1());
-        this.screen1 = new YValueToScreen(osco.getCh1().getPosPoti(), 8);
-        this.frontend2 = new Frontend(osco.getSignal2(), osco.getCh2());
-        this.screen2 = new YValueToScreen(osco.getCh2().getPosPoti(), 8);
-        this.triggerIn = osco.getTriggerIn();
+        channel1 = osco.getCh1();
+        channel2 = osco.getCh2();
+        this.triggerInProvider = osco.getTrigger().getTrigIn().getSignalProvider();
         this.horizontal = osco.getHorizontal();
         this.trigger = osco.getTrigger();
         this.mode = osco.getMode();
@@ -46,6 +43,12 @@ public class ModelTimeRT implements Model {
 
     @Override
     public void updateBuffer(ScreenBuffer screenBuffer) {
+        Frontend frontend1 = new Frontend(channel1);
+        YValueToScreen screen1 = new YValueToScreen(channel1.getPos(), 8);
+        Frontend frontend2 = new Frontend(channel2);
+        YValueToScreen screen2 = new YValueToScreen(channel2.getPos(), 8);
+        PeriodicSignal triggerIn = triggerInProvider.getSignal();
+
         int width = screenBuffer.getWidth();
         int height = screenBuffer.getHeight();
         double timePerPixel = horizontal.getTimePerDiv() * 10 / width;

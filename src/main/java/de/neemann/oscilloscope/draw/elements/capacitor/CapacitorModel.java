@@ -5,7 +5,7 @@ import de.neemann.oscilloscope.draw.elements.Switch;
 import de.neemann.oscilloscope.gui.Observer;
 import de.neemann.oscilloscope.signal.InterpolateLinear;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
-import de.neemann.oscilloscope.signal.PeriodicSignalWrapper;
+import de.neemann.oscilloscope.signal.SignalProvider;
 import de.neemann.oscilloscope.signal.Sine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,17 +21,21 @@ public class CapacitorModel implements Observer {
     private static final double C = 100e-9;
     private static final double TAU = R * C;
 
-    private final PeriodicSignalWrapper capacitorVoltageSignal;
-    private final PeriodicSignalWrapper resistorVoltageSignal;
-    private PeriodicSignal input = PeriodicSignal.GND;
+    private final SignalProvider capacitorVoltageSignal;
+    private final SignalProvider resistorVoltageSignal;
+    private final SignalProvider input;
     private Switch<OffOn> debugSwitch;
 
     /**
      * Creates a new diode model
+     *
+     * @param input the provider for the input
      */
-    public CapacitorModel() {
-        capacitorVoltageSignal = new PeriodicSignalWrapper();
-        resistorVoltageSignal = new PeriodicSignalWrapper();
+    public CapacitorModel(SignalProvider input) {
+        this.input = input;
+        input.addObserver(this);
+        capacitorVoltageSignal = new SignalProvider();
+        resistorVoltageSignal = new SignalProvider();
     }
 
     /**
@@ -45,34 +49,16 @@ public class CapacitorModel implements Observer {
     }
 
     /**
-     * Sets the input signal
-     *
-     * @param signal the input signal
-     */
-    public void setInput(PeriodicSignal signal) {
-        if (input != null)
-            input.removeObserver(this);
-
-        input = signal;
-        if (input == null)
-            input = PeriodicSignal.GND;
-        else
-            input.addObserver(this);
-
-        inputSignalHasChanged();
-    }
-
-    /**
      * @return the signal describing the capacitors voltage
      */
-    public PeriodicSignal getVoltageCapacitor() {
+    public SignalProvider getVoltageCapacitor() {
         return capacitorVoltageSignal;
     }
 
     /**
      * @return the signal describing the resistance voltage
      */
-    public PeriodicSignal getVoltageResistor() {
+    public SignalProvider getVoltageResistor() {
         return resistorVoltageSignal;
     }
 
@@ -82,34 +68,34 @@ public class CapacitorModel implements Observer {
     }
 
     private void inputSignalHasChanged() {
-        PeriodicSignal.SinParams sinParams = input.getSinParams();
-        if (sinParams == null)
-            solveDGL();
-        else {
+        PeriodicSignal in = input.getSignal();
+        if (in instanceof Sine)
             if (debugSwitch == null || debugSwitch.getSelected() == OffOn.Off)
-                createSines(sinParams);
+                createSines((Sine) in);
             else
-                solveDGL();
+                solveDGL(in);
+        else {
+            solveDGL(in);
         }
     }
 
-    private void createSines(PeriodicSignal.SinParams sinParams) {
+    private void createSines(Sine sine) {
         LOGGER.info("create sines");
-        double w = sinParams.getOmega();
-        double uc = sinParams.getAmpl() / Math.sqrt(1 + sqr(w * TAU));
+        double w = sine.getOmega();
+        double uc = sine.getAmpl() / Math.sqrt(1 + sqr(w * TAU));
         double phase = -Math.atan(w * TAU);
 
-        double ur = Math.sqrt(sqr(sinParams.getAmpl()) - sqr(uc));
+        double ur = Math.sqrt(sqr(sine.getAmpl()) - sqr(uc));
 
-        capacitorVoltageSignal.setSignal(new Sine(uc, w, sinParams.getPhase() + phase, sinParams.getOffset()));
-        resistorVoltageSignal.setSignal(new Sine(-ur, w, sinParams.getPhase() + phase + Math.PI / 2, 0));
+        capacitorVoltageSignal.setSignal(new Sine(uc, w, sine.getPhase() + phase, sine.getOffset()));
+        resistorVoltageSignal.setSignal(new Sine(-ur, w, sine.getPhase() + phase + Math.PI / 2, 0));
     }
 
     private static double sqr(double v) {
         return v * v;
     }
 
-    private void solveDGL() {
+    private void solveDGL(PeriodicSignal input) {
         LOGGER.info("recalculate capacitor");
         double[] capacitorVoltage = new double[POINTS];
         double[] resistorVoltage = new double[POINTS];

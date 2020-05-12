@@ -6,9 +6,8 @@ public class InterpolateCubicTest extends TestCase {
 
 
     public void testSimple() {
-        InterpolateCubic c = new InterpolateCubic();
         double period = 0.001;
-        c.setValues(period, new double[]{1, 0, -1, 0});
+        InterpolateCubic c = new InterpolateCubic(period, new double[]{1, 0, -1, 0});
 
         for (int i = 0; i <= 100; i++) {
             double t = period * i / 100;

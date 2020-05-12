@@ -28,15 +28,15 @@ public class Diode extends Container<Diode> {
     public Diode() {
         super(SIZE * 10, SIZE * 10);
 
-        DiodeModel m = new DiodeModel();
-
         input = new BNCInput("");
-        ud = new BNCOutput("");
-        ur = new BNCOutput("");
+        DiodeModel m = new DiodeModel(input.getSignalProvider());
 
-        add(input.setPos(SIZE, SIZE * 5).setInputSetter(m::setInput));
-        add(ud.setPos(SIZE * 9, SIZE).setOutput(m::getVoltageDiode));
-        add(ur.setPos(SIZE * 9, SIZE * 9).setOutput(m::getVoltageResistor));
+        ud = new BNCOutput("", m.getVoltageDiode());
+        ur = new BNCOutput("", m.getVoltageResistor());
+
+        add(input.setPos(SIZE, SIZE * 5));
+        add(ud.setPos(SIZE * 9, SIZE));
+        add(ur.setPos(SIZE * 9, SIZE * 9));
 
         setBackground(Color.WHITE);
     }

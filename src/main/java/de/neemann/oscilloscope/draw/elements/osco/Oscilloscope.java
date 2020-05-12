@@ -45,9 +45,6 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
     private final PowerSwitch power;
     private final Screen screen;
 
-    private PeriodicSignal signal1 = PeriodicSignal.GND;
-    private PeriodicSignal signal2 = PeriodicSignal.GND;
-    private PeriodicSignal triggerIn = PeriodicSignal.GND;
     private boolean isInXY;
     private boolean useRT;
     private Model model;
@@ -109,7 +106,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                 .add(trigger.setMode(new Switch<TrigMode>("Mode").add(TrigMode.values()).setPos(SIZE * 3, SIZE)))
                 .add(trigger.setSource(new Switch<TrigSource>("Source").add(TrigSource.values()).setPos(SIZE * 7, SIZE)))
                 .add(trigger.setSlope(new Switch<String>("Slope").add("+").add("-").setPos(SIZE * 4, SIZE * 7)))
-                .add(trigger.setIn(new BNCInput("Trig. In").setInputSetter(this::setTriggerIn).setPos(SIZE * 8, SIZE * 8)));
+                .add(trigger.setIn(new BNCInput("Trig. In").setPos(SIZE * 8, SIZE * 8)));
 
         horizontal = new Horizontal();
         Container<?> horizontalContainer = new Container<>("Horizontal", SIZE * 16, SIZE * 9)
@@ -132,8 +129,8 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                 .add(ch1.setCoupling(new Switch<Coupling>("").add(Coupling.values()).set(1).setPos(SIZE * 9, SIZE * 9)))
                 .add(ch2.setCoupling(new Switch<Coupling>("").add(Coupling.values()).set(1).setPos(SIZE * 17, SIZE * 9)))
                 .add(ch2.setInv(new Switch<OffOn>("Ch 2 INV").add(OffOn.values()).setPos(SIZE * 13, SIZE * 9)))
-                .add(ch1.setInput(new BNCInput("Ch 1 / X").setInputSetter(this::setSignalCh1).setPos(SIZE * 5, SIZE * 11)))
-                .add(ch2.setInput(new BNCInput("Ch 2 / Y").setInputSetter(this::setSignalCh2).setPos(SIZE * 22, SIZE * 11)))
+                .add(ch1.setInput(new BNCInput("Ch 1 / X").setPos(SIZE * 5, SIZE * 11)))
+                .add(ch2.setInput(new BNCInput("Ch 2 / Y").setPos(SIZE * 22, SIZE * 11)))
                 .add(ch1.setMag5(new Switch<OffOn>("MAG5").add(OffOn.values()).setPos(SIZE, SIZE * 10)))
                 .add(ch2.setMag5(new Switch<OffOn>("MAG5").add(OffOn.values()).setPos(SIZE * 26, SIZE * 10)));
 
@@ -242,37 +239,6 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
     }
 
     /**
-     * Sets the signal for channel 1
-     *
-     * @param s the signal
-     */
-    public void setSignalCh1(PeriodicSignal s) {
-        signal1 = s;
-        createNewModel();
-    }
-
-    /**
-     * Sets the signal for channel 2
-     *
-     * @param s the signal
-     */
-    public void setSignalCh2(PeriodicSignal s) {
-        signal2 = s;
-        createNewModel();
-    }
-
-
-    /**
-     * Sets the trigger input
-     *
-     * @param s the signal
-     */
-    public void setTriggerIn(PeriodicSignal s) {
-        triggerIn = s;
-        createNewModel();
-    }
-
-    /**
      * Closes the oscilloscope. Stops all timers.
      */
     @Override
@@ -287,27 +253,6 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
      */
     public PowerSwitch getPowerSwitch() {
         return power;
-    }
-
-    /**
-     * @return the channel 1 input signal
-     */
-    public PeriodicSignal getSignal1() {
-        return signal1;
-    }
-
-    /**
-     * @return the channel 2 input signal
-     */
-    public PeriodicSignal getSignal2() {
-        return signal2;
-    }
-
-    /**
-     * @return the trigger input signal
-     */
-    public PeriodicSignal getTriggerIn() {
-        return triggerIn;
     }
 
     @Override

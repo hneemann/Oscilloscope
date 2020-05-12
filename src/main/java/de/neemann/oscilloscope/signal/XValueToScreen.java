@@ -1,12 +1,10 @@
 package de.neemann.oscilloscope.signal;
 
-import de.neemann.oscilloscope.draw.elements.PotiInterface;
-
 /**
  * Transfers a voltage ti a pixel number on the screen
  */
 public class XValueToScreen implements ToScreen {
-    private final PotiInterface pos;
+    private final double pos;
     private final int divs;
     private final int ofs;
     private final int max;
@@ -18,7 +16,7 @@ public class XValueToScreen implements ToScreen {
      * @param pos  the pos poti
      * @param divs the number of divs on the screen
      */
-    public XValueToScreen(PotiInterface pos, int divs) {
+    public XValueToScreen(double pos, int divs) {
         this.pos = pos;
         this.divs = divs;
         this.max = divs * 2;
@@ -28,7 +26,7 @@ public class XValueToScreen implements ToScreen {
 
     @Override
     public int v(double v, int pixels) {
-        double div = v + ofs + (pos.get() - 0.5) * 20;
+        double div = v + ofs + (pos - 0.5) * 20;
 
         if (div > max)
             div = max;

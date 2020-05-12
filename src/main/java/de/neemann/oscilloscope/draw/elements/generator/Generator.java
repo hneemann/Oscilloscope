@@ -3,7 +3,7 @@ package de.neemann.oscilloscope.draw.elements.generator;
 import de.neemann.oscilloscope.draw.elements.*;
 import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.gui.Observer;
-import de.neemann.oscilloscope.signal.PeriodicSignal;
+import de.neemann.oscilloscope.signal.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -27,9 +27,8 @@ public class Generator extends Container<Generator> {
     private final BNCOutput output;
     private final BNCOutput trigOut;
     private final String name;
-    private final TriggerOut triggerOut;
-    private final SignalOut signalOut;
-    private double frequency;
+    private final SignalProvider triggerOut;
+    private final SignalProvider signalOut;
 
     private static ArrayList<Magnify> createFrequencies() {
         ArrayList<Magnify> f = new ArrayList<>();
@@ -51,33 +50,30 @@ public class Generator extends Container<Generator> {
         super(SIZE * 27, SIZE * 10);
         this.name = name;
 
-        triggerOut = new TriggerOut();
-        signalOut = new SignalOut();
+        triggerOut = new SignalProvider();
+        signalOut = new SignalProvider();
+
+        TriggerObserver triggerObserver = new TriggerObserver();
+        SignalObserver signalObserver = new SignalObserver();
 
         freq = new SelectorKnob<Magnify>("Freq/Hz", 30).addAll(createFrequencies());
         freqFine = new Poti("Freq Fine", 30);
-        // the generator frequency is slightly of, to emulate non synchronized clocks in osco and generator.
-        Observer freqChanged = () -> frequency = freq.getSelected().getMag() * 1.001 * Math.exp(freqFine.get() * Math.log(10));
-        freq.addObserver(freqChanged);
-        freqFine.addObserver(freqChanged);
-        freq.addObserver(signalOut);
-        freq.addObserver(triggerOut);
-        freqFine.addObserver(signalOut);
-        freqFine.addObserver(triggerOut);
+        freq.addObserver(signalObserver);
+        freq.addObserver(triggerObserver);
+        freqFine.addObserver(signalObserver);
+        freqFine.addObserver(triggerObserver);
         phase = new Poti("Phase", 30);
-        phase.addObserver(signalOut);
-        phase.addObserver(triggerOut);
+        phase.addObserver(signalObserver);
+        phase.addObserver(triggerObserver);
         offset = new Poti("Offset", 30).set(0.5);
-        offset.addObserver(signalOut);
+        offset.addObserver(signalObserver);
         amplitude = new Poti("Ampl.", 30);
-        amplitude.addObserver(signalOut);
+        amplitude.addObserver(signalObserver);
         power = new PowerSwitch();
-        power.addObserver(signalOut);
-        power.addObserver(triggerOut);
+        power.addObserver(signalObserver);
+        power.addObserver(triggerObserver);
         form = new Switch<Form>("Shape").add(Form.values());
-        form.addObserver(signalOut);
-
-        freqChanged.hasChanged();
+        form.addObserver(signalObserver);
 
         setBackground(Color.WHITE);
         add(freq.setPos(SIZE * 19, SIZE * 3));
@@ -88,9 +84,9 @@ public class Generator extends Container<Generator> {
         add(power.setPos(SIZE * 24 + SIZE2, SIZE));
         add(amplitude.setPos(SIZE * 25, SIZE * 8));
 
-        output = new BNCOutput("Out").setOutput(() -> signalOut);
+        output = new BNCOutput("Out", signalOut);
         add(output.setPos(SIZE * 2, SIZE * 8));
-        trigOut = new BNCOutput("Trig").setOutput(() -> triggerOut);
+        trigOut = new BNCOutput("Trig", triggerOut);
         add(trigOut.setPos(SIZE * 2, SIZE * 3));
     }
 
@@ -143,67 +139,48 @@ public class Generator extends Container<Generator> {
         return freqFine;
     }
 
+    private double getOmega() {
+        return 2 * Math.PI * freq.getSelected().getMag() * 1.001 * Math.exp(freqFine.get() * Math.log(10));
+    }
 
-    private class SignalOut extends PeriodicSignal {
+    private class SignalObserver implements Observer {
+
         @Override
-        public double period() {
-            return 1 / frequency;
-        }
-
-        @Override
-        public double v(double t) {
-            if (power.is(OffOn.Off))
-                return 0;
-
-            double arg = t * frequency + phase.get();
-            double ampl = amplitude.get() * MAX_AMPL;
-            switch (form.getSelected()) {
-                case SINE:
-                    return Math.sin(2 * Math.PI * arg) * ampl + mean();
-                case SQUARE:
-                    return (arg - Math.floor(arg) < 0.5 ? ampl : -ampl) + mean();
-                case TRIANGLE:
-                    double vt = arg - Math.floor(arg);
-                    return (vt < 0.5 ? ampl * (4 * vt - 1) : ampl * (4 * (1 - vt) - 1)) + mean();
-                case SAWTOOTH:
-                    double vs = arg - Math.floor(arg);
-                    return (vs * 2 - 1) * ampl + mean();
+        public void hasChanged() {
+            PeriodicSignal out = PeriodicSignal.GND;
+            if (power.is(OffOn.On)) {
+                double phase = Generator.this.phase.get() * 2 * Math.PI;
+                double ampl = amplitude.get() * MAX_AMPL;
+                double offs = (offset.get() - 0.5) * 2 * MAX_AMPL;
+                switch (form.getSelected()) {
+                    case SINE:
+                        out = new Sine(ampl, getOmega(), phase, offs);
+                        break;
+                    case SQUARE:
+                        out = new Square(ampl, getOmega(), phase, offs);
+                        break;
+                    case TRIANGLE:
+                        out = new Triangle(ampl, getOmega(), phase, offs);
+                        break;
+                    case SAWTOOTH:
+                        out = new Sawtooth(ampl, getOmega(), phase, offs);
+                        break;
+                }
             }
-            return 0;
+            signalOut.setSignal(out);
         }
+    }
+
+    private class TriggerObserver implements Observer {
 
         @Override
-        public double mean() {
-            return (offset.get() - 0.5) * 2 * MAX_AMPL;
-        }
-
-        @Override
-        public SinParams getSinParams() {
-            if (form.getSelected() != Form.SINE || power.is(OffOn.Off))
-                return null;
+        public void hasChanged() {
+            if (power.is(OffOn.On))
+                triggerOut.setSignal(new Square(2.5, getOmega(), 0, 2.5));
             else
-                return new SinParams(amplitude.get() * MAX_AMPL, mean(), 2 * Math.PI * frequency, 2 * Math.PI * phase.get());
+                triggerOut.setSignal(PeriodicSignal.GND);
         }
     }
 
-    private class TriggerOut extends PeriodicSignal {
-        @Override
-        public double period() {
-            return 1 / frequency;
-        }
 
-        @Override
-        public double v(double t) {
-            if (power.is(OffOn.Off))
-                return 0;
-
-            double arg = t * frequency;
-            return (arg - Math.floor(arg) < 0.5 ? 5 : 0);
-        }
-
-        @Override
-        public double mean() {
-            return 2.5;
-        }
-    }
 }

@@ -1,5 +1,7 @@
 package de.neemann.oscilloscope.signal;
 
+import de.neemann.oscilloscope.draw.elements.Poti;
+import de.neemann.oscilloscope.draw.elements.osco.Channel;
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 
 /**
@@ -8,11 +10,10 @@ import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 public class ModelXY implements Model {
     private static final int MAX_LOOP = 10000;
 
-    private final PeriodicSignal xFrontend;
-    private final PeriodicSignal yFrontend;
-    private final ToScreen xScreen;
-    private final ToScreen yScreen;
     private final long timeOffset;
+    private final Channel channel1;
+    private final Channel channel2;
+    private final Poti xPoti;
     private double lastTime;
     private ScreenBuffer buffer;
     private int lastxPos;
@@ -27,10 +28,11 @@ public class ModelXY implements Model {
         if (!osco.getHorizontal().isXY())
             throw new RuntimeException("wrong model");
 
-        this.xFrontend = new Frontend(osco.getSignal1(), osco.getCh1());
-        this.xScreen = new XValueToScreen(osco.getHorizontal().getPosPoti(), 10);
-        this.yFrontend = new Frontend(osco.getSignal2(), osco.getCh2());
-        this.yScreen = new YValueToScreen(osco.getCh2().getPosPoti(), 8);
+        channel1=osco.getCh1();
+        channel2=osco.getCh2();
+
+        xPoti=osco.getHorizontal().getPosPoti();
+
         timeOffset = System.currentTimeMillis();
         lastTime = getTimeInMillis() / 1000.0;
     }
@@ -42,6 +44,11 @@ public class ModelXY implements Model {
     @Override
     public void updateBuffer(ScreenBuffer screenBuffer) {
         double time = getTimeInMillis() / 1000.0;
+
+        Frontend xFrontend = new Frontend(channel1);
+        XValueToScreen xScreen = new XValueToScreen(xPoti.get(), 10);
+        Frontend yFrontend = new Frontend(channel2);
+        YValueToScreen yScreen = new YValueToScreen(channel2.getPos(), 8);
 
         int width = screenBuffer.getWidth();
         int height = screenBuffer.getHeight();
