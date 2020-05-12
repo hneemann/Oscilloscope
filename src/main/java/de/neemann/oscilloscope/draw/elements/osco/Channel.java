@@ -11,8 +11,8 @@ import de.neemann.oscilloscope.signal.SignalProvider;
 public class Channel implements Observer {
     private final SignalProvider output = new SignalProvider();
     private SelectorKnob<Magnify> amplitude;
-    private Poti pos;
-    private Poti var;
+    private Potentiometer pos;
+    private Potentiometer var;
     private Switch<Coupling> coupling;
     private BNCInput input;
     private Switch<OffOn> inv;
@@ -36,7 +36,7 @@ public class Channel implements Observer {
      * @param pos the pos poti
      * @return the given value for chained calls
      */
-    public Poti setPos(Poti pos) {
+    public Potentiometer setPos(Potentiometer pos) {
         this.pos = pos;
         pos.addObserver(this);
         return pos;
@@ -48,7 +48,7 @@ public class Channel implements Observer {
      * @param var the var poti
      * @return the given value for chained calls
      */
-    public Poti setVar(Poti var) {
+    public Potentiometer setVar(Potentiometer var) {
         this.var = var;
         var.addObserver(this);
         return var;
@@ -110,7 +110,7 @@ public class Channel implements Observer {
     /**
      * @return the pos poti
      */
-    public Poti getPosPoti() {
+    public Potentiometer getPosPoti() {
         return pos;
     }
 

@@ -5,9 +5,9 @@ import de.neemann.oscilloscope.draw.graphics.*;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 
 /**
- * Abstraction of a poti
+ * Abstraction of a potentiometer
  */
-public class Poti extends ObservableElement<Poti> implements PotiInterface {
+public class Potentiometer extends ObservableElement<Potentiometer> {
     private static final int MAX = 5000;
     private static final long SPEED = 50;
 
@@ -15,14 +15,15 @@ public class Poti extends ObservableElement<Poti> implements PotiInterface {
     private final String name;
     private int selectedPosition;
     private long time;
+    private boolean centerZero;
 
     /**
-     * Creates a new poti
+     * Creates a new potentiometer
      *
      * @param name   the name
      * @param radius the size
      */
-    public Poti(String name, int radius) {
+    public Potentiometer(String name, int radius) {
         this.name = name;
         this.radius = radius;
     }
@@ -30,20 +31,29 @@ public class Poti extends ObservableElement<Poti> implements PotiInterface {
     /**
      * @return the value of the poti in the range 0-1
      */
-    @Override
     public double get() {
         return ((double) selectedPosition) / MAX;
     }
 
     /**
-     * Sets the potis value
+     * Sets the potentiometers value
      *
      * @param v the new value
      * @return this for chained calls
      */
-    public Poti set(double v) {
+    public Potentiometer set(double v) {
         selectedPosition = (int) (v * MAX);
         hasChanged();
+        return this;
+    }
+
+    /**
+     * Sets the potentiometers value
+     *
+     * @return this for chained calls
+     */
+    public Potentiometer setCenterZero() {
+        centerZero = true;
         return this;
     }
 
@@ -57,9 +67,11 @@ public class Poti extends ObservableElement<Poti> implements PotiInterface {
         VectorInterface p2 = getOffset(0, radius + Style.MAXLINETHICK * 3);
         gr.drawLine(p1, p2, Style.PRINT);
 
-        p1 = getOffset(MAX, radius + Style.MAXLINETHICK * 2);
-        p2 = getOffset(MAX, radius + Style.MAXLINETHICK * 3);
-        gr.drawLine(p1, p2, Style.PRINT);
+        if (centerZero) {
+            p1 = getOffset(MAX, radius + Style.MAXLINETHICK * 2);
+            p2 = getOffset(MAX, radius + Style.MAXLINETHICK * 3);
+            gr.drawLine(p1, p2, Style.PRINT);
+        }
 
         VectorInterface p = getOffset(selectedPosition, r);
         gr.drawLine(new Vector(0, 0), p, Style.NORMAL);

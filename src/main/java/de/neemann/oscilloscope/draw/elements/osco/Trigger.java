@@ -7,7 +7,7 @@ import de.neemann.oscilloscope.signal.PeriodicSignal;
  * Abstraction of the trigger unit.
  */
 public class Trigger {
-    private Poti trigLevel;
+    private Potentiometer trigLevel;
     private Switch<TrigMode> trigMode;
     private Switch<TrigSource> trigSource;
     private Switch<String> trigSlope;
@@ -19,7 +19,7 @@ public class Trigger {
      * @param trigLevel the level poti
      * @return the given value for chained calls
      */
-    public Poti setLevel(Poti trigLevel) {
+    public Potentiometer setLevel(Potentiometer trigLevel) {
         this.trigLevel = trigLevel;
         return trigLevel;
     }
@@ -145,7 +145,7 @@ public class Trigger {
     /**
      * @return the level poti
      */
-    public Poti getLevelPoti() {
+    public Potentiometer getLevelPoti() {
         return trigLevel;
     }
 

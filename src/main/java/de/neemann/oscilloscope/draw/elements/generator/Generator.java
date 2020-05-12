@@ -19,10 +19,10 @@ public class Generator extends Container<Generator> {
 
     private final SelectorKnob<Magnify> freq;
     private final Switch<Form> form;
-    private final Poti freqFine;
-    private final Poti phase;
-    private final Poti offset;
-    private final Poti amplitude;
+    private final Potentiometer freqFine;
+    private final Potentiometer phase;
+    private final Potentiometer offset;
+    private final Potentiometer amplitude;
     private final PowerSwitch power;
     private final BNCOutput output;
     private final BNCOutput trigOut;
@@ -57,17 +57,17 @@ public class Generator extends Container<Generator> {
         SignalObserver signalObserver = new SignalObserver();
 
         freq = new SelectorKnob<Magnify>("Freq/Hz", 30).addAll(createFrequencies());
-        freqFine = new Poti("Freq Fine", 30);
+        freqFine = new Potentiometer("Freq Fine", 30);
         freq.addObserver(signalObserver);
         freq.addObserver(triggerObserver);
         freqFine.addObserver(signalObserver);
         freqFine.addObserver(triggerObserver);
-        phase = new Poti("Phase", 30);
+        phase = new Potentiometer("Phase", 30);
         phase.addObserver(signalObserver);
         phase.addObserver(triggerObserver);
-        offset = new Poti("Offset", 30).set(0.5);
+        offset = new Potentiometer("Offset", 30).set(0.5).setCenterZero();
         offset.addObserver(signalObserver);
-        amplitude = new Poti("Ampl.", 30);
+        amplitude = new Potentiometer("Ampl.", 30);
         amplitude.addObserver(signalObserver);
         power = new PowerSwitch();
         power.addObserver(signalObserver);
@@ -121,7 +121,7 @@ public class Generator extends Container<Generator> {
     /**
      * @return the amplitude poti
      */
-    public Poti getAmplitude() {
+    public Potentiometer getAmplitude() {
         return amplitude;
     }
 
@@ -135,7 +135,7 @@ public class Generator extends Container<Generator> {
     /**
      * @return the frequency fine poti
      */
-    public Poti setFrequencyFinePoti() {
+    public Potentiometer setFrequencyFinePoti() {
         return freqFine;
     }
 

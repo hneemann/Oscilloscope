@@ -7,8 +7,8 @@ import de.neemann.oscilloscope.draw.elements.*;
  */
 public class Horizontal {
 
-    private Poti pos;
-    private Poti var;
+    private Potentiometer pos;
+    private Potentiometer var;
     private Switch<OffOn> horiMag;
     private SelectorKnob<TimeBase> timeBase;
 
@@ -18,7 +18,7 @@ public class Horizontal {
      * @param horiPos the pos poti
      * @return the given value for chained calls
      */
-    public Poti setPos(Poti horiPos) {
+    public Potentiometer setPos(Potentiometer horiPos) {
         this.pos = horiPos;
         return horiPos;
     }
@@ -29,7 +29,7 @@ public class Horizontal {
      * @param horiVar the var poti
      * @return the given value for chained calls
      */
-    public Poti setVar(Poti horiVar) {
+    public Potentiometer setVar(Potentiometer horiVar) {
         this.var = horiVar;
         return horiVar;
     }
@@ -66,7 +66,7 @@ public class Horizontal {
     /**
      * @return the pos poti
      */
-    public Poti getPosPoti() {
+    public Potentiometer getPosPoti() {
         return pos;
     }
 
