@@ -15,7 +15,6 @@ public class ModelXY implements Model {
     private final Channel channel2;
     private final Poti xPoti;
     private double lastTime;
-    private ScreenBuffer buffer;
     private int lastxPos;
     private int lastyPos;
 
@@ -43,11 +42,12 @@ public class ModelXY implements Model {
 
     @Override
     public void updateBuffer(ScreenBuffer screenBuffer) {
-        double time = getTimeInMillis() / 1000.0;
 
-        Frontend xFrontend = new Frontend(channel1);
+        PeriodicSignal xFrontend = channel1.getSignal();
+        PeriodicSignal yFrontend = channel2.getSignal();
+
+        double time = getTimeInMillis() / 1000.0;
         XValueToScreen xScreen = new XValueToScreen(xPoti.get(), 10);
-        Frontend yFrontend = new Frontend(channel2);
         YValueToScreen yScreen = new YValueToScreen(channel2.getPos(), 8);
 
         int width = screenBuffer.getWidth();

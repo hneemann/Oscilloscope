@@ -40,11 +40,12 @@ public class ModelTimeCalc implements Model {
 
     @Override
     public void updateBuffer(ScreenBuffer screenBuffer) {
-        Frontend frontend1 = new Frontend(channel1);
-        YValueToScreen screen1 = new YValueToScreen(channel1.getPos(), 8);
-        Frontend frontend2 = new Frontend(channel2);
-        YValueToScreen screen2 = new YValueToScreen(channel2.getPos(), 8);
+        PeriodicSignal frontend1 = channel1.getSignal();
+        PeriodicSignal frontend2 = channel2.getSignal();
         PeriodicSignal triggerIn = triggerInProvider.getSignal();
+
+        YValueToScreen screen1 = new YValueToScreen(channel1.getPos(), 8);
+        YValueToScreen screen2 = new YValueToScreen(channel2.getPos(), 8);
 
         int width = screenBuffer.getWidth();
         int heigth = screenBuffer.getHeight();

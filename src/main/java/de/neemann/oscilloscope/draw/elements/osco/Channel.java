@@ -1,12 +1,15 @@
 package de.neemann.oscilloscope.draw.elements.osco;
 
 import de.neemann.oscilloscope.draw.elements.*;
+import de.neemann.oscilloscope.gui.Observer;
+import de.neemann.oscilloscope.signal.PeriodicSignal;
+import de.neemann.oscilloscope.signal.SignalProvider;
 
 /**
  * The abstraction of the channel
  */
-public class Channel {
-
+public class Channel implements Observer {
+    private final SignalProvider output = new SignalProvider();
     private SelectorKnob<Magnify> amplitude;
     private Poti pos;
     private Poti var;
@@ -23,6 +26,7 @@ public class Channel {
      */
     public SelectorKnob<Magnify> setAmplitude(SelectorKnob<Magnify> mag) {
         this.amplitude = mag;
+        mag.addObserver(this);
         return mag;
     }
 
@@ -34,6 +38,7 @@ public class Channel {
      */
     public Poti setPos(Poti pos) {
         this.pos = pos;
+        pos.addObserver(this);
         return pos;
     }
 
@@ -45,6 +50,7 @@ public class Channel {
      */
     public Poti setVar(Poti var) {
         this.var = var;
+        var.addObserver(this);
         return var;
     }
 
@@ -56,6 +62,7 @@ public class Channel {
      */
     public Switch<Coupling> setCoupling(Switch<Coupling> coupling) {
         this.coupling = coupling;
+        coupling.addObserver(this);
         return coupling;
     }
 
@@ -67,6 +74,7 @@ public class Channel {
      */
     public BNCInput setInput(BNCInput input) {
         this.input = input;
+        input.getSignalProvider().addObserver(this);
         return input;
     }
 
@@ -78,13 +86,14 @@ public class Channel {
      */
     public Switch<OffOn> setInv(Switch<OffOn> inv) {
         this.inv = inv;
+        inv.addObserver(this);
         return inv;
     }
 
     /**
      * @return the amplitude value
      */
-    public double getAmplitude() {
+    private double getAmplitude() {
         if (isMag5())
             return amplitude.getSelected().getMag() / 5;
         else
@@ -108,14 +117,14 @@ public class Channel {
     /**
      * @return the var value
      */
-    public double getVar() {
+    private double getVar() {
         return var.get();
     }
 
     /**
      * @return the coupling
      */
-    public Coupling getCoupling() {
+    private Coupling getCoupling() {
         return coupling.getSelected();
     }
 
@@ -129,7 +138,7 @@ public class Channel {
     /**
      * @return true if inv os on
      */
-    public boolean isInv() {
+    private boolean isInv() {
         if (inv == null)
             return false;
         return inv.is(OffOn.On);
@@ -143,13 +152,14 @@ public class Channel {
      */
     public Switch<OffOn> setMag5(Switch<OffOn> mag5) {
         this.mag5 = mag5;
+        mag5.addObserver(this);
         return mag5;
     }
 
     /**
      * @return true if mag5 is on
      */
-    public boolean isMag5() {
+    private boolean isMag5() {
         return mag5.is(OffOn.On);
     }
 
@@ -173,4 +183,67 @@ public class Channel {
     public Switch<OffOn> getInvSwitch() {
         return inv;
     }
+
+    @Override
+    public void hasChanged() {
+        output.setSignal(new Frontend(this));
+    }
+
+    /**
+     * @return the output signal
+     */
+    public PeriodicSignal getSignal() {
+        return output.getSignal();
+    }
+
+    private static final class Frontend implements PeriodicSignal {
+        private final PeriodicSignal s;
+        private final Coupling coupling;
+        private final boolean isInv;
+        private final double amplitude;
+        private final double var;
+
+        /**
+         * Creates a new frontend
+         *
+         * @param channel the channel parameters
+         */
+        private Frontend(Channel channel) {
+            this.s = channel.getInput().getSignalProvider().getSignal();
+            coupling = channel.getCoupling();
+            amplitude = channel.getAmplitude();
+            var = channel.getVar();
+            isInv = channel.isInv();
+        }
+
+
+        @Override
+        public double v(double t) {
+            if (coupling == Coupling.GND)
+                return 0;
+            else {
+                double v = s.v(t);
+
+                if (coupling == Coupling.AC)
+                    v -= s.mean();
+
+                if (isInv)
+                    v = -v;
+                return v / amplitude * (1 + var * 2);
+            }
+        }
+
+        @Override
+        public double period() {
+            return s.period();
+        }
+
+        @Override
+        public double mean() {
+            if (coupling == Coupling.DC)
+                return s.mean();
+            return 0;
+        }
+    }
+
 }
