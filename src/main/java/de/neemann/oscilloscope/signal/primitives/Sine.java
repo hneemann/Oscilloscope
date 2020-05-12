@@ -1,4 +1,6 @@
-package de.neemann.oscilloscope.signal;
+package de.neemann.oscilloscope.signal.primitives;
+
+import de.neemann.oscilloscope.signal.PeriodicSignal;
 
 /**
  * A sine signal

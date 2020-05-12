@@ -1,5 +1,6 @@
 package de.neemann.oscilloscope.draw.elements.diode;
 
+import de.neemann.oscilloscope.signal.interpolate.Solver;
 import junit.framework.TestCase;
 
 

@@ -20,7 +20,6 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  * The oscilloscope
  */
 public class Oscilloscope extends Container<Oscilloscope> implements ElementComponent.NeedsComponent {
-    private static boolean debug = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(Oscilloscope.class);
     /**
      * The screen update period
@@ -28,14 +27,6 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
     public static final int TIME_DELTA_MS = 20;
     private static final ArrayList<TimeBase> TIMES = createTimes();
     private static final ArrayList<Magnify> MAGNIFY = createMagnify();
-
-    /**
-     * Sets debug mode
-     */
-    public static void setDebug() {
-        debug = true;
-    }
-
     private final Trigger trigger;
     private final Horizontal horizontal;
     private final Channel ch1;
@@ -153,11 +144,13 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                 timer = executor.scheduleAtFixedRate(new Runnable() {
                     @Override
                     public void run() {
-                        if (debug)
-                            System.out.println("*");
                         if (model != null) {
                             long t = System.currentTimeMillis();
-                            model.updateBuffer(screen.getScreenBuffer());
+                            try {
+                                model.updateBuffer(screen.getScreenBuffer());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             t = System.currentTimeMillis() - t;
                             if (t > TIME_DELTA_MS)
                                 LOGGER.info("slow " + t);

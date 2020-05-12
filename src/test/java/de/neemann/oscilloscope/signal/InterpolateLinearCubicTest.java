@@ -2,7 +2,7 @@ package de.neemann.oscilloscope.signal;
 
 import junit.framework.TestCase;
 
-public class InterpolateCubicTest extends TestCase {
+public class InterpolateLinearCubicTest extends TestCase {
 
 
     public void testSimple() {

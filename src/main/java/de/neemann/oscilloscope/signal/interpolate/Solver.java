@@ -1,4 +1,4 @@
-package de.neemann.oscilloscope.draw.elements.diode;
+package de.neemann.oscilloscope.signal.interpolate;
 
 /**
  * A solver to solve a equation
@@ -38,21 +38,21 @@ public class Solver {
     /**
      * solves the function using a simple newton iteration
      *
-     * @param x        the initial x value
-     * @param deltaMin precision of the result
+     * @param x   the initial x value
+     * @param eps precision of the result
      * @return the solving value
      */
-    public double newton(double x, double deltaMin) {
+    public double newton(double x, double eps) {
         int n = 0;
-        while (n++ < 20) {
+        while (n++ < 40) {
             f.setX(x);
             double delta = f.f() / f.deriv();
             x = x - delta;
-            if (Math.abs(delta) < deltaMin)
+            if (Math.abs(delta) < eps)
                 break;
         }
         if (n == 20)
-            System.out.println("newton does not converge");
+            System.out.println("newton does not converge " + x + "," + f);
         return x;
     }
 

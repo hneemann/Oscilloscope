@@ -6,7 +6,7 @@ import de.neemann.oscilloscope.gui.Observer;
 import de.neemann.oscilloscope.signal.InterpolateLinear;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
 import de.neemann.oscilloscope.signal.SignalProvider;
-import de.neemann.oscilloscope.signal.Sine;
+import de.neemann.oscilloscope.signal.primitives.Sine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,6 +95,11 @@ public class CapacitorModel implements Observer {
         return v * v;
     }
 
+    /**
+     * a simple gauss solver
+     *
+     * @param input the input signal
+     */
     private void solveDGL(PeriodicSignal input) {
         LOGGER.info("recalculate capacitor");
         double[] capacitorVoltage = new double[POINTS];

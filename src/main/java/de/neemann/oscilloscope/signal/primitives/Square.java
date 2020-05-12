@@ -1,9 +1,11 @@
-package de.neemann.oscilloscope.signal;
+package de.neemann.oscilloscope.signal.primitives;
+
+import de.neemann.oscilloscope.signal.PeriodicSignal;
 
 /**
- * The triangle signal
+ * The square signal
  */
-public class Triangle implements PeriodicSignal {
+public class Square implements PeriodicSignal {
     private final double ampl;
     private final double phase;
     private final double period;
@@ -18,7 +20,7 @@ public class Triangle implements PeriodicSignal {
      * @param phase  the phase
      * @param offset the offset
      */
-    public Triangle(double ampl, double w, double phase, double offset) {
+    public Square(double ampl, double w, double phase, double offset) {
         this.ampl = ampl;
         this.phase = phase;
         this.frequency = w / 2 / Math.PI;
@@ -29,8 +31,7 @@ public class Triangle implements PeriodicSignal {
     @Override
     public double v(double t) {
         double arg = t * frequency + phase;
-        double vt = arg - Math.floor(arg);
-        return (vt < 0.5 ? ampl * (4 * vt - 1) : ampl * (4 * (1 - vt) - 1)) + offset;
+        return (arg - Math.floor(arg) < 0.5 ? ampl : -ampl) + offset;
     }
 
     @Override

@@ -1,20 +1,19 @@
 package de.neemann.oscilloscope.draw.elements.diode;
 
-import de.neemann.oscilloscope.draw.elements.diode.Solver.FunctionDeriv;
+import de.neemann.oscilloscope.draw.elements.generator.Generator;
 import de.neemann.oscilloscope.gui.Observer;
-import de.neemann.oscilloscope.signal.InterpolateCubic;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
 import de.neemann.oscilloscope.signal.SignalProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.neemann.oscilloscope.signal.interpolate.InterpolateLinear;
+import de.neemann.oscilloscope.signal.interpolate.InverterFunc;
+import de.neemann.oscilloscope.signal.interpolate.Solver.FunctionDeriv;
+import de.neemann.oscilloscope.signal.primitives.SignalFunc;
 
 /**
  * The model of the diode
  */
 public class DiodeModel implements Observer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DiodeModel.class);
-
-    private static final int POINTS = 200;
+    private static final int POINTS = 10000;
     private static final double R = 1000;
     private static final double UT = 0.025;
     private static final double IS = 1e-10;
@@ -22,6 +21,7 @@ public class DiodeModel implements Observer {
     private final SignalProvider inputProvider;
     private final SignalProvider diodeVoltageSignal;
     private final SignalProvider resistorVoltageSignal;
+    private final InterpolateLinear ud;
 
     /**
      * Creates a new diode model
@@ -33,6 +33,10 @@ public class DiodeModel implements Observer {
         inputProvider.addObserver(this);
         diodeVoltageSignal = new SignalProvider();
         resistorVoltageSignal = new SignalProvider();
+
+        ud = new InterpolateLinear(
+                -Generator.MAX_AMPL, Generator.MAX_AMPL, POINTS,
+                new InverterFunc(1e-6, -10, UDiodeFunc::new));
     }
 
     /**
@@ -55,32 +59,19 @@ public class DiodeModel implements Observer {
     }
 
     private void inputSignalHasChanged() {
-        LOGGER.info("recalculate diode");
-        PeriodicSignal input = inputProvider.getSignal();
-        double[] diodeVoltage = new double[POINTS];
-        double[] resistorVoltage = new double[POINTS];
-        double period = input.period();
-        for (int i = 0; i < POINTS; i++) {
-            double uGes = input.v(period * i / POINTS);
-            if (uGes < 0) {
-                diodeVoltage[i] = uGes;
-                resistorVoltage[i] = 0;
-            } else {
-                Solver s = new Solver(new DiodeFunc(uGes));
-                double uD = s.newton(0.6, 1e-4);
-                diodeVoltage[i] = uD;
-                resistorVoltage[i] = uD - uGes;
-            }
-        }
-        diodeVoltageSignal.setSignal(new InterpolateCubic(period, diodeVoltage));
-        resistorVoltageSignal.setSignal(new InterpolateCubic(period, resistorVoltage));
+        final PeriodicSignal uGes = inputProvider.getSignal();
+        diodeVoltageSignal.setSignal(new SignalFunc(uGes, ud));
+        resistorVoltageSignal.setSignal(new SignalFunc(uGes, ug -> ud.f(ug) - ug));
     }
 
-    private static final class DiodeFunc extends FunctionDeriv {
+    /**
+     * Function to calculate Ud at a given uGes
+     */
+    private static final class UDiodeFunc extends FunctionDeriv {
         private final double uGes;
         private double iGes;
 
-        private DiodeFunc(double uGes) {
+        private UDiodeFunc(double uGes) {
             this.uGes = uGes;
         }
 
@@ -98,6 +89,11 @@ public class DiodeModel implements Observer {
         @Override
         public double deriv() {
             return R * iGes / N / UT + 1;
+        }
+
+        @Override
+        public String toString() {
+            return "UDiodeFunc{" + "uGes=" + uGes + '}';
         }
     }
 

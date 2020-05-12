@@ -4,6 +4,10 @@ import de.neemann.oscilloscope.draw.elements.*;
 import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.gui.Observer;
 import de.neemann.oscilloscope.signal.*;
+import de.neemann.oscilloscope.signal.primitives.Sawtooth;
+import de.neemann.oscilloscope.signal.primitives.Sine;
+import de.neemann.oscilloscope.signal.primitives.Square;
+import de.neemann.oscilloscope.signal.primitives.Triangle;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -15,7 +19,10 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  * Abstraction of a function generator
  */
 public class Generator extends Container<Generator> {
-    private static final double MAX_AMPL = 10;
+    /**
+     * max generator output voltage amplitude
+     */
+    public static final double MAX_AMPL = 10;
 
     private final SelectorKnob<Magnify> freq;
     private final Switch<Form> form;

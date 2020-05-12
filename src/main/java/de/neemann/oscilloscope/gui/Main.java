@@ -1,9 +1,10 @@
 package de.neemann.oscilloscope.gui;
 
 import de.neemann.oscilloscope.draw.elements.Container;
-import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 import de.neemann.oscilloscope.draw.graphics.GraphicMinMax;
-import de.neemann.oscilloscope.experiments.*;
+import de.neemann.oscilloscope.experiments.Experiment;
+import de.neemann.oscilloscope.experiments.Experiments;
+import de.neemann.oscilloscope.experiments.General;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -15,9 +16,6 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
 import java.util.prefs.Preferences;
 
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
@@ -94,24 +92,6 @@ public class Main extends JFrame {
                 }
             }
         }));
-        if (preset)
-            view.add(new JMenuItem(new AbstractAction("Info") {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    Oscilloscope.setDebug();
-                    ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-                    long[] ids = bean.findMonitorDeadlockedThreads();
-                    if (ids != null) {
-                        ThreadInfo[] threadInfo = bean.getThreadInfo(ids);
-                        for (ThreadInfo ti : threadInfo) {
-                            System.out.println(ti.getThreadName());
-                            for (StackTraceElement st : ti.getStackTrace())
-                                System.out.println(st);
-                        }
-                    } else
-                        System.out.println("no deadlock");
-                }
-            }));
         view.add(InfoDialog.getInstance().createMenuItem(this, MESSAGE));
 
         setJMenuBar(bar);
