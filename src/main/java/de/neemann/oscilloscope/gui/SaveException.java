@@ -22,20 +22,16 @@ public class SaveException implements Thread.UncaughtExceptionHandler {
         return INSTANCE;
     }
 
+    /**
+     * Stores the given exception
+     *
+     * @param throwable the exception
+     */
     public static void save(Throwable throwable) {
-        getInstance().uncaughtException(throwable);
+        getInstance().uncaughtException(Thread.currentThread(), throwable);
     }
 
     private final DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-
-    /**
-     * Stores an exception
-     *
-     * @param throwable the exception to store
-     */
-    public void uncaughtException(Throwable throwable) {
-        uncaughtException(Thread.currentThread(), throwable);
-    }
 
     @Override
     public void uncaughtException(Thread thread, Throwable throwable) {
