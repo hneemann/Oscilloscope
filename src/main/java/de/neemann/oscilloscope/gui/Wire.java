@@ -71,4 +71,11 @@ public class Wire implements Observer {
     public void hasChanged() {
         in.setSignal(out.getSignal());
     }
+
+    /**
+     * @return the output socket
+     */
+    public BNCOutput getOutput() {
+        return out;
+    }
 }
