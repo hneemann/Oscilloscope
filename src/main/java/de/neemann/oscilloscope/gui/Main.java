@@ -160,6 +160,7 @@ public class Main extends JFrame {
      * @param args the arguments
      */
     public static void main(String[] args) {
+        Thread.setDefaultUncaughtExceptionHandler(SaveException.getInstance());
         SwingUtilities.invokeLater(() -> new Main(args.length == 1 && args[0].equals("preset")).setVisible(true));
     }
 

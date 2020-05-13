@@ -3,6 +3,7 @@ package de.neemann.oscilloscope.draw.elements.osco;
 import de.neemann.oscilloscope.draw.elements.Container;
 import de.neemann.oscilloscope.draw.elements.*;
 import de.neemann.oscilloscope.gui.ElementComponent;
+import de.neemann.oscilloscope.gui.SaveException;
 import de.neemann.oscilloscope.signal.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,6 +150,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                             try {
                                 model.updateBuffer(screen.getScreenBuffer());
                             } catch (Exception e) {
+                                SaveException.save(e);
                                 e.printStackTrace();
                             }
                             t = System.currentTimeMillis() - t;
