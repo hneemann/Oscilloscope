@@ -17,7 +17,7 @@ public class Switch<T> extends ObservableElement<Switch<T>> {
      */
     public static final int SIZE = 20;
     /**
-     * hals the internal grid size
+     * half the internal grid size
      */
     public static final int SIZE2 = SIZE / 2;
 
@@ -37,7 +37,7 @@ public class Switch<T> extends ObservableElement<Switch<T>> {
     }
 
     /**
-     * Abbs an item.
+     * Adds an item.
      *
      * @param item the item to add
      * @return this for chained calls
