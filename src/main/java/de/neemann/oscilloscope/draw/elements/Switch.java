@@ -2,7 +2,6 @@ package de.neemann.oscilloscope.draw.elements;
 
 import de.neemann.oscilloscope.draw.graphics.*;
 
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import static de.neemann.oscilloscope.draw.graphics.Style.MAXLINETHICK;
@@ -123,12 +122,8 @@ public class Switch<T> extends ObservableElement<Switch<T>> {
         if (items.size() == 2) {
             selectedPosition = 1 - selectedPosition;
             hasChanged();
-        } else {
-            if (button == MouseEvent.BUTTON1)
-                up(ctrl);
-            else if (button == MouseEvent.BUTTON3)
-                down(ctrl);
-        }
+        } else
+            super.clicked(button, ctrl);
     }
 
     /**

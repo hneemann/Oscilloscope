@@ -2,6 +2,8 @@ package de.neemann.oscilloscope.draw.elements;
 
 import de.neemann.oscilloscope.draw.graphics.*;
 
+import java.awt.event.MouseEvent;
+
 /**
  * Base class of all the gui elements.
  *
@@ -104,6 +106,10 @@ public abstract class Element<T extends Element<?>> {
      * @param ctrl   ctrl is pressed
      */
     public void clicked(int button, boolean ctrl) {
+        if (button == MouseEvent.BUTTON1)
+            up(ctrl);
+        else if (button == MouseEvent.BUTTON3)
+            down(ctrl);
     }
 
     /**
