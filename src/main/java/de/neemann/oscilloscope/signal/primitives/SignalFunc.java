@@ -9,16 +9,19 @@ import de.neemann.oscilloscope.signal.interpolate.Func;
 public class SignalFunc implements PeriodicSignal {
     private final PeriodicSignal s;
     private final Func f;
+    private final double mean;
 
     /**
      * Creates a new instance
      *
-     * @param s the periodic signal
-     * @param f the function to apply on the signal
+     * @param s    the periodic signal
+     * @param f    the function to apply on the signal
+     * @param mean the mean value used for AC coupling
      */
-    public SignalFunc(PeriodicSignal s, Func f) {
+    public SignalFunc(PeriodicSignal s, Func f, double mean) {
         this.s = s;
         this.f = f;
+        this.mean = mean;
     }
 
     @Override
@@ -33,7 +36,7 @@ public class SignalFunc implements PeriodicSignal {
 
     @Override
     public double mean() {
-        return f.f(s.mean());
+        return mean;
     }
 
 }

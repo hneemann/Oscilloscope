@@ -82,10 +82,10 @@ public class CapacitorModel implements Observer {
     private void createSines(Sine sine) {
         LOGGER.info("create sines");
         double w = sine.getOmega();
-        double uc = sine.getAmpl() / Math.sqrt(1 + sqr(w * TAU));
+        double uc = sine.getAmplitude() / Math.sqrt(1 + sqr(w * TAU));
         double phase = -Math.atan(w * TAU);
 
-        double ur = Math.sqrt(sqr(sine.getAmpl()) - sqr(uc));
+        double ur = Math.sqrt(sqr(sine.getAmplitude()) - sqr(uc));
 
         capacitorVoltageSignal.setSignal(new Sine(uc, w, sine.getPhase() + phase, sine.getOffset()));
         resistorVoltageSignal.setSignal(new Sine(-ur, w, sine.getPhase() + phase + Math.PI / 2, 0));

@@ -37,17 +37,15 @@ public class Main extends JFrame {
 
     private static final Preferences PREFS = Preferences.userRoot().node("oscilloscope");
     private final ElementComponent elementComponent;
-    private final boolean preset;
     private Container<?> mainContainer;
 
     /**
      * Creates a new main window.
      *
-     * @param preset if true, the system is setup properly
+     * @param experiment the selected experiment
      */
-    public Main(boolean preset) {
+    public Main(String experiment) {
         super("Oscilloscope");
-        this.preset = preset;
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         elementComponent = new ElementComponent();
@@ -96,15 +94,17 @@ public class Main extends JFrame {
 
         setJMenuBar(bar);
 
-        Experiment general = Experiments.getInstance().get(General.NAME);
-//        Experiment general = Experiments.getInstance().get("Resonant Circuit");
 
-        if (general != null)
-            setExercise(general);
-        else {
-            setSize(800, 600);
+        Experiment exp = null;
+        boolean preset = true;
+        if (experiment != null)
+            exp = Experiments.getInstance().get(experiment);
+        if (exp == null) {
+            preset = false;
+            exp = Experiments.getInstance().get(General.NAME);
         }
 
+        setExperiment(exp, preset);
         setLocationRelativeTo(null);
     }
 
@@ -147,8 +147,9 @@ public class Main extends JFrame {
      * Sets an exercise
      *
      * @param experiment the exercise to use
+     * @param preset     if true experiment is preconfigured
      */
-    public void setExercise(Experiment experiment) {
+    public void setExperiment(Experiment experiment, boolean preset) {
         setMain(experiment.create());
         if (preset)
             experiment.setup(elementComponent);
@@ -161,7 +162,10 @@ public class Main extends JFrame {
      */
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler(SaveException.getInstance());
-        SwingUtilities.invokeLater(() -> new Main(args.length == 1 && args[0].equals("preset")).setVisible(true));
+
+        String experiment = args.length != 1 ? null : args[0].replace('_', ' ');
+
+        SwingUtilities.invokeLater(() -> new Main(experiment).setVisible(true));
     }
 
     private final class ExerciseGenerator extends AbstractAction {
@@ -174,7 +178,7 @@ public class Main extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            setExercise(experiment);
+            setExperiment(experiment, false);
         }
     }
 

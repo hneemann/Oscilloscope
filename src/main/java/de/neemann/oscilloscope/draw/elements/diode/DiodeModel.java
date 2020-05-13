@@ -7,6 +7,7 @@ import de.neemann.oscilloscope.signal.SignalProvider;
 import de.neemann.oscilloscope.signal.interpolate.InterpolateLinear;
 import de.neemann.oscilloscope.signal.interpolate.InverterFunc;
 import de.neemann.oscilloscope.signal.interpolate.Solver.FunctionDeriv;
+import de.neemann.oscilloscope.signal.primitives.Signal;
 import de.neemann.oscilloscope.signal.primitives.SignalFunc;
 
 /**
@@ -60,8 +61,17 @@ public class DiodeModel implements Observer {
 
     private void inputSignalHasChanged() {
         final PeriodicSignal uGes = inputProvider.getSignal();
-        diodeVoltageSignal.setSignal(new SignalFunc(uGes, ud));
-        resistorVoltageSignal.setSignal(new SignalFunc(uGes, ug -> ud.f(ug) - ug));
+
+        double udMean = 0;
+        double urMean = 0;
+        if (uGes instanceof Signal) {
+            Signal s = (Signal) uGes;
+            udMean = (0.7 - s.getAmplitude()+s.getOffset()) / 2;
+            urMean = (-s.getAmplitude()-s.getOffset()) / 4;
+        }
+
+        diodeVoltageSignal.setSignal(new SignalFunc(uGes, ud, udMean));
+        resistorVoltageSignal.setSignal(new SignalFunc(uGes, ug -> ud.f(ug) - ug, urMean));
     }
 
     /**

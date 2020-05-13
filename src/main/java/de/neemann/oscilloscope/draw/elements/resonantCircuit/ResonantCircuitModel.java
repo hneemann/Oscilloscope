@@ -117,7 +117,7 @@ public class ResonantCircuitModel implements Observer {
     private PeriodicSignal createSines(Sine sine) {
         LOGGER.info("create sine");
         double w = sine.getOmega();
-        double a = sine.getAmpl() * (resistor + RL) / Math.sqrt(sqr(resistor + RL) + sqr(w * L - 1 / (w * C)));
+        double a = sine.getAmplitude() * (resistor + RL) / Math.sqrt(sqr(resistor + RL) + sqr(w * L - 1 / (w * C)));
         double ampl = a * resistor / (resistor + RL);
 
         double phi = Math.atan((w * L - 1 / (w * C)) / (resistor + RL));
