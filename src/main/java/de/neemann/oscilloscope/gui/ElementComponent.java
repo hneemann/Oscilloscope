@@ -241,17 +241,14 @@ public class ElementComponent extends JComponent {
                 pendingWire = null;
                 repaint();
             }
-
         }
 
         @Override
         public void mouseEntered(MouseEvent mouseEvent) {
-
         }
 
         @Override
         public void mouseExited(MouseEvent mouseEvent) {
-
         }
 
         @Override

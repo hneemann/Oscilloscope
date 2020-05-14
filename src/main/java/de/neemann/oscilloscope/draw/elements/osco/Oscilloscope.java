@@ -158,7 +158,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                             }
                             t = System.currentTimeMillis() - t;
                             if (t > TIME_DELTA_MS)
-                                LOGGER.info("slow " + t);
+                                LOGGER.info("slow: " + t + "ms");
                             if (debug)
                                 System.out.print(")");
                         }
@@ -190,7 +190,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
      * Enables debug mode
      */
     public static void setDebug() {
-        debug=true;
+        debug = true;
     }
 
     private void stopTimer() {

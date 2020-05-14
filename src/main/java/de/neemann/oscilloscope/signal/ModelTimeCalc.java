@@ -7,9 +7,13 @@ import de.neemann.oscilloscope.draw.elements.osco.Channel;
 import de.neemann.oscilloscope.draw.elements.osco.Horizontal;
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 import de.neemann.oscilloscope.draw.elements.osco.Trigger;
+import de.neemann.oscilloscope.signal.primitives.Sum;
 
 /**
- * Scope model in normal time mode
+ * Scope model in normal time mode.
+ * Humans are not able to see the trace moving across the screen.
+ * The trace seems like a stable line. In this case the trans can be calculated
+ * and drawn independent of real time.
  */
 public class ModelTimeCalc implements Model {
     private final Horizontal horizontal;
@@ -44,11 +48,12 @@ public class ModelTimeCalc implements Model {
         PeriodicSignal frontend2 = channel2.getSignal();
         PeriodicSignal triggerIn = triggerInProvider.getSignal();
 
-        YValueToScreen screen1 = new YValueToScreen(channel1.getPos(), 8);
-        YValueToScreen screen2 = new YValueToScreen(channel2.getPos(), 8);
-
         int width = screenBuffer.getWidth();
-        int heigth = screenBuffer.getHeight();
+        int height = screenBuffer.getHeight();
+        ValueToScreen screen1 = new ValueToScreen(frontend1, channel1.getPos(), 8, height);
+        ValueToScreen screen2 = new ValueToScreen(frontend2, channel2.getPos(), 8, height);
+        ValueToScreen screenSum = new ValueToScreen(new Sum(frontend1, frontend2), channel1.getPos(), 8, height);
+
         double timePerPixel = horizontal.getTimePerDiv() * 10 / width;
         double t0 = (System.currentTimeMillis() - timeOffset) / 1000.0;
 
@@ -82,32 +87,32 @@ public class ModelTimeCalc implements Model {
         if (show) {
             switch (mode.getSelected()) {
                 case Ch_1:
-                    drawTrace(screenBuffer, t -> screen1.v(frontend1.v(t), heigth), width, timePerPixel, triggerTime);
+                    drawTrace(screenBuffer, screen1, width, timePerPixel, triggerTime);
                     break;
                 case Ch_2:
-                    drawTrace(screenBuffer, t -> screen2.v(frontend2.v(t), heigth), width, timePerPixel, triggerTime);
+                    drawTrace(screenBuffer, screen2, width, timePerPixel, triggerTime);
                     break;
                 case DUAL:
-                    drawTrace(screenBuffer, t -> screen1.v(frontend1.v(t), heigth), width, timePerPixel, triggerTime);
-                    drawTrace(screenBuffer, t -> screen2.v(frontend2.v(t), heigth), width, timePerPixel, triggerTime);
+                    drawTrace(screenBuffer, screen1, width, timePerPixel, triggerTime);
+                    drawTrace(screenBuffer, screen2, width, timePerPixel, triggerTime);
                     break;
                 case ADD:
-                    drawTrace(screenBuffer, t -> screen1.v(frontend1.v(t) + frontend2.v(t), heigth), width, timePerPixel, triggerTime);
+                    drawTrace(screenBuffer, screenSum, width, timePerPixel, triggerTime);
             }
         }
     }
 
-    interface Screen {
-        int v(double t);
-    }
-
-    private void drawTrace(ScreenBuffer g, Screen screen, int width, double timePerPixel, double t) {
-        int y0 = screen.v(t);
-        for (int x = 0; x < width; x++) {
-            t += timePerPixel;
-            int y1 = screen.v(t);
-            g.drawTrace(x - 1, y0, x, y1);
-            y0 = y1;
+    private void drawTrace(ScreenBuffer g, PeriodicSignal screen, int width, double timePerPixel, double t) {
+        // to avoid a beat (german Schwebung) don't plot anything if frequency is extremely
+        // high compared to screen width. In this case: if a full wave length is less then 2 pixels wide.
+        if (screen.period() > timePerPixel * 2) {
+            int y0 = (int) screen.v(t);
+            for (int x = 0; x < width; x++) {
+                t += timePerPixel;
+                int y1 = (int) screen.v(t);
+                g.drawTrace(x - 1, y0, x, y1);
+                y0 = y1;
+            }
         }
     }
 }

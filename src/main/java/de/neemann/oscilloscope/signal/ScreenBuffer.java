@@ -120,7 +120,7 @@ public class ScreenBuffer {
         if (isOnScreen(x0, y0) || isOnScreen(x1, y1)) {
             int distOnScreenSqr = sqr(x0 - x1) + sqr(y0 - y1);
             g2d.setColor(SPEEDCOLOR[Math.min(distOnScreenSqr, SPEEDCOLORS - 1)]);
-            g2d.drawLine(x0, y0, x1, y1);
+            g2d.drawLine(x0, height-y0, x1, height-y1);
         }
     }
 
@@ -135,7 +135,7 @@ public class ScreenBuffer {
     public synchronized void drawBrightTrace(int x0, int y0, int x1, int y1) {
         if (isOnScreen(x0, y0) || isOnScreen(x1, y1)) {
             g2d.setColor(Color.GREEN);
-            g2d.drawLine(x0, y0, x1, y1);
+            g2d.drawLine(x0, height-y0, x1, height-y1);
         }
     }
 
@@ -144,7 +144,7 @@ public class ScreenBuffer {
     }
 
     private boolean isOnScreen(int x, int y) {
-        return x >= 0 && x <= width && y >= 0 && y <= height;
+        return x >= 0 && x < width && y >= 0 && y < height;
     }
 
 }

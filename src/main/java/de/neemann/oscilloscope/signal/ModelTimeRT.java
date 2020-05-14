@@ -7,9 +7,12 @@ import de.neemann.oscilloscope.draw.elements.osco.Channel;
 import de.neemann.oscilloscope.draw.elements.osco.Horizontal;
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 import de.neemann.oscilloscope.draw.elements.osco.Trigger;
+import de.neemann.oscilloscope.signal.primitives.Sum;
 
 /**
- * Scope model in normal time mode
+ * Scope model in real time mode.
+ * Humans can see the trace moving across the screen.
+ * Drawing has to consider real time.
  */
 public class ModelTimeRT implements Model {
     private final Horizontal horizontal;
@@ -47,11 +50,12 @@ public class ModelTimeRT implements Model {
         PeriodicSignal frontend2 = channel2.getSignal();
         PeriodicSignal triggerIn = triggerInProvider.getSignal();
 
-        YValueToScreen screen1 = new YValueToScreen(channel1.getPos(), 8);
-        YValueToScreen screen2 = new YValueToScreen(channel2.getPos(), 8);
-
         int width = screenBuffer.getWidth();
         int height = screenBuffer.getHeight();
+        ValueToScreen screen1 = new ValueToScreen(frontend1, channel1.getPos(), 8, height);
+        ValueToScreen screen2 = new ValueToScreen(frontend2, channel2.getPos(), 8, height);
+        ValueToScreen screenSum = new ValueToScreen(new Sum(frontend1, frontend2), channel1.getPos(), 8, height);
+
         double timePerPixel = horizontal.getTimePerDiv() * 10 / width;
         double tNow = (System.currentTimeMillis() - timeOffset) / 1000.0;
 
@@ -94,17 +98,17 @@ public class ModelTimeRT implements Model {
             screenBuffer.darken();
             switch (mode.getSelected()) {
                 case Ch_1:
-                    drawTrace(screenBuffer, t -> screen1.v(frontend1.v(t), height), tStart, tLast, tNow, timePerPixel);
+                    drawTrace(screenBuffer, screen1, tStart, tLast, tNow, timePerPixel);
                     break;
                 case Ch_2:
-                    drawTrace(screenBuffer, t -> screen2.v(frontend2.v(t), height), tStart, tLast, tNow, timePerPixel);
+                    drawTrace(screenBuffer, screen2, tStart, tLast, tNow, timePerPixel);
                     break;
                 case DUAL:
-                    drawTrace(screenBuffer, t -> screen1.v(frontend1.v(t), height), tStart, tLast, tNow, timePerPixel);
-                    drawTrace(screenBuffer, t -> screen2.v(frontend2.v(t), height), tStart, tLast, tNow, timePerPixel);
+                    drawTrace(screenBuffer, screen1, tStart, tLast, tNow, timePerPixel);
+                    drawTrace(screenBuffer, screen2, tStart, tLast, tNow, timePerPixel);
                     break;
                 case ADD:
-                    drawTrace(screenBuffer, t -> screen1.v(frontend1.v(t) + frontend2.v(t), height), tStart, tLast, tNow, timePerPixel);
+                    drawTrace(screenBuffer, screenSum, tStart, tLast, tNow, timePerPixel);
             }
         }
         tLast = tNow;
@@ -113,12 +117,8 @@ public class ModelTimeRT implements Model {
             isRunning = false;
     }
 
-    interface Screen {
-        int v(double t);
-    }
-
-    private void drawTrace(ScreenBuffer buffer, Screen screen, double t0, double t1, double t2, double timePerPixel) {
-        int y0 = screen.v(t1);
+    private void drawTrace(ScreenBuffer buffer, PeriodicSignal screen, double t0, double t1, double t2, double timePerPixel) {
+        int y0 = (int) screen.v(t1);
         int x1 = (int) ((t1 - t0) / timePerPixel);
         int x0 = x1;
 
@@ -128,10 +128,10 @@ public class ModelTimeRT implements Model {
             deltaTime = (t2 - t1) / 20;
 
         while (t1 < t2) {
-            int ym = screen.v(t1 + deltaTime / 2);
+            int ym = (int) screen.v(t1 + deltaTime / 2);
             t1 += deltaTime;
             x1 = (int) ((t1 - t0) / timePerPixel);
-            int y1 = screen.v(t1);
+            int y1 = (int) screen.v(t1);
             if (ym == y1 || ym == y0)
                 buffer.drawTrace(x0, y0, x1, y1);
             else

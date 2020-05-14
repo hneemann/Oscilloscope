@@ -45,12 +45,12 @@ public class ModelXY implements Model {
         PeriodicSignal xFrontend = channel1.getSignal();
         PeriodicSignal yFrontend = channel2.getSignal();
 
-        XValueToScreen xScreen = new XValueToScreen(xPotentiometer.get(), 10);
-        YValueToScreen yScreen = new YValueToScreen(channel2.getPos(), 8);
-
-        double time = getTimeInMillis() / 1000.0;
         int width = screenBuffer.getWidth();
         int height = screenBuffer.getHeight();
+        ValueToScreen xScreen = new ValueToScreen(xFrontend, xPotentiometer.get(), 10, width);
+        ValueToScreen yScreen = new ValueToScreen(yFrontend, channel2.getPos(), 8, height);
+
+        double time = getTimeInMillis() / 1000.0;
 
         double period = Math.max(xFrontend.period(), yFrontend.period());
 
@@ -64,8 +64,8 @@ public class ModelXY implements Model {
         screenBuffer.darken();
         while (lastTime < time) {
             lastTime += timeDelta;
-            int xPos = xScreen.v(xFrontend.v(lastTime), width);
-            int yPos = yScreen.v(yFrontend.v(lastTime), height);
+            int xPos = (int) xScreen.v(lastTime);
+            int yPos = (int) yScreen.v(lastTime);
             screenBuffer.drawTrace(lastxPos, lastyPos, xPos, yPos);
             lastxPos = xPos;
             lastyPos = yPos;
