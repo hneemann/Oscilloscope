@@ -42,9 +42,7 @@ public class ResonantCircuit extends Container<ResonantCircuit> {
         m.setResistor(resSwitch.getSelected());
         resSwitch.addObserver(() -> m.setResistor(resSwitch.getSelected()));
 
-//        Switch<OffOn> debugSwitch = new Switch<OffOn>("").add(OffOn.values());
-//        m.setDebugSwitch(debugSwitch);
-//        add(debugSwitch);
+//        add(m.setDebugSwitch(new OnOffSwitch("Num")).setPos(0, 0));
 
         setBackground(Color.WHITE);
     }

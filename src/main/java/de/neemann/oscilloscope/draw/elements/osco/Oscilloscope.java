@@ -28,6 +28,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
     public static final int TIME_DELTA_MS = 20;
     private static final ArrayList<TimeBase> TIMES = createTimes();
     private static final ArrayList<Magnify> MAGNIFY = createMagnify();
+    private static boolean debug;
     private final Trigger trigger;
     private final Horizontal horizontal;
     private final Channel ch1;
@@ -146,6 +147,8 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                     @Override
                     public void run() {
                         if (model != null) {
+                            if (debug)
+                                System.out.print("(");
                             long t = System.currentTimeMillis();
                             try {
                                 model.updateBuffer(screen.getScreenBuffer());
@@ -156,6 +159,8 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                             t = System.currentTimeMillis() - t;
                             if (t > TIME_DELTA_MS)
                                 LOGGER.info("slow " + t);
+                            if (debug)
+                                System.out.print(")");
                         }
                         elementComponent.repaint();
                     }
@@ -179,6 +184,13 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                 createNewModel();
             }
         });
+    }
+
+    /**
+     * Enables debug mode
+     */
+    public static void setDebug() {
+        debug=true;
     }
 
     private void stopTimer() {

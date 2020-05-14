@@ -17,11 +17,13 @@ public abstract class ObservableElement<T extends Element<?>> extends Element<T>
      * Adds a observer ot the knob
      *
      * @param observer the observer
+     * @return this for chained calls
      */
-    public void addObserver(Observer observer) {
+    public ObservableElement<T> addObserver(Observer observer) {
         if (observers == null)
             observers = new ArrayList<>();
         observers.add(observer);
+        return this;
     }
 
     /**

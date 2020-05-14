@@ -52,7 +52,7 @@ public final class ResonantCircuitExperiment implements Experiment {
 
         gen1.getPowerSwitch().set(1);
         gen1.getAmplitude().set(0.2);
-        gen1.setFrequencySwitch().set(3);
+        gen1.setFrequencySwitch().set(2);
         gen1.setFrequencyFinePoti().set(Math.log(1.591) / Math.log(10));
 
         component.add(new Wire(gen1.getOutput(), capacitor.getInput()));

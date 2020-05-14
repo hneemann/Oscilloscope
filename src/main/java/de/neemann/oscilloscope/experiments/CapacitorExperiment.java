@@ -54,7 +54,7 @@ public final class CapacitorExperiment implements Experiment {
 
         gen1.getPowerSwitch().set(1);
         gen1.getAmplitude().set(0.18);
-        gen1.setFrequencySwitch().set(2);
+        gen1.setFrequencySwitch().set(1);
 
         component.add(new Wire(gen1.getOutput(), capacitor.getInput()));
         component.add(new Wire(capacitor.getVoltCapacitor(), oscilloscope.getCh1().getInput()));

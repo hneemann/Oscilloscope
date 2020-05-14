@@ -16,14 +16,14 @@ public class CapacitorModel implements Observer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CapacitorModel.class);
 
     private static final int POINTS = 1000;
-    private static final double R = 1000;
-    private static final double C = 100e-9;
-    private static final double TAU = R * C;
 
     private final SignalProvider capacitorVoltageSignal;
     private final SignalProvider resistorVoltageSignal;
     private final SignalProvider input;
+
     private OnOffSwitch debugSwitch;
+    private double resistor = 1000;
+    private double capacitor = 100e-9;
 
     /**
      * Creates a new diode model
@@ -38,13 +38,35 @@ public class CapacitorModel implements Observer {
     }
 
     /**
+     * Sets the used resistor
+     *
+     * @param res the resistor
+     */
+    public void setResistor(int res) {
+        this.resistor = res;
+        inputSignalHasChanged();
+    }
+
+    /**
+     * Sets the used capacitor
+     *
+     * @param cap the capacitor in nF
+     */
+    public void setCapacitor(int cap) {
+        this.capacitor = cap * 1e-9;
+        inputSignalHasChanged();
+    }
+
+    /**
      * Sets a debug switch
      *
      * @param debugSwitch the debug switch
+     * @return the switch
      */
-    public void setDebugSwitch(OnOffSwitch debugSwitch) {
+    public OnOffSwitch setDebugSwitch(OnOffSwitch debugSwitch) {
         this.debugSwitch = debugSwitch;
         debugSwitch.addObserver(this);
+        return debugSwitch;
     }
 
     /**
@@ -81,8 +103,9 @@ public class CapacitorModel implements Observer {
     private void createSines(Sine sine) {
         LOGGER.info("create sines");
         double w = sine.getOmega();
-        double uc = sine.getAmplitude() / Math.sqrt(1 + sqr(w * TAU));
-        double phase = -Math.atan(w * TAU);
+        double tau = resistor * capacitor;
+        double uc = sine.getAmplitude() / Math.sqrt(1 + sqr(w * tau));
+        double phase = -Math.atan(w * tau);
 
         double ur = Math.sqrt(sqr(sine.getAmplitude()) - sqr(uc));
 
@@ -101,19 +124,27 @@ public class CapacitorModel implements Observer {
      */
     private void solveDGL(PeriodicSignal input) {
         LOGGER.info("recalculate capacitor");
-        double[] capacitorVoltage = new double[POINTS];
-        double[] resistorVoltage = new double[POINTS];
         double period = input.period();
-        double dt = period / POINTS;
+        double tau = capacitor * resistor;
+
+        // at least 30 points per tau
+        int points = (int) (30 * period / 5 / tau);
+        if (points < POINTS)
+            points = POINTS;
+
+        double[] capacitorVoltage = new double[points];
+        double[] resistorVoltage = new double[points];
+
+        double dt = period / points;
         double uc = 0;
         for (int l = 0; l < 3; l++)
-            for (int i = 0; i < POINTS; i++) {
-                double uGes = input.v(period * i / POINTS);
+            for (int i = 0; i < points; i++) {
+                double uGes = input.v(period * i / points);
 
                 capacitorVoltage[i] = uc;
                 resistorVoltage[i] = -(uGes - uc);
 
-                double ducdt = (uGes - uc) / TAU;
+                double ducdt = (uGes - uc) / tau;
                 uc += ducdt * dt;
             }
         capacitorVoltageSignal.setSignal(new InterpolateLinear(period, capacitorVoltage));

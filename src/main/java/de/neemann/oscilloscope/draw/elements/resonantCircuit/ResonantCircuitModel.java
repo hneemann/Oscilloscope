@@ -40,10 +40,12 @@ public class ResonantCircuitModel implements Observer {
      * Sets the debug switch
      *
      * @param debugSwitch the debug switch
+     * @return the switch
      */
-    public void setDebugSwitch(OnOffSwitch debugSwitch) {
+    public OnOffSwitch setDebugSwitch(OnOffSwitch debugSwitch) {
         this.debugSwitch = debugSwitch;
         debugSwitch.addObserver(this);
+        return debugSwitch;
     }
 
     /**

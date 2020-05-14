@@ -52,10 +52,10 @@ public final class General implements Experiment {
 
         gen1.getPowerSwitch().set(1);
         gen1.getAmplitude().set(0.18);
-        gen1.setFrequencySwitch().set(2);
+        gen1.setFrequencySwitch().set(1);
         gen2.getPowerSwitch().set(1);
         gen2.getAmplitude().set(0.18);
-        gen2.setFrequencySwitch().set(2);
+        gen2.setFrequencySwitch().set(1);
         gen2.setFrequencyFinePoti().set(Math.log(3) / Math.log(10));
 
         component.add(new Wire(gen1.getOutput(), oscilloscope.getCh1().getInput()));

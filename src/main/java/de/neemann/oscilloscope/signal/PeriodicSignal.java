@@ -11,7 +11,7 @@ public interface PeriodicSignal {
     PeriodicSignal GND = new PeriodicSignal() {
         @Override
         public double period() {
-            return 1;
+            return 0.01;
         }
 
         @Override

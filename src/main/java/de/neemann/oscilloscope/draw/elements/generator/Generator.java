@@ -39,7 +39,6 @@ public class Generator extends Container<Generator> {
 
     private static ArrayList<Magnify> createFrequencies() {
         ArrayList<Magnify> f = new ArrayList<>();
-        f.add(new Magnify(1));
         f.add(new Magnify(10));
         f.add(new Magnify(100));
         f.add(new Magnify(1000));
