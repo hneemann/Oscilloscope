@@ -15,8 +15,8 @@ public class Channel implements Observer {
     private Potentiometer var;
     private Switch<Coupling> coupling;
     private BNCInput input;
-    private Switch<OffOn> inv;
-    private Switch<OffOn> mag5;
+    private OnOffSwitch inv;
+    private OnOffSwitch mag5;
 
     /**
      * Sets a amplifier knob
@@ -84,7 +84,7 @@ public class Channel implements Observer {
      * @param inv the inv switch
      * @return the given value for chained calls
      */
-    public Switch<OffOn> setInv(Switch<OffOn> inv) {
+    public OnOffSwitch setInv(OnOffSwitch inv) {
         this.inv = inv;
         inv.addObserver(this);
         return inv;
@@ -141,7 +141,7 @@ public class Channel implements Observer {
     private boolean isInv() {
         if (inv == null)
             return false;
-        return inv.is(OffOn.On);
+        return inv.isOn();
     }
 
     /**
@@ -150,7 +150,7 @@ public class Channel implements Observer {
      * @param mag5 the mag 5 switch
      * @return the given value for chained calls
      */
-    public Switch<OffOn> setMag5(Switch<OffOn> mag5) {
+    public OnOffSwitch setMag5(OnOffSwitch mag5) {
         this.mag5 = mag5;
         mag5.addObserver(this);
         return mag5;
@@ -160,7 +160,7 @@ public class Channel implements Observer {
      * @return true if mag5 is on
      */
     private boolean isMag5() {
-        return mag5.is(OffOn.On);
+        return mag5.isOn();
     }
 
     /**
@@ -180,7 +180,7 @@ public class Channel implements Observer {
     /**
      * @return the inv switch
      */
-    public Switch<OffOn> getInvSwitch() {
+    public OnOffSwitch getInvSwitch() {
         return inv;
     }
 

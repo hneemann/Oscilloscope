@@ -97,14 +97,14 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                 .add(trigger.setLevel(new Potentiometer("Level", 20).setPos(SIZE, SIZE * 8).setCenterZero()))
                 .add(trigger.setMode(new Switch<TrigMode>("Mode").add(TrigMode.values()).setPos(SIZE * 3, SIZE)))
                 .add(trigger.setSource(new Switch<TrigSource>("Source").add(TrigSource.values()).setPos(SIZE * 7, SIZE)))
-                .add(trigger.setSlope(new Switch<String>("Slope").add("+").add("-").setPos(SIZE * 4, SIZE * 7)))
+                .add(trigger.setSlope(new Switch<Slope>("Slope").add(Slope.values()).setPos(SIZE * 4, SIZE * 7)))
                 .add(trigger.setIn(new BNCInput("Trig. In").setPos(SIZE * 8, SIZE * 8)));
 
         horizontal = new Horizontal();
         Container<?> horizontalContainer = new Container<>("Horizontal", SIZE * 16, SIZE * 9)
                 .add(horizontal.setPos(new Potentiometer("POS", 20).setPos(SIZE, SIZE * 2).setCenterZero()))
                 .add(horizontal.setVar(new Potentiometer("VAR", 20).setPos(SIZE * 4, SIZE * 2)))
-                .add(horizontal.setMag(new Switch<OffOn>("MAG10").add(OffOn.values()).setPos(SIZE * 2, SIZE * 7)))
+                .add(horizontal.setMag(new OnOffSwitch("MAG10")).setPos(SIZE * 2, SIZE * 7))
                 .add(horizontal.setTimeBase(new SelectorKnobUnit<TimeBase>("TIME/DIV", 60, "s").addAll(TIMES).setPos(SIZE * 11, SIZE * 5 + SIZE2)));
 
         ch1 = new Channel();
@@ -120,11 +120,11 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                 .add(mode.setPos(SIZE * 13, SIZE * 3))
                 .add(ch1.setCoupling(new Switch<Coupling>("").add(Coupling.values()).set(1).setPos(SIZE * 9, SIZE * 9)))
                 .add(ch2.setCoupling(new Switch<Coupling>("").add(Coupling.values()).set(1).setPos(SIZE * 17, SIZE * 9)))
-                .add(ch2.setInv(new Switch<OffOn>("Ch 2 INV").add(OffOn.values()).setPos(SIZE * 13, SIZE * 9)))
+                .add(ch2.setInv(new OnOffSwitch("Ch 2 INV")).setPos(SIZE * 13, SIZE * 9))
                 .add(ch1.setInput(new BNCInput("Ch 1 / X").setPos(SIZE * 5, SIZE * 11)))
                 .add(ch2.setInput(new BNCInput("Ch 2 / Y").setPos(SIZE * 22, SIZE * 11)))
-                .add(ch1.setMag5(new Switch<OffOn>("MAG5").add(OffOn.values()).setPos(SIZE, SIZE * 10)))
-                .add(ch2.setMag5(new Switch<OffOn>("MAG5").add(OffOn.values()).setPos(SIZE * 26, SIZE * 10)));
+                .add(ch1.setMag5(new OnOffSwitch("MAG5")).setPos(SIZE, SIZE * 10))
+                .add(ch2.setMag5(new OnOffSwitch("MAG5")).setPos(SIZE * 26, SIZE * 10));
 
         setBackground(Color.WHITE);
         add(triggerContainer.setPos(SIZE * 48, SIZE));
@@ -139,7 +139,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
         executor = new ScheduledThreadPoolExecutor(1);
 
         power.addObserver(() -> {
-            if (power.is(OffOn.On)) {
+            if (power.isOn()) {
                 createNewModel();
 
                 timer = executor.scheduleAtFixedRate(new Runnable() {

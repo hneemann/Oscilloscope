@@ -5,9 +5,10 @@ import de.neemann.oscilloscope.draw.graphics.Style;
 import de.neemann.oscilloscope.draw.graphics.Vector;
 
 /**
- * A power switch
+ * A power switch.
+ * Adds a LED beside the switch
  */
-public class PowerSwitch extends Switch<OffOn> {
+public class PowerSwitch extends OnOffSwitch {
     private static final Vector RAD = new Vector(SIZE2, SIZE2);
     private static final Vector POS = new Vector(SIZE * 2, SIZE);
 
@@ -16,13 +17,12 @@ public class PowerSwitch extends Switch<OffOn> {
      */
     public PowerSwitch() {
         super("Power");
-        add(OffOn.values());
     }
 
     @Override
     public void drawToOrigin(Graphic gr) {
         super.drawToOrigin(gr);
-        if (getSelected()==OffOn.On)
+        if (getSelected() == OffOn.On)
             gr.drawCircle(POS.sub(RAD), POS.add(RAD), Style.LED);
         gr.drawCircle(POS.sub(RAD), POS.add(RAD), Style.NORMAL);
     }

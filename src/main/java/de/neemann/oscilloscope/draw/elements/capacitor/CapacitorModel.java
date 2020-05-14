@@ -1,7 +1,6 @@
 package de.neemann.oscilloscope.draw.elements.capacitor;
 
-import de.neemann.oscilloscope.draw.elements.OffOn;
-import de.neemann.oscilloscope.draw.elements.Switch;
+import de.neemann.oscilloscope.draw.elements.OnOffSwitch;
 import de.neemann.oscilloscope.gui.Observer;
 import de.neemann.oscilloscope.signal.InterpolateLinear;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
@@ -24,7 +23,7 @@ public class CapacitorModel implements Observer {
     private final SignalProvider capacitorVoltageSignal;
     private final SignalProvider resistorVoltageSignal;
     private final SignalProvider input;
-    private Switch<OffOn> debugSwitch;
+    private OnOffSwitch debugSwitch;
 
     /**
      * Creates a new diode model
@@ -43,7 +42,7 @@ public class CapacitorModel implements Observer {
      *
      * @param debugSwitch the debug switch
      */
-    public void setDebugSwitch(Switch<OffOn> debugSwitch) {
+    public void setDebugSwitch(OnOffSwitch debugSwitch) {
         this.debugSwitch = debugSwitch;
         debugSwitch.addObserver(this);
     }
@@ -70,7 +69,7 @@ public class CapacitorModel implements Observer {
     private void inputSignalHasChanged() {
         PeriodicSignal in = input.getSignal();
         if (in instanceof Sine)
-            if (debugSwitch == null || debugSwitch.getSelected() == OffOn.Off)
+            if (debugSwitch == null || debugSwitch.isOff())
                 createSines((Sine) in);
             else
                 solveDGL(in);

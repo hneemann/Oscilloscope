@@ -9,7 +9,7 @@ public class Horizontal {
 
     private Potentiometer pos;
     private Potentiometer var;
-    private Switch<OffOn> horiMag;
+    private OnOffSwitch horiMag;
     private SelectorKnob<TimeBase> timeBase;
 
     /**
@@ -40,7 +40,7 @@ public class Horizontal {
      * @param horiMag the mag switch
      * @return the given value for chained calls
      */
-    public Switch<OffOn> setMag(Switch<OffOn> horiMag) {
+    public OnOffSwitch setMag(OnOffSwitch horiMag) {
         this.horiMag = horiMag;
         return horiMag;
     }
@@ -74,7 +74,7 @@ public class Horizontal {
      * @return tue if mag10 is on
      */
     public boolean isMag() {
-        return horiMag.is(OffOn.On);
+        return horiMag.isOn();
     }
 
     /**

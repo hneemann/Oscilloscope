@@ -1,7 +1,6 @@
 package de.neemann.oscilloscope.draw.elements.resonantCircuit;
 
-import de.neemann.oscilloscope.draw.elements.OffOn;
-import de.neemann.oscilloscope.draw.elements.Switch;
+import de.neemann.oscilloscope.draw.elements.OnOffSwitch;
 import de.neemann.oscilloscope.gui.Observer;
 import de.neemann.oscilloscope.signal.InterpolateLinear;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
@@ -24,7 +23,7 @@ public class ResonantCircuitModel implements Observer {
     private final SignalProvider resistorVoltageSignal;
     private final SignalProvider input;
     private double resistor;
-    private Switch<OffOn> debugSwitch;
+    private OnOffSwitch debugSwitch;
 
     /**
      * Creates a new diode model
@@ -42,7 +41,7 @@ public class ResonantCircuitModel implements Observer {
      *
      * @param debugSwitch the debug switch
      */
-    public void setDebugSwitch(Switch<OffOn> debugSwitch) {
+    public void setDebugSwitch(OnOffSwitch debugSwitch) {
         this.debugSwitch = debugSwitch;
         debugSwitch.addObserver(this);
     }
@@ -62,7 +61,7 @@ public class ResonantCircuitModel implements Observer {
     private void inputSignalHasChanged() {
         PeriodicSignal in = input.getSignal();
         if (in instanceof Sine) {
-            if (debugSwitch == null || debugSwitch.getSelected() == OffOn.Off)
+            if (debugSwitch == null || debugSwitch.isOff())
                 resistorVoltageSignal.setSignal(createSines((Sine) in));
             else
                 resistorVoltageSignal.setSignal(solveDGL(in));

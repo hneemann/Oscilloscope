@@ -10,7 +10,7 @@ public class Trigger {
     private Potentiometer trigLevel;
     private Switch<TrigMode> trigMode;
     private Switch<TrigSource> trigSource;
-    private Switch<String> trigSlope;
+    private Switch<Slope> trigSlope;
     private BNCInput trigIn;
 
     /**
@@ -52,7 +52,7 @@ public class Trigger {
      * @param trigSlope the slope
      * @return the given value for chained calls
      */
-    public Switch<String> setSlope(Switch<String> trigSlope) {
+    public Switch<Slope> setSlope(Switch<Slope> trigSlope) {
         this.trigSlope = trigSlope;
         return trigSlope;
     }
@@ -126,7 +126,7 @@ public class Trigger {
      * @return the trigger event
      */
     public Trig wasTrig(PeriodicSignal signal, double timePerPixel, double t0, double t1, double level) {
-        boolean up = trigSlope.is("+");
+        boolean up = trigSlope.is(Slope.up);
         double t = t0;
         boolean ol0 = signal.v(t) > level;
         while (t < t1) {
