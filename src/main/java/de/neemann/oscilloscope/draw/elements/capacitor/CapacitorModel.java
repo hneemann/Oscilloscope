@@ -9,6 +9,8 @@ import de.neemann.oscilloscope.signal.primitives.Sine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.neemann.oscilloscope.draw.elements.DoubleHelper.different;
+
 /**
  * The model of the capacitor
  */
@@ -43,8 +45,10 @@ public class CapacitorModel implements Observer {
      * @param res the resistor
      */
     public void setResistor(int res) {
-        this.resistor = res;
-        inputSignalHasChanged();
+        if (different(resistor, res)) {
+            this.resistor = res;
+            inputSignalHasChanged();
+        }
     }
 
     /**
@@ -53,8 +57,11 @@ public class CapacitorModel implements Observer {
      * @param cap the capacitor in nF
      */
     public void setCapacitor(int cap) {
-        this.capacitor = cap * 1e-9;
-        inputSignalHasChanged();
+        double c = cap * 1e-9;
+        if (different(c, capacitor)) {
+            this.capacitor = c;
+            inputSignalHasChanged();
+        }
     }
 
     /**

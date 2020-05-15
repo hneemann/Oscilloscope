@@ -9,22 +9,25 @@ import de.neemann.oscilloscope.signal.primitives.Sine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.neemann.oscilloscope.draw.elements.DoubleHelper.different;
+
 /**
  * The model of the capacitor
  */
 public class ResonantCircuitModel implements Observer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResonantCircuitModel.class);
 
-    private static final int POINTS = 10000;
+    private static final int MIN_POINTS = 1000;
+    private static final int MAX_POINTS = 100000;
 
     // parasitic resistance of the inductor
     private static final double RL = 50;
 
     private final SignalProvider resistorVoltageSignal;
     private final SignalProvider input;
-    private double resistor;
-    private double capacitor;
-    private double inductor;
+    private double resistor = 50;
+    private double capacitor = 100e-9;
+    private double inductor = 0.01;
     private OnOffSwitch debugSwitch;
 
     /**
@@ -48,6 +51,44 @@ public class ResonantCircuitModel implements Observer {
         this.debugSwitch = debugSwitch;
         debugSwitch.addObserver(this);
         return debugSwitch;
+    }
+
+    /**
+     * Sets the used resistor
+     *
+     * @param res the resistor
+     */
+    public void setResistor(int res) {
+        if (different(res, resistor)) {
+            this.resistor = res;
+            inputSignalHasChanged();
+        }
+    }
+
+    /**
+     * Sets the used capacitor
+     *
+     * @param cap the capacitor in nF
+     */
+    public void setCapacitor(int cap) {
+        double c = cap * 1e-9;
+        if (different(c, capacitor)) {
+            this.capacitor = c;
+            inputSignalHasChanged();
+        }
+    }
+
+    /**
+     * Sets the used capacitor
+     *
+     * @param ind the capacitor in mH
+     */
+    public void setInductor(int ind) {
+        double i = ind * 1e-3;
+        if (different(i, inductor)) {
+            this.inductor = i;
+            inputSignalHasChanged();
+        }
     }
 
     /**
@@ -78,13 +119,12 @@ public class ResonantCircuitModel implements Observer {
         double t = Math.sqrt(inductor * capacitor) * 2 * Math.PI;
         LOGGER.info("recalculate resonant circuit, f0=" + 1 / t + "Hz");
 
-
         double period = input.period();
         int points = (int) (period / t * 1000);
-        if (points < POINTS)
-            points = POINTS;
-        else if (points > 10000)
-            points = 10000;
+        if (points < MIN_POINTS)
+            points = MIN_POINTS;
+        else if (points > MAX_POINTS)
+            points = MAX_POINTS;
 
         double[] resistorVoltage = new double[points];
         double dt = period / points;
@@ -105,36 +145,6 @@ public class ResonantCircuitModel implements Observer {
             }
         }
         return new InterpolateLinear(period, resistorVoltage);
-    }
-
-    /**
-     * Sets the used resistor
-     *
-     * @param res the resistor
-     */
-    public void setResistor(int res) {
-        this.resistor = res;
-        inputSignalHasChanged();
-    }
-
-    /**
-     * Sets the used capacitor
-     *
-     * @param cap the capacitor in nF
-     */
-    public void setCapacitor(int cap) {
-        this.capacitor = cap * 1e-9;
-        inputSignalHasChanged();
-    }
-
-    /**
-     * Sets the used capacitor
-     *
-     * @param ind the capacitor in mH
-     */
-    public void setInductor(int ind) {
-        this.inductor = ind * 1e-3;
-        inputSignalHasChanged();
     }
 
     private PeriodicSignal createSines(Sine sine) {
