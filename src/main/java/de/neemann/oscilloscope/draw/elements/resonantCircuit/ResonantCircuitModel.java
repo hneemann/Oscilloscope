@@ -15,14 +15,16 @@ import org.slf4j.LoggerFactory;
 public class ResonantCircuitModel implements Observer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResonantCircuitModel.class);
 
-    private static final int POINTS = 1000;
-    private static final double C = 100e-9;
-    private static final double L = 0.1;
-    private static final double RL = 100;
+    private static final int POINTS = 10000;
+
+    // parasitic resistance of the inductor
+    private static final double RL = 50;
 
     private final SignalProvider resistorVoltageSignal;
     private final SignalProvider input;
     private double resistor;
+    private double capacitor;
+    private double inductor;
     private OnOffSwitch debugSwitch;
 
     /**
@@ -73,7 +75,7 @@ public class ResonantCircuitModel implements Observer {
     }
 
     private PeriodicSignal solveDGL(PeriodicSignal input) {
-        double t = Math.sqrt(L * C) * 2 * Math.PI;
+        double t = Math.sqrt(inductor * capacitor) * 2 * Math.PI;
         LOGGER.info("recalculate resonant circuit, f0=" + 1 / t + "Hz");
 
 
@@ -95,7 +97,7 @@ public class ResonantCircuitModel implements Observer {
 
                 resistorVoltage[j] = -i * resistor;
 
-                double d2idt2 = -(resistor + RL) / L * didt - i / L / C - (uGes - lastUGes) / dt / L;
+                double d2idt2 = -(resistor + RL) / inductor * didt - i / inductor / capacitor - (uGes - lastUGes) / dt / inductor;
                 i += didt * dt;
                 didt += d2idt2 * dt;
 
@@ -115,13 +117,33 @@ public class ResonantCircuitModel implements Observer {
         inputSignalHasChanged();
     }
 
+    /**
+     * Sets the used capacitor
+     *
+     * @param cap the capacitor in nF
+     */
+    public void setCapacitor(int cap) {
+        this.capacitor = cap * 1e-9;
+        inputSignalHasChanged();
+    }
+
+    /**
+     * Sets the used capacitor
+     *
+     * @param ind the capacitor in mH
+     */
+    public void setInductor(int ind) {
+        this.inductor = ind * 1e-3;
+        inputSignalHasChanged();
+    }
+
     private PeriodicSignal createSines(Sine sine) {
         LOGGER.info("create sine");
         double w = sine.getOmega();
-        double a = sine.getAmplitude() * (resistor + RL) / Math.sqrt(sqr(resistor + RL) + sqr(w * L - 1 / (w * C)));
+        double a = sine.getAmplitude() * (resistor + RL) / Math.sqrt(sqr(resistor + RL) + sqr(w * inductor - 1 / (w * capacitor)));
         double ampl = a * resistor / (resistor + RL);
 
-        double phi = Math.atan((w * L - 1 / (w * C)) / (resistor + RL));
+        double phi = Math.atan((w * inductor - 1 / (w * capacitor)) / (resistor + RL));
 
         double phase = sine.getPhase() - phi;
 

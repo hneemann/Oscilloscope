@@ -1,9 +1,8 @@
 package de.neemann.oscilloscope.draw.elements.capacitor;
 
-import de.neemann.oscilloscope.draw.elements.BNCInput;
-import de.neemann.oscilloscope.draw.elements.BNCOutput;
+import de.neemann.oscilloscope.gui.Debug;
+import de.neemann.oscilloscope.draw.elements.*;
 import de.neemann.oscilloscope.draw.elements.Container;
-import de.neemann.oscilloscope.draw.elements.Switch;
 import de.neemann.oscilloscope.draw.graphics.Graphic;
 import de.neemann.oscilloscope.draw.graphics.Polygon;
 import de.neemann.oscilloscope.draw.graphics.Style;
@@ -53,7 +52,8 @@ public class Capacitor extends Container<Capacitor> {
         c.addObserver(() -> m.setCapacitor(c.getSelected())).hasChanged();
         add(c.setPos(SIZE * 5, SIZE * 2 + SIZE2));
 
-        //add(m.setDebugSwitch(new OnOffSwitch("Num")).setPos(0, 0));
+        if (Debug.isDebug())
+            add(m.setDebugSwitch(new OnOffSwitch("Num")).setPos(0, 0));
 
         setBackground(Color.WHITE);
     }

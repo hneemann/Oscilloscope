@@ -94,11 +94,11 @@ public class Main extends JFrame {
                 }
             }
         }));
-        if (experiment != null)
+        if (Debug.isDebug())
             view.add(new JMenuItem(new AbstractAction("Info") {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
-                    Oscilloscope.setDebug();
+                    Oscilloscope.toggleDebug();
                     ThreadMXBean bean = ManagementFactory.getThreadMXBean();
                     long[] ids = bean.findMonitorDeadlockedThreads();
                     if (ids != null) {
@@ -118,15 +118,12 @@ public class Main extends JFrame {
 
 
         Experiment exp = null;
-        boolean preset = true;
         if (experiment != null)
             exp = Experiments.getInstance().get(experiment);
-        if (exp == null) {
-            preset = false;
+        if (exp == null)
             exp = Experiments.getInstance().get(General.NAME);
-        }
 
-        setExperiment(exp, preset);
+        setExperiment(exp);
         setLocationRelativeTo(null);
     }
 
@@ -169,11 +166,10 @@ public class Main extends JFrame {
      * Sets an exercise
      *
      * @param experiment the exercise to use
-     * @param preset     if true experiment is preconfigured
      */
-    public void setExperiment(Experiment experiment, boolean preset) {
+    public void setExperiment(Experiment experiment) {
         setMain(experiment.create());
-        if (preset)
+        if (Debug.isDebug())
             experiment.setup(elementComponent);
     }
 
@@ -185,7 +181,14 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         Thread.setDefaultUncaughtExceptionHandler(SaveException.getInstance());
 
-        String experiment = args.length != 1 ? null : args[0].replace('_', ' ');
+        String exp = null;
+        for (String a : args) {
+            if (a.equals("debug"))
+                Debug.setDebug();
+            else
+                exp = a.replace('_', ' ');
+        }
+        String experiment = exp;
 
         SwingUtilities.invokeLater(() -> new Main(experiment).setVisible(true));
     }
@@ -200,7 +203,7 @@ public class Main extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            setExperiment(experiment, false);
+            setExperiment(experiment);
         }
     }
 
