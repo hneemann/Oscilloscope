@@ -10,5 +10,5 @@ deploy:
     secure: KbS7UMCM05c8Uwqv/hVSRg+d8OyxmqW3tpyLSKhzoTg370+7ItoLL7OJzfG70lARYtPFRwfovwnZ+WgUnY9VE5vCm5wXIj4S1kb3CZBtT+42ijS9g9O77xRBHqxVUfhJi8G+uD/tfdpU7MdaxtwrYu7LOowJORxcPJ8CQt1Lw4wCA7fHUETqgi/vzrvGBZHL/XKzKF7DgPbmBKtacKLCt//UWHuRwrl2jA10TZOnuHKhPKHB20BFUYrJo8HUJXQ70oyowwGOdDnvkbeZhrpNopRlH9iLMmNBc+f1zH3HaUeFI+EfPJ8sYvIC/pxxIeNjJETI7usMYWmWOTlmMUzXtWoP7N/v+684l6jby3390XnnLU7Ez0VLZzhb+ApDhwqe3rxwLJQq4G+fOia4O8mFSlDCcbj1Xg3ylCPqF3QLd6YI16y060ZCS/AptcOlgn/GpcsWCe8VvQr8VakAgM5KCgC5fQrRRw7BgHl9BjNO+RLqaokspKHtjj1ZmVnPTu6hpAY4VFlZLbRA8udQfspUz9+wKrT0BMGxNfGi0c9Mk5fabLKYfqvF+JiYmJVvt0XlDiuVa5q+6EjfVk4awi0mj2R6Uc4klurvNIh4/0VrEeRcJkDwCrb3DMfvR+ztkj84apuqaOJcMKWf3UF5S74Y8RptQtNG29Y46bNR2YG2Ixc=
   file: target/Oscilloscope.jar
   on:
-    repo: hneemann/Oscilloscope
+    tags: true
   skip_cleanup: 'true'
