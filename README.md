@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/hneemann/Oscilloscope.svg?branch=master)](https://travis-ci.org/hneemann/Oscilloscope)
+
 # Oscilloscope #
 
 Simple Oscilloscope Simulator 
