@@ -2,7 +2,7 @@ package de.neemann.oscilloscope.draw.elements.resonantCircuit;
 
 import de.neemann.oscilloscope.draw.elements.OnOffSwitch;
 import de.neemann.oscilloscope.gui.Observer;
-import de.neemann.oscilloscope.signal.InterpolateLinear;
+import de.neemann.oscilloscope.signal.PeriodicInterpolate;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
 import de.neemann.oscilloscope.signal.SignalProvider;
 import de.neemann.oscilloscope.signal.primitives.Sine;
@@ -144,7 +144,7 @@ public class ResonantCircuitModel implements Observer {
                 lastUGes = uGes;
             }
         }
-        return new InterpolateLinear(period, resistorVoltage);
+        return new PeriodicInterpolate(period, resistorVoltage);
     }
 
     private PeriodicSignal createSines(Sine sine) {

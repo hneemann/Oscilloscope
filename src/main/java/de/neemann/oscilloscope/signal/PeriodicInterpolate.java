@@ -3,7 +3,7 @@ package de.neemann.oscilloscope.signal;
 /**
  * Implements a table based periodic signal.
  */
-public class InterpolateLinear implements PeriodicSignal {
+public class PeriodicInterpolate implements PeriodicSignal {
 
     private final double period;
     private final double[] values;
@@ -15,7 +15,7 @@ public class InterpolateLinear implements PeriodicSignal {
      * @param period the period
      * @param values the table values
      */
-    public InterpolateLinear(double period, double[] values) {
+    public PeriodicInterpolate(double period, double[] values) {
         double sum = 0;
         for (double value : values) sum += value;
         mean = sum / values.length;

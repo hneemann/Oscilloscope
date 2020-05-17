@@ -2,7 +2,7 @@ package de.neemann.oscilloscope.draw.elements.capacitor;
 
 import de.neemann.oscilloscope.draw.elements.OnOffSwitch;
 import de.neemann.oscilloscope.gui.Observer;
-import de.neemann.oscilloscope.signal.InterpolateLinear;
+import de.neemann.oscilloscope.signal.PeriodicInterpolate;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
 import de.neemann.oscilloscope.signal.SignalProvider;
 import de.neemann.oscilloscope.signal.primitives.Sine;
@@ -154,8 +154,8 @@ public class CapacitorModel implements Observer {
                 double ducdt = (uGes - uc) / tau;
                 uc += ducdt * dt;
             }
-        capacitorVoltageSignal.setSignal(new InterpolateLinear(period, capacitorVoltage));
-        resistorVoltageSignal.setSignal(new InterpolateLinear(period, resistorVoltage));
+        capacitorVoltageSignal.setSignal(new PeriodicInterpolate(period, capacitorVoltage));
+        resistorVoltageSignal.setSignal(new PeriodicInterpolate(period, resistorVoltage));
     }
 
 }
