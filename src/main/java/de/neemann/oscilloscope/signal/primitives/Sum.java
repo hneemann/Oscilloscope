@@ -1,5 +1,6 @@
 package de.neemann.oscilloscope.signal.primitives;
 
+import de.neemann.oscilloscope.draw.elements.DoubleHelper;
 import de.neemann.oscilloscope.signal.PeriodicSignal;
 
 /**
@@ -21,12 +22,16 @@ public class Sum implements PeriodicSignal {
     public Sum(PeriodicSignal a, PeriodicSignal b) {
         this.a = a;
         this.b = b;
-
-        // not good but sufficient
-        period=Math.max(a.period(), b.period());
-
-        mean=a.mean() + b.mean();
+        double p1 = a.period();
+        double p2 = b.period();
+        if (DoubleHelper.equal(p1, p2)) {
+            this.period = (p1 + p2) / 2;
+        } else {
+            this.period = p1 * p2 / Math.abs(p1 - p2);
+        }
+        mean = a.mean() + b.mean();
     }
+
 
     @Override
     public double v(double t) {
