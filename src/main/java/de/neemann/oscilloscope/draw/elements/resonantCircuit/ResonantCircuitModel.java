@@ -24,6 +24,7 @@ public class ResonantCircuitModel implements Observer {
     private static final double RL = 50;
 
     private final SignalProvider resistorVoltageSignal;
+    private final SignalProvider capacitorVoltageSignal;
     private final SignalProvider input;
     private double resistor = 50;
     private double capacitor = 100e-9;
@@ -39,6 +40,7 @@ public class ResonantCircuitModel implements Observer {
         this.input = input;
         input.addObserver(this);
         resistorVoltageSignal = new SignalProvider();
+        capacitorVoltageSignal = new SignalProvider();
     }
 
     /**
@@ -98,6 +100,13 @@ public class ResonantCircuitModel implements Observer {
         return resistorVoltageSignal;
     }
 
+    /**
+     * @return the signal describing the capacitor voltage
+     */
+    public SignalProvider getVoltageCapacitor() {
+        return capacitorVoltageSignal;
+    }
+
     @Override
     public void hasChanged() {
         inputSignalHasChanged();
@@ -107,15 +116,15 @@ public class ResonantCircuitModel implements Observer {
         PeriodicSignal in = input.getSignal();
         if (in instanceof Sine) {
             if (debugSwitch == null || debugSwitch.isOff())
-                resistorVoltageSignal.setSignal(createSines((Sine) in));
+                createSines((Sine) in);
             else
-                resistorVoltageSignal.setSignal(solveDGL(in));
+                solveDGL(in);
         } else {
-            resistorVoltageSignal.setSignal(solveDGL(in));
+            solveDGL(in);
         }
     }
 
-    private PeriodicSignal solveDGL(PeriodicSignal input) {
+    private void solveDGL(PeriodicSignal input) {
         double t = Math.sqrt(inductor * capacitor) * 2 * Math.PI;
         LOGGER.info("recalculate resonant circuit, f0=" + 1 / t + "Hz");
 
@@ -127,37 +136,47 @@ public class ResonantCircuitModel implements Observer {
             points = MAX_POINTS;
 
         double[] resistorVoltage = new double[points];
+        double[] capacitorVoltage = new double[points];
         double dt = period / points;
-        double didt = 0;
         double i = 0;
-        double lastUGes = 0;
+        double uc = 0;
         for (int l = 0; l < 8; l++) {
+            double iStart = i;
+            double iMax = 0;
             for (int j = 0; j < points; j++) {
                 double uGes = input.v(period * j / points);
 
-                resistorVoltage[j] = -i * resistor;
+                resistorVoltage[j] = i * resistor;
+                capacitorVoltage[j] = uc;
 
-                double d2idt2 = -(resistor + RL) / inductor * didt - i / inductor / capacitor - (uGes - lastUGes) / dt / inductor;
+                double didt = (uGes - uc - (resistor + RL) * i) / inductor;
+                double ducdt = i / capacitor;
+
+                if (iMax < i)
+                    iMax = i;
+
                 i += didt * dt;
-                didt += d2idt2 * dt;
-
-                lastUGes = uGes;
+                uc += ducdt * dt;
             }
+            if (Math.abs(iStart - i) / iMax < 1e-4)
+                break;
         }
-        return new PeriodicInterpolate(period, resistorVoltage);
+        resistorVoltageSignal.setSignal(new PeriodicInterpolate(period, resistorVoltage));
+        capacitorVoltageSignal.setSignal(new PeriodicInterpolate(period, capacitorVoltage));
     }
 
-    private PeriodicSignal createSines(Sine sine) {
+    private void createSines(Sine sine) {
         LOGGER.info("create sine");
         double w = sine.getOmega();
-        double a = sine.getAmplitude() * (resistor + RL) / Math.sqrt(sqr(resistor + RL) + sqr(w * inductor - 1 / (w * capacitor)));
-        double ampl = a * resistor / (resistor + RL);
-
+        double ur_ges = sine.getAmplitude() * (resistor + RL) / Math.sqrt(sqr(resistor + RL) + sqr(w * inductor - 1 / (w * capacitor)));
+        double ur = ur_ges * resistor / (resistor + RL);
         double phi = Math.atan((w * inductor - 1 / (w * capacitor)) / (resistor + RL));
-
         double phase = sine.getPhase() - phi;
 
-        return new Sine(ampl, w, phase, 0);
+        double uc = sine.getAmplitude() / Math.sqrt(sqr(capacitor * w) * (sqr(inductor * w) + sqr(resistor + RL)) - 2 * capacitor * inductor * sqr(w) + 1);
+
+        resistorVoltageSignal.setSignal(new Sine(ur, w, phase, 0));
+        capacitorVoltageSignal.setSignal(new Sine(uc, w, phase - Math.PI / 2, sine.getOffset()));
     }
 
     private static double sqr(double v) {
