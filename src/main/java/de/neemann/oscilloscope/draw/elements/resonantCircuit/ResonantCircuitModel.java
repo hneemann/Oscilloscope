@@ -146,7 +146,7 @@ public class ResonantCircuitModel implements Observer {
             for (int j = 0; j < points; j++) {
                 double uGes = input.v(period * j / points);
 
-                resistorVoltage[j] = i * resistor;
+                resistorVoltage[j] = -i * resistor;
                 capacitorVoltage[j] = uc;
 
                 double didt = (uGes - uc - (resistor + RL) * i) / inductor;
@@ -175,7 +175,7 @@ public class ResonantCircuitModel implements Observer {
 
         double uc = sine.getAmplitude() / Math.sqrt(sqr(capacitor * w) * (sqr(inductor * w) + sqr(resistor + RL)) - 2 * capacitor * inductor * sqr(w) + 1);
 
-        resistorVoltageSignal.setSignal(new Sine(ur, w, phase, 0));
+        resistorVoltageSignal.setSignal(new Sine(ur, w, phase + Math.PI, 0));
         capacitorVoltageSignal.setSignal(new Sine(uc, w, phase - Math.PI / 2, sine.getOffset()));
     }
 

@@ -45,6 +45,7 @@ public final class ResonantCircuitExperiment implements Experiment {
         oscilloscope.getCh2().getCouplingSwitch().set(2);
         oscilloscope.getCh2().getAmplitudeSwitch().set(3);
         oscilloscope.getMode().set(2);
+        oscilloscope.getTrigger().getTrigSourceSwitch().set(3);
         oscilloscope.getTrigger().getTrigModeSwitch().set(1);
         oscilloscope.getTrigger().getLevelPoti().set(0.5);
         oscilloscope.getPowerSwitch().set(1);
@@ -58,6 +59,7 @@ public final class ResonantCircuitExperiment implements Experiment {
         component.add(new Wire(gen1.getOutput(), capacitor.getInput()));
         component.add(new Wire(gen1.getOutput(), oscilloscope.getCh1().getInput()));
         component.add(new Wire(capacitor.getVoltRes(), oscilloscope.getCh2().getInput()));
+        component.add(new Wire(gen1.getTrigOutput(), oscilloscope.getTrigger().getTrigIn()));
     }
 
 }
