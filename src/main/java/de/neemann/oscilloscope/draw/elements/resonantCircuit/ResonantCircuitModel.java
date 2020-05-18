@@ -168,8 +168,8 @@ public class ResonantCircuitModel implements Observer {
     private void createSines(Sine sine) {
         LOGGER.info("create sine");
         double w = sine.getOmega();
-        double ur_ges = sine.getAmplitude() * (resistor + RL) / Math.sqrt(sqr(resistor + RL) + sqr(w * inductor - 1 / (w * capacitor)));
-        double ur = ur_ges * resistor / (resistor + RL);
+        double urGes = sine.getAmplitude() * (resistor + RL) / Math.sqrt(sqr(resistor + RL) + sqr(w * inductor - 1 / (w * capacitor)));
+        double ur = urGes * resistor / (resistor + RL);
         double phi = Math.atan((w * inductor - 1 / (w * capacitor)) / (resistor + RL));
         double phase = sine.getPhase() - phi;
 
