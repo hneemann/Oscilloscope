@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import static de.neemann.oscilloscope.draw.elements.DoubleHelper.different;
 
 /**
- * The model of the capacitor
+ * The model of the resonant circuit
  */
 public class ResonantCircuitModel implements Observer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResonantCircuitModel.class);
@@ -32,7 +32,7 @@ public class ResonantCircuitModel implements Observer {
     private OnOffSwitch debugSwitch;
 
     /**
-     * Creates a new diode model
+     * Creates a new resonant circuit model
      *
      * @param input the input signal
      */
@@ -81,9 +81,9 @@ public class ResonantCircuitModel implements Observer {
     }
 
     /**
-     * Sets the used capacitor
+     * Sets the used inductor
      *
-     * @param ind the capacitor in mH
+     * @param ind the inductor in mH
      */
     public void setInductor(int ind) {
         double i = ind * 1e-3;
@@ -118,15 +118,20 @@ public class ResonantCircuitModel implements Observer {
             if (debugSwitch == null || debugSwitch.isOff())
                 createSines((Sine) in);
             else
-                solveDGL(in);
+                solveDifferentialEquation(in);
         } else {
-            solveDGL(in);
+            solveDifferentialEquation(in);
         }
     }
 
-    private void solveDGL(PeriodicSignal input) {
+    /**
+     * Simple algorithm to solve the differential equation
+     *
+     * @param input the input signal
+     */
+    private void solveDifferentialEquation(PeriodicSignal input) {
         double t = Math.sqrt(inductor * capacitor) * 2 * Math.PI;
-        LOGGER.info("recalculate resonant circuit, f0=" + 1 / t + "Hz");
+        LOGGER.info("solve resonant circuit equation, f0=" + 1 / t + "Hz");
 
         double period = input.period();
         int points = (int) (period / t * 1000);
@@ -165,6 +170,12 @@ public class ResonantCircuitModel implements Observer {
         capacitorVoltageSignal.setSignal(new PeriodicInterpolate(period, capacitorVoltage));
     }
 
+
+    /**
+     * Creates the well known solution of the differential equation in case of a sine input signal.
+     *
+     * @param sine the input signal
+     */
     private void createSines(Sine sine) {
         LOGGER.info("create sine");
         double w = sine.getOmega();
@@ -175,6 +186,7 @@ public class ResonantCircuitModel implements Observer {
 
         double uc = sine.getAmplitude() / Math.sqrt(sqr(capacitor * w) * (sqr(inductor * w) + sqr(resistor + RL)) - 2 * capacitor * inductor * sqr(w) + 1);
 
+        // the "+ Math.PI" in "phase + Math.PI" changes the sign.
         resistorVoltageSignal.setSignal(new Sine(ur, w, phase + Math.PI, 0));
         capacitorVoltageSignal.setSignal(new Sine(uc, w, phase - Math.PI / 2, sine.getOffset()));
     }

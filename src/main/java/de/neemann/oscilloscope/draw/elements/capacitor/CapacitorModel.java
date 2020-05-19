@@ -28,7 +28,7 @@ public class CapacitorModel implements Observer {
     private double capacitor = 100e-9;
 
     /**
-     * Creates a new diode model
+     * Creates a new capacitor model
      *
      * @param input the provider for the input
      */
@@ -101,12 +101,17 @@ public class CapacitorModel implements Observer {
             if (debugSwitch == null || debugSwitch.isOff())
                 createSines((Sine) in);
             else
-                solveDGL(in);
+                solveDifferentialEquation(in);
         else {
-            solveDGL(in);
+            solveDifferentialEquation(in);
         }
     }
 
+    /**
+     * Creates the well known solution of the differential equation in case of a sine input signal.
+     *
+     * @param sine the input signal
+     */
     private void createSines(Sine sine) {
         LOGGER.info("create sines");
         double w = sine.getOmega();
@@ -125,12 +130,12 @@ public class CapacitorModel implements Observer {
     }
 
     /**
-     * a simple gauss solver
+     * Simple algorithm to solve the differential equation
      *
      * @param input the input signal
      */
-    private void solveDGL(PeriodicSignal input) {
-        LOGGER.info("recalculate capacitor");
+    private void solveDifferentialEquation(PeriodicSignal input) {
+        LOGGER.info("solve capacitor equation");
         double period = input.period();
         double tau = capacitor * resistor;
 
