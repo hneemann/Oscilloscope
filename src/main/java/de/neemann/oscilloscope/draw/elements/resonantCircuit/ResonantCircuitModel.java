@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static de.neemann.oscilloscope.draw.elements.DoubleHelper.different;
+import static de.neemann.oscilloscope.draw.elements.DoubleHelper.sqr;
 
 /**
  * The model of the resonant circuit
@@ -189,10 +190,6 @@ public class ResonantCircuitModel implements Observer {
         // the "+ Math.PI" in "phase + Math.PI" changes the sign.
         resistorVoltageSignal.setSignal(new Sine(ur, w, phase + Math.PI, 0));
         capacitorVoltageSignal.setSignal(new Sine(uc, w, phase - Math.PI / 2, sine.getOffset()));
-    }
-
-    private static double sqr(double v) {
-        return v * v;
     }
 
 }

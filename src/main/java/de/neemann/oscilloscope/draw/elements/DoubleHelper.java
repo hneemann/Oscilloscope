@@ -33,4 +33,15 @@ public final class DoubleHelper {
     public static boolean equal(double a, double b) {
         return !different(a, b);
     }
+
+    /**
+     * Returns the square of x
+     *
+     * @param x x
+     * @return x*x
+     */
+    public static double sqr(double x) {
+        return x * x;
+    }
+
 }

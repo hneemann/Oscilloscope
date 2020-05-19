@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static de.neemann.oscilloscope.draw.elements.DoubleHelper.different;
+import static de.neemann.oscilloscope.draw.elements.DoubleHelper.sqr;
 
 /**
  * The model of the capacitor
@@ -123,10 +124,6 @@ public class CapacitorModel implements Observer {
 
         capacitorVoltageSignal.setSignal(new Sine(uc, w, sine.getPhase() + phase, sine.getOffset()));
         resistorVoltageSignal.setSignal(new Sine(-ur, w, sine.getPhase() + phase + Math.PI / 2, 0));
-    }
-
-    private static double sqr(double v) {
-        return v * v;
     }
 
     /**
