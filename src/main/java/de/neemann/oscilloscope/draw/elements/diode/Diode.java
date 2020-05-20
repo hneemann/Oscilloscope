@@ -3,10 +3,8 @@ package de.neemann.oscilloscope.draw.elements.diode;
 import de.neemann.oscilloscope.draw.elements.BNCInput;
 import de.neemann.oscilloscope.draw.elements.BNCOutput;
 import de.neemann.oscilloscope.draw.elements.Container;
-import de.neemann.oscilloscope.draw.graphics.Graphic;
+import de.neemann.oscilloscope.draw.graphics.*;
 import de.neemann.oscilloscope.draw.graphics.Polygon;
-import de.neemann.oscilloscope.draw.graphics.Style;
-import de.neemann.oscilloscope.draw.graphics.Vector;
 
 import java.awt.*;
 
@@ -95,9 +93,10 @@ public class Diode extends Container<Diode> {
         gr.drawLine(new Vector(SIZE * 5, SIZE * 4), new Vector(SIZE * 9, SIZE * 4), Style.PRINT);
         gr.drawLine(new Vector(SIZE * 9, SIZE * 2), new Vector(SIZE * 9, SIZE * 8), Style.PRINT);
 
-
         gr.drawLine(new Vector(SIZE * 5, SIZE), new Vector(SIZE * 9, SIZE), Style.PRINT);
         gr.drawLine(new Vector(SIZE * 5, SIZE * 9), new Vector(SIZE * 9, SIZE * 9), Style.PRINT);
+
+        gr.drawText(new Vector(SIZE * 6, SIZE * 6 + SIZE2), "1kΩ", Orientation.LEFTCENTER, Style.PRINT);
 
         dot(gr, SIZE * 5, SIZE);
         dot(gr, SIZE * 5, SIZE * 4);
