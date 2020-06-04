@@ -157,6 +157,8 @@ public class Main extends JFrame {
         GraphicMinMax minMax = new GraphicMinMax();
         mainContainer.draw(minMax);
 
+        System.out.println(minMax.getMax().y-minMax.getMin().y);
+
         elementComponent.setPreferredSize(new Dimension(minMax.getMax().x + SIZE2, minMax.getMax().y + SIZE2));
         elementComponent.setContainer(mainContainer);
         pack();

@@ -27,8 +27,8 @@ public final class CapacitorExperiment implements Experiment {
     public Container<?> create() {
         return new Container<>()
                 .add(new Oscilloscope().setPos(SIZE + SIZE2, SIZE + SIZE2))
-                .add(new Generator("gen1").setPos(SIZE + SIZE2, SIZE * 31 + SIZE2))
-                .add(new Capacitor().setPos(SIZE * 32 + SIZE2, SIZE * 31 + SIZE2));
+                .add(new Generator("gen1").setPos(SIZE + SIZE2, SIZE * 30 + SIZE2))
+                .add(new Capacitor().setPos(SIZE * 32 + SIZE2, SIZE * 30 + SIZE2));
     }
 
     @Override

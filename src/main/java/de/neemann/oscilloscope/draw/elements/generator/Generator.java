@@ -62,18 +62,18 @@ public class Generator extends Container<Generator> {
         TriggerObserver triggerObserver = new TriggerObserver();
         SignalObserver signalObserver = new SignalObserver();
 
-        freq = new SelectorKnob<Magnify>("Freq/Hz", 30).addAll(createFrequencies());
-        freqFine = new Potentiometer("Freq Fine", 30);
+        freq = new SelectorKnob<Magnify>("Freq/Hz", SIZE + SIZE2).addAll(createFrequencies());
+        freqFine = new Potentiometer("Freq Fine", SIZE + SIZE2);
         freq.addObserver(signalObserver);
         freq.addObserver(triggerObserver);
         freqFine.addObserver(signalObserver);
         freqFine.addObserver(triggerObserver);
-        phase = new Potentiometer("Phase", 30);
+        phase = new Potentiometer("Phase", SIZE + SIZE2);
         phase.addObserver(signalObserver);
         phase.addObserver(triggerObserver);
-        offset = new Potentiometer("Offset", 30).set(0.5).setCenterZero();
+        offset = new Potentiometer("Offset", SIZE + SIZE2).set(0.5).setCenterZero();
         offset.addObserver(signalObserver);
-        amplitude = new Potentiometer("Ampl.", 30);
+        amplitude = new Potentiometer("Ampl.", SIZE + SIZE2);
         amplitude.addObserver(signalObserver);
         power = new PowerSwitch();
         power.addObserver(signalObserver);
@@ -82,16 +82,16 @@ public class Generator extends Container<Generator> {
         form.addObserver(signalObserver);
 
         setBackground(Color.WHITE);
-        add(freq.setPos(SIZE * 19, SIZE * 3));
-        add(freqFine.setPos(SIZE * 19, SIZE * 8));
+        add(freq.setPos(SIZE * 19, SIZE * 3 + SIZE2));
+        add(freqFine.setPos(SIZE * 19, SIZE * 8 + SIZE2));
         add(form.setPos(SIZE * 11, SIZE2));
-        add(phase.setPos(SIZE * 7, SIZE * 8));
-        add(offset.setPos(SIZE * 13, SIZE * 8));
+        add(phase.setPos(SIZE * 7, SIZE * 8 + SIZE2));
+        add(offset.setPos(SIZE * 13, SIZE * 8 + SIZE2));
         add(power.setPos(SIZE * 24 + SIZE2, SIZE));
-        add(amplitude.setPos(SIZE * 25, SIZE * 8));
+        add(amplitude.setPos(SIZE * 25, SIZE * 8 + SIZE2));
 
         output = new BNCOutput("Out", signalOut);
-        add(output.setPos(SIZE * 2, SIZE * 8));
+        add(output.setPos(SIZE * 2, SIZE * 8 + SIZE2));
         trigOut = new BNCOutput("Trig", triggerOut);
         add(trigOut.setPos(SIZE * 2, SIZE * 3));
     }

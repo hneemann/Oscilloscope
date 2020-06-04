@@ -1,7 +1,9 @@
 package de.neemann.oscilloscope.draw.elements;
 
 import de.neemann.oscilloscope.draw.graphics.*;
+import de.neemann.oscilloscope.draw.graphics.Polygon;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import static de.neemann.oscilloscope.draw.graphics.Style.MAXLINETHICK;
@@ -15,7 +17,7 @@ public class Switch<T> extends ObservableElement<Switch<T>> {
     /**
      * internal grid size
      */
-    public static final int SIZE = 20;
+    public static final int SIZE = Toolkit.getDefaultToolkit().getScreenSize().getHeight() < 900 ? 16 : 20;
     /**
      * half the internal grid size
      */
