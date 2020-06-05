@@ -17,7 +17,20 @@ public class Switch<T> extends ObservableElement<Switch<T>> {
     /**
      * internal grid size
      */
-    public static final int SIZE = Toolkit.getDefaultToolkit().getScreenSize().getHeight() < 900 ? 16 : 20;
+    public static final int SIZE;
+
+    static {
+        int s = 20;
+        try {
+            if (Toolkit.getDefaultToolkit().getScreenSize().getHeight() < 900) {
+                s = 16;
+            }
+        } catch (Exception e) {
+            // use 20 if there was an exception
+        }
+        SIZE = s;
+    }
+
     /**
      * half the internal grid size
      */

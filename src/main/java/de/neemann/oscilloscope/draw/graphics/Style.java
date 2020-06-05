@@ -7,6 +7,8 @@ package de.neemann.oscilloscope.draw.graphics;
 
 import java.awt.*;
 
+import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
+
 /**
  * Defines the styles (color, line thickness, font size and style) which are used to draw the circuit.
  */
@@ -215,7 +217,7 @@ public final class Style {
         private int thickness = LINETHICK;
         private boolean filled = false;
         private Color color = Color.BLACK;
-        private int fontSize = 15;
+        private int fontSize = SIZE * 15 / 20;
         private float[] dash = null;
         private boolean mattersForSize = false;
         private int endCap = BasicStroke.CAP_SQUARE;
