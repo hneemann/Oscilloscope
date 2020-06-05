@@ -164,7 +164,7 @@ public class ResonantCircuitModel implements Observer {
                 i += didt * dt;
                 uc += ducdt * dt;
             }
-            if (Math.abs(iStart - i) / iMax < 1e-4)
+            if (Math.abs(iStart - i) / iMax < 1e-4 && l > 0)
                 break;
         }
         resistorVoltageSignal.setSignal(new PeriodicInterpolate(period, resistorVoltage));
