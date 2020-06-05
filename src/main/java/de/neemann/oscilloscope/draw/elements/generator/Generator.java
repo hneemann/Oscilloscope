@@ -155,21 +155,20 @@ public class Generator extends Container<Generator> {
         public void hasChanged() {
             PeriodicSignal out = PeriodicSignal.GND;
             if (power.isOn()) {
-                double phase = Generator.this.phase.get() * 2 * Math.PI;
                 double ampl = amplitude.get() * MAX_AMPL;
                 double offs = (offset.get() - 0.5) * 2 * MAX_AMPL;
                 switch (form.getSelected()) {
                     case SINE:
-                        out = new Sine(ampl, getOmega(), phase, offs);
+                        out = new Sine(ampl, getOmega(), 0, offs);
                         break;
                     case SQUARE:
-                        out = new Square(ampl, getOmega(), phase, offs);
+                        out = new Square(ampl, getOmega(), 0, offs);
                         break;
                     case TRIANGLE:
-                        out = new Triangle(ampl, getOmega(), phase, offs);
+                        out = new Triangle(ampl, getOmega(), 0, offs);
                         break;
                     case SAWTOOTH:
-                        out = new Sawtooth(ampl, getOmega(), phase, offs);
+                        out = new Sawtooth(ampl, getOmega(), 0, offs);
                         break;
                 }
             }
@@ -181,9 +180,10 @@ public class Generator extends Container<Generator> {
 
         @Override
         public void hasChanged() {
-            if (power.isOn())
-                triggerOut.setSignal(new Square(2.5, getOmega(), 0, 2.5));
-            else
+            if (power.isOn()) {
+                double phase = Generator.this.phase.get() * 2 * Math.PI;
+                triggerOut.setSignal(new Square(2.5, getOmega(), phase, 2.5));
+            } else
                 triggerOut.setSignal(PeriodicSignal.GND);
         }
     }
