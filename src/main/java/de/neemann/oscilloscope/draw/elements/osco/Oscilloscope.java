@@ -29,7 +29,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
     private static final ArrayList<TimeBase> TIMES = createTimes();
     private static final ArrayList<Magnify> MAGNIFY = createMagnify();
     private static boolean debug;
-        private final Trigger trigger;
+    private final Trigger trigger;
     private final Horizontal horizontal;
     private final Channel ch1;
     private final Channel ch2;
@@ -106,16 +106,16 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
                 .add(horizontal.setPos(new Potentiometer("POS", SIZE).setPos(SIZE, SIZE * 2).setCenterZero()))
                 .add(horizontal.setVar(new Potentiometer("VAR", SIZE).setPos(SIZE * 4, SIZE * 2)))
                 .add(horizontal.setMag(new OnOffSwitch("MAG10")).setPos(SIZE * 2, SIZE * 7))
-                .add(horizontal.setTimeBase(new SelectorKnobUnit<TimeBase>("TIME/DIV", SIZE*3, "s").addAll(TIMES).setPos(SIZE * 11, SIZE * 5 + SIZE2)));
+                .add(horizontal.setTimeBase(new SelectorKnobUnit<TimeBase>("TIME/DIV", SIZE * 3, "s").addAll(TIMES).setPos(SIZE * 11, SIZE * 5 + SIZE2)));
 
         ch1 = new Channel();
         ch2 = new Channel();
         mode = new Switch<Mode>("Mode").add(Mode.values());
         Container<?> verticalContainer = new Container<>("Vertical", SIZE * 28, SIZE * 12)
-                .add(ch1.setAmplitude(new SelectorKnob<Magnify>("VOLTS/DIV", SIZE*2).addAll(MAGNIFY).setPos(SIZE * 3, SIZE * 5)))
+                .add(ch1.setAmplitude(new SelectorKnob<Magnify>("VOLTS/DIV", SIZE * 2).addAll(MAGNIFY).setPos(SIZE * 3, SIZE * 5)))
                 .add(ch1.setPos(new Potentiometer("POS", SIZE).setCenterZero().setPos(SIZE * 9, SIZE * 2)))
                 .add(ch1.setVar(new Potentiometer("VAR", SIZE).setPos(SIZE * 9, SIZE * 6)))
-                .add(ch2.setAmplitude(new SelectorKnob<Magnify>("VOLTS/DIV", 40).addAll(MAGNIFY).setPos(SIZE * 24, SIZE * 5)))
+                .add(ch2.setAmplitude(new SelectorKnob<Magnify>("VOLTS/DIV", SIZE * 2).addAll(MAGNIFY).setPos(SIZE * 24, SIZE * 5)))
                 .add(ch2.setPos(new Potentiometer("POS", SIZE).setCenterZero().setPos(SIZE * 18, SIZE * 2)))
                 .add(ch2.setVar(new Potentiometer("VAR", SIZE).setPos(SIZE * 18, SIZE * 6)))
                 .add(mode.setPos(SIZE * 13, SIZE * 3))
