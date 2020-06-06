@@ -7,6 +7,7 @@ import de.neemann.oscilloscope.draw.graphics.VectorInterface;
 
 import java.util.ArrayList;
 
+import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 
 /**
@@ -52,8 +53,8 @@ public class SelectorKnobUnit<T extends Magnify> extends SelectorKnob<T> {
             String pr1 = items.get(i).getPrefix();
             if (pr0 != null && pr1 != null && !pr0.equals(pr1)) {
                 float line = i - 0.5f;
-                VectorInterface p1 = getOffset(line, radius + Style.MAXLINETHICK * 11);
-                VectorInterface p2 = getOffset(line, radius + Style.MAXLINETHICK * 13);
+                VectorInterface p1 = getOffset(line, radius + SIZE * 2 + Style.MAXLINETHICK);
+                VectorInterface p2 = getOffset(line, radius + SIZE * 2 + SIZE2);
                 gr.drawLine(p1, p2, Style.PRINT);
 
                 drawUnitText(gr, pr0 + unit, (lastLine + line) / 2);
@@ -66,7 +67,7 @@ public class SelectorKnobUnit<T extends Magnify> extends SelectorKnob<T> {
     }
 
     private void drawUnitText(Graphic gr, String text, float textAngle) {
-        VectorInterface textPos = getOffset(textAngle, radius + Style.MAXLINETHICK * 10);
+        VectorInterface textPos = getOffset(textAngle, radius + SIZE * 2);
         gr.drawText(textPos, text, Orientation.from(textPos), Style.PRINT);
     }
 

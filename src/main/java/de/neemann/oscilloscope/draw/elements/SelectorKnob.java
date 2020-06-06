@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
 import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
 
 /**
@@ -85,11 +86,11 @@ public class SelectorKnob<T> extends ObservableElement<SelectorKnob<T>> {
         gr.drawCircle(new Vector(-r, -r), new Vector(r, r), Style.SWITCH);
 
         for (int i = 0; i < items.size(); i++) {
-            VectorInterface p1 = getOffset(i, radius + Style.MAXLINETHICK * 2);
-            VectorInterface p2 = getOffset(i, radius + Style.MAXLINETHICK * 3);
+            VectorInterface p1 = getOffset(i, radius + SIZE2 - Style.MAXLINETHICK / 2);
+            VectorInterface p2 = getOffset(i, radius + SIZE2 + Style.MAXLINETHICK / 2);
             gr.drawLine(p1, p2, Style.PRINT);
 
-            VectorInterface p3 = getOffset(i, radius + Style.MAXLINETHICK * 4);
+            VectorInterface p3 = getOffset(i, radius + SIZE - Style.MAXLINETHICK);
             gr.drawText(p3, getStringFor(items.get(i)), Orientation.from(p3), Style.PRINT);
         }
 
@@ -97,7 +98,7 @@ public class SelectorKnob<T> extends ObservableElement<SelectorKnob<T>> {
         VectorInterface p2 = getOffset(selectedPosition, r / 3);
         gr.drawLine(p1, p2, Style.NORMAL);
 
-        gr.drawText(new Vector(0, -radius - Style.MAXLINETHICK * 6 - SIZE2 - getNameOfs()), name, Orientation.CENTERBOTTOM, Style.PRINT);
+        gr.drawText(new Vector(0, -radius - SIZE - SIZE2 - Style.MAXLINETHICK - getNameOfs()), name, Orientation.CENTERBOTTOM, Style.PRINT);
     }
 
     int getNameOfs() {

@@ -14,6 +14,8 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
  * A wire to connect BNC connectors
  */
 public class Wire implements Observer {
+    private static final int WIRE_WIDTH = SIZE * 12 / 20;
+
     private final BNCOutput out;
     private final BNCInput in;
 
@@ -40,7 +42,7 @@ public class Wire implements Observer {
         Vector c = new Vector((p0.x + p1.x) / 2, Math.max(p0.y, p1.y) + SIZE * 8);
 
         g2d.setColor(new Color(0, 0, 0, 192));
-        g2d.setStroke(new BasicStroke(12, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2d.setStroke(new BasicStroke(WIRE_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2d.draw(new QuadCurve2D.Float(p0.x, p0.y, c.x, c.y, p1.x, p1.y));
     }
 
