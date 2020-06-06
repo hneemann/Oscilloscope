@@ -127,6 +127,8 @@ public class Main extends JFrame {
 
         setExperiment(exp);
         setLocationRelativeTo(null);
+
+        setResizable(false);
     }
 
     private JMenu createScaleMenu() {
