@@ -7,8 +7,8 @@ import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 import de.neemann.oscilloscope.gui.ElementComponent;
 import de.neemann.oscilloscope.gui.Wire;
 
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE2;
 
 /**
  * The capacitor experimental setup

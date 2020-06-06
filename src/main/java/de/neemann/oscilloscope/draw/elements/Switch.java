@@ -1,11 +1,11 @@
 package de.neemann.oscilloscope.draw.elements;
 
 import de.neemann.oscilloscope.draw.graphics.*;
-import de.neemann.oscilloscope.draw.graphics.Polygon;
 
-import java.awt.*;
 import java.util.ArrayList;
 
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE2;
 import static de.neemann.oscilloscope.draw.graphics.Style.MAXLINETHICK;
 
 /**
@@ -14,28 +14,6 @@ import static de.neemann.oscilloscope.draw.graphics.Style.MAXLINETHICK;
  * @param <T> the type of the elements
  */
 public class Switch<T> extends ObservableElement<Switch<T>> {
-    /**
-     * internal grid size
-     */
-    public static final int SIZE;
-
-    static {
-        int s = 20;
-        try {
-            if (Toolkit.getDefaultToolkit().getScreenSize().getHeight() < 900) {
-                s = 16;
-            }
-        } catch (Exception e) {
-            // use 20 if there was an exception
-        }
-        SIZE = s;
-    }
-
-    /**
-     * half the internal grid size
-     */
-    public static final int SIZE2 = SIZE / 2;
-
     private final ArrayList<T> items;
     private final String name;
     private int selectedPosition;

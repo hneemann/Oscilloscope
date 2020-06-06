@@ -8,7 +8,7 @@ import de.neemann.oscilloscope.signal.PeriodicSignal;
 import java.awt.*;
 import java.awt.geom.QuadCurve2D;
 
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE;
 
 /**
  * A wire to connect BNC connectors

@@ -9,8 +9,8 @@ import de.neemann.oscilloscope.draw.graphics.Vector;
  * Adds a LED beside the switch
  */
 public class PowerSwitch extends OnOffSwitch {
-    private static final Vector RAD = new Vector(SIZE2, SIZE2);
-    private static final Vector POS = new Vector(SIZE * 2, SIZE);
+    private static final Vector RAD = new Vector(Scaling.SIZE2, Scaling.SIZE2);
+    private static final Vector POS = new Vector(Scaling.SIZE * 2, Scaling.SIZE);
 
     /**
      * Creates a new switch

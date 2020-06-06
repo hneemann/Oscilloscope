@@ -7,7 +7,7 @@ import de.neemann.oscilloscope.draw.graphics.Polygon;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE2;
 
 /**
  * A Container tha holds other elements
@@ -15,7 +15,7 @@ import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
  * @param <T> the type of the container
  */
 public class Container<T extends Container<?>> extends Element<T> {
-    private static final int PAD = Switch.SIZE;
+    private static final int PAD = Scaling.SIZE;
 
     private final String name;
     private final int dx;

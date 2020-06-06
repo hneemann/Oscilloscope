@@ -1,6 +1,7 @@
 package de.neemann.oscilloscope.gui;
 
 import de.neemann.oscilloscope.draw.elements.Container;
+import de.neemann.oscilloscope.draw.elements.Scaling;
 import de.neemann.oscilloscope.draw.elements.osco.Oscilloscope;
 import de.neemann.oscilloscope.draw.graphics.GraphicMinMax;
 import de.neemann.oscilloscope.experiments.Experiment;
@@ -22,7 +23,7 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.prefs.Preferences;
 
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE2;
 
 /**
  * The main frame.
@@ -94,6 +95,7 @@ public class Main extends JFrame {
                 }
             }
         }));
+        view.add(createScaleMenu());
         if (Debug.isDebug())
             view.add(new JMenuItem(new AbstractAction("Info") {
                 @Override
@@ -127,6 +129,23 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    private JMenu createScaleMenu() {
+        JMenu menu = new JMenu("Window Size");
+        for (int i = 6; i <= 10; i++) {
+            int s = i * 2;
+            int x = 60 * s;
+            int y = 41 * s;
+            menu.add(new AbstractAction(x + "x" + y) {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    Scaling.setDefault(s);
+                    JOptionPane.showMessageDialog(Main.this, "Changing the window size requires a restart!");
+                }
+            });
+        }
+        return menu;
+    }
+
     private File getUserFolder() {
         String f = PREFS.get("folder", null);
         if (f == null)
@@ -157,7 +176,8 @@ public class Main extends JFrame {
         GraphicMinMax minMax = new GraphicMinMax();
         mainContainer.draw(minMax);
 
-        System.out.println(minMax.getMax().y-minMax.getMin().y);
+        System.out.println((minMax.getMax().x - minMax.getMin().x) + "x"
+                + (minMax.getMax().y - minMax.getMin().y));
 
         elementComponent.setPreferredSize(new Dimension(minMax.getMax().x + SIZE2, minMax.getMax().y + SIZE2));
         elementComponent.setContainer(mainContainer);

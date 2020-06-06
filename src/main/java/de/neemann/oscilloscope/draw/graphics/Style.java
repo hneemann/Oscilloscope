@@ -7,7 +7,7 @@ package de.neemann.oscilloscope.draw.graphics;
 
 import java.awt.*;
 
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE;
 
 /**
  * Defines the styles (color, line thickness, font size and style) which are used to draw the circuit.

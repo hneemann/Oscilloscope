@@ -12,8 +12,8 @@ import de.neemann.oscilloscope.signal.primitives.Triangle;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE2;
 
 /**
  * Abstraction of a function generator

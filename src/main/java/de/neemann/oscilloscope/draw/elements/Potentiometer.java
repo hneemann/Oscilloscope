@@ -2,7 +2,7 @@ package de.neemann.oscilloscope.draw.elements;
 
 import de.neemann.oscilloscope.draw.graphics.*;
 
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE2;
 
 /**
  * Abstraction of a potentiometer

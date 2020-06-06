@@ -14,8 +14,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE2;
 
 /**
  * The oscilloscope

@@ -8,8 +8,8 @@ import de.neemann.oscilloscope.draw.graphics.Polygon;
 
 import java.awt.*;
 
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE;
-import static de.neemann.oscilloscope.draw.elements.Switch.SIZE2;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE;
+import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE2;
 
 /**
  * The diode experimental setup
