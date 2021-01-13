@@ -73,7 +73,7 @@ public class Vector implements VectorInterface {
     }
 
     /**
-     * returns the maximim vector from the given vectors.
+     * returns the maximum vector from the given vectors.
      *
      * @param p the vectors to evaluate
      * @return the maximum

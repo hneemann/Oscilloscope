@@ -198,7 +198,7 @@ public class Main extends JFrame {
     }
 
     /**
-     * Starts the main programm
+     * Starts the main program
      *
      * @param args the arguments
      */

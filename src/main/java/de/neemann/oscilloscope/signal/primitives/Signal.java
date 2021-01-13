@@ -16,7 +16,7 @@ public abstract class Signal implements PeriodicSignal {
      * Creates a new instance
      *
      * @param ampl  the amplitude
-     * @param omega the circular frequncy
+     * @param omega the circular frequency
      * @param phase the phase
      * @param offs  the offset
      */

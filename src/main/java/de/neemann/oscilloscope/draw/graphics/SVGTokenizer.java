@@ -202,7 +202,7 @@ public class SVGTokenizer {
     }
 
     /**
-     * @return the remainig string
+     * @return the remaining string
      */
     public String remaining() {
         final String s = code.substring(pos).trim();

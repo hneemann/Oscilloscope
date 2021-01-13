@@ -14,7 +14,7 @@ public class GraphicTransform extends Graphic {
     private final Transform transform;
 
     /**
-     * Creates a new instace
+     * Creates a new instance
      *
      * @param parent    the delegate to be used to berform the drawing
      * @param transform the transformation

@@ -24,7 +24,7 @@ public class TextFormatLaTeX implements GraphicSVG.TextStyle {
     /**
      * Creates a new instance.
      *
-     * @param pinStyleInMathMode if true pin lables are set in math mode
+     * @param pinStyleInMathMode if true pin labels are set in math mode
      */
     public TextFormatLaTeX(boolean pinStyleInMathMode) {
         this.pinStyleInMathMode = pinStyleInMathMode;
