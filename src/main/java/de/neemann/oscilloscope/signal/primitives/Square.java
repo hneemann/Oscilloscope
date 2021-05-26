@@ -4,7 +4,6 @@ package de.neemann.oscilloscope.signal.primitives;
  * The square signal
  */
 public class Square extends Signal {
-    private final double frequency;
 
     /**
      * Creates a new instance
@@ -16,12 +15,11 @@ public class Square extends Signal {
      */
     public Square(double ampl, double w, double phase, double offset) {
         super(ampl, w, phase, offset);
-        this.frequency = w / 2 / Math.PI;
     }
 
     @Override
     public double v(double t) {
-        double arg = t * frequency + getPhase();
+        double arg = (t * getOmega() + getPhase()) / (2 * Math.PI);
         return (arg - Math.floor(arg) < 0.5 ? getAmplitude() : -getAmplitude()) + getOffset();
     }
 

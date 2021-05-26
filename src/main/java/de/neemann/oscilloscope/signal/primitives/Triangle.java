@@ -4,7 +4,6 @@ package de.neemann.oscilloscope.signal.primitives;
  * The triangle signal
  */
 public class Triangle extends Signal {
-    private final double frequency;
 
     /**
      * Creates a new instance
@@ -16,12 +15,11 @@ public class Triangle extends Signal {
      */
     public Triangle(double ampl, double w, double phase, double offset) {
         super(ampl, w, phase, offset);
-        this.frequency = w / 2 / Math.PI;
     }
 
     @Override
     public double v(double t) {
-        double arg = t * frequency + getPhase();
+        double arg = (t * getOmega() + getPhase()) / (2 * Math.PI);
         double vt = arg - Math.floor(arg);
         return (vt < 0.5 ? getAmplitude() * (4 * vt - 1) : getAmplitude() * (4 * (1 - vt) - 1)) + getOffset();
     }

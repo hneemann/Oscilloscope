@@ -29,10 +29,11 @@ public final class General implements Experiment {
 
     @Override
     public Container<?> create() {
+        Generator gen1 = new Generator("gen1").setPos(SIZE + SIZE2, SIZE * 30 + SIZE2);
         return new Container<>()
                 .add(new Oscilloscope().setPos(SIZE + SIZE2, SIZE + SIZE2))
-                .add(new Generator("gen1").setPos(SIZE + SIZE2, SIZE * 30 + SIZE2))
-                .add(new Generator("gen2").setPos(SIZE * 32 + SIZE2, SIZE * 30 + SIZE2));
+                .add(gen1)
+                .add(new Generator("gen2", gen1).setPos(SIZE * 32 + SIZE2, SIZE * 30 + SIZE2));
     }
 
     @Override

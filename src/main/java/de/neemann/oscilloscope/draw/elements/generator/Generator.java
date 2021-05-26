@@ -36,6 +36,7 @@ public class Generator extends Container<Generator> {
     private final String name;
     private final SignalProvider triggerOut;
     private final SignalProvider signalOut;
+    private final PhaseShift phaseShift;
 
     private static ArrayList<Magnify> createFrequencies() {
         ArrayList<Magnify> f = new ArrayList<>();
@@ -53,6 +54,16 @@ public class Generator extends Container<Generator> {
      * @param name the generators name
      */
     public Generator(String name) {
+        this(name, null);
+    }
+
+    /**
+     * Creates a new function generator
+     *
+     * @param name  the generators name
+     * @param other the other generator if two generators are used
+     */
+    public Generator(String name, Generator other) {
         super(SIZE * 27, SIZE * 10);
         this.name = name;
 
@@ -80,6 +91,14 @@ public class Generator extends Container<Generator> {
         power.addObserver(triggerObserver);
         form = new Switch<Form>("Shape").add(Form.values());
         form.addObserver(signalObserver);
+
+        if (other != null) {
+            phaseShift = () -> (other.phase.get() - phase.get()) * 2 * Math.PI;
+            other.phase.addObserver(signalObserver);
+            other.phase.addObserver(triggerObserver);
+        } else {
+            phaseShift = () -> 0;
+        }
 
         setBackground(Color.WHITE);
         add(freq.setPos(SIZE * 19, SIZE * 3 + SIZE2));
@@ -150,7 +169,6 @@ public class Generator extends Container<Generator> {
     }
 
     private class SignalObserver implements Observer {
-
         @Override
         public void hasChanged() {
             PeriodicSignal out = PeriodicSignal.GND;
@@ -159,16 +177,16 @@ public class Generator extends Container<Generator> {
                 double offs = (offset.get() - 0.5) * 2 * MAX_AMPL;
                 switch (form.getSelected()) {
                     case SINE:
-                        out = new Sine(ampl, getOmega(), 0, offs);
+                        out = new Sine(ampl, getOmega(), phaseShift.getShift(), offs);
                         break;
                     case SQUARE:
-                        out = new Square(ampl, getOmega(), 0, offs);
+                        out = new Square(ampl, getOmega(), phaseShift.getShift(), offs);
                         break;
                     case TRIANGLE:
-                        out = new Triangle(ampl, getOmega(), 0, offs);
+                        out = new Triangle(ampl, getOmega(), phaseShift.getShift(), offs);
                         break;
                     case SAWTOOTH:
-                        out = new Sawtooth(ampl, getOmega(), 0, offs);
+                        out = new Sawtooth(ampl, getOmega(), phaseShift.getShift(), offs);
                         break;
                 }
             }
@@ -182,11 +200,14 @@ public class Generator extends Container<Generator> {
         public void hasChanged() {
             if (power.isOn()) {
                 double phase = Generator.this.phase.get() * 2 * Math.PI;
-                triggerOut.setSignal(new Square(2.5, getOmega(), phase, 2.5));
+                triggerOut.setSignal(new Square(2.5, getOmega(), phaseShift.getShift() + phase, 2.5));
             } else
                 triggerOut.setSignal(PeriodicSignal.GND);
         }
     }
 
+    private interface PhaseShift {
+        double getShift();
+    }
 
 }
