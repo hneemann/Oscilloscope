@@ -231,11 +231,15 @@ public class ElementComponent extends JComponent {
                 if (el != null) {
                     if (el instanceof BNCInput) {
                         BNCInput bncInput = (BNCInput) el;
+                        boolean isInputConnected = false;
                         for (Wire w : wires) {
-                            if (w.getInput() == bncInput)
-                                return;
+                            if (w.getInput() == bncInput) {
+                                isInputConnected = true;
+                                break;
+                            }
                         }
-                        add(new Wire(pendingWire.getOutput(), bncInput));
+                        if (!isInputConnected)
+                            add(new Wire(pendingWire.getOutput(), bncInput));
                     }
                 }
                 pendingWire = null;
