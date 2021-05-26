@@ -2,7 +2,7 @@ package de.neemann.oscilloscope.signal.interpolate;
 
 /**
  * A function that is defined by solving (finding a zero) ofan other function.
- * Because solving is a slow operation use tihs function only in combination with
+ * Because solving is a slow operation use this function only in combination with
  * the {@link InterpolateLinear} function.
  */
 public class InverterFunc implements Func {
