@@ -8,7 +8,8 @@ import static de.neemann.oscilloscope.draw.elements.Scaling.SIZE2;
  * Abstraction of a potentiometer
  */
 public class Potentiometer extends ObservableElement<Potentiometer> {
-    private static final int MAX = 5000;
+    private static final int MAX = 10000;
+    private static final int FAST = 20;
     private static final long SPEED = 50;
 
     private final int radius;
@@ -93,7 +94,7 @@ public class Potentiometer extends ObservableElement<Potentiometer> {
             if (delta < 1)
                 delta = 1;
 
-            delta *= 10;
+            delta *= FAST;
         }
 
         time = t;
