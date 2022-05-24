@@ -16,7 +16,7 @@ import static de.neemann.oscilloscope.draw.elements.capacitor.Capacitor.CAP_PAD;
 import static de.neemann.oscilloscope.draw.elements.diode.Diode.dot;
 
 /**
- * The capacitor experimental setup
+ * The resonant circuit experimental setup
  */
 public class ResonantCircuit extends Container<ResonantCircuit> {
 
@@ -84,26 +84,18 @@ public class ResonantCircuit extends Container<ResonantCircuit> {
     public void drawToOrigin(Graphic gr) {
         super.drawToOrigin(gr);
 
-        // wire to L
+        gr.drawPolygon(new Polygon(false)
+                .add(SIZE * 3, SIZE)
+                .add(new Vector(SIZE * 3, SIZE - SIZE2), new Vector(SIZE * 3 + SIZE2, SIZE - SIZE2), new Vector(SIZE * 3 + SIZE2, SIZE))
+                .add(new Vector(SIZE * 3 + SIZE2, SIZE - SIZE2), new Vector(SIZE * 4, SIZE - SIZE2), new Vector(SIZE * 4, SIZE))
+                .add(new Vector(SIZE * 4, SIZE - SIZE2), new Vector(SIZE * 4 + SIZE2, SIZE - SIZE2), new Vector(SIZE * 4 + SIZE2, SIZE))
+                .add(new Vector(SIZE * 4 + SIZE2, SIZE - SIZE2), new Vector(SIZE * 5, SIZE - SIZE2), new Vector(SIZE * 5, SIZE)), Style.PRINT);
         gr.drawPolygon(new Polygon(false)
                 .add(SIZE, SIZE * 5)
                 .add(SIZE, SIZE)
                 .add(SIZE * 3, SIZE), Style.PRINT);
-
-        // L
-        gr.drawPolygon(new Polygon(true)
-                .add(SIZE * 3, SIZE - SIZE2)
-                .add(SIZE * 3, SIZE + SIZE2)
-                .add(SIZE * 6, SIZE + SIZE2)
-                .add(SIZE * 6, SIZE - SIZE2), Style.PRINT_FILLED);
-
-        // wire L to C
-        gr.drawLine(new Vector(SIZE * 7, SIZE), new Vector(SIZE * 10 + CAP_PAD, SIZE), Style.PRINT);
-
-
         gr.drawPolygon(new Polygon(false)
-                .add(SIZE, SIZE * 5)
-                .add(SIZE, SIZE)
+                .add(SIZE * 5, SIZE)
                 .add(SIZE * 8, SIZE)
                 .add(SIZE * 8, SIZE * 2 + CAP_PAD), Style.PRINT);
         gr.drawPolygon(new Polygon(false)
