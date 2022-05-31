@@ -169,6 +169,7 @@ public class Oscilloscope extends Container<Oscilloscope> implements ElementComp
             } else {
                 model = null;
                 stopTimer();
+                screen.getScreenBuffer().clear();
             }
 
         });
